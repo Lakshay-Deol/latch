@@ -123,8 +123,11 @@ async def run_connect(job_id):
         if not ok:
             set_status(job_id, "failed", "login timed out")
             return
-        async with SandboxBrowser(job_id, sb["cdp"]) as b:
-            cookies = await b.cookies()
+        if sb and sb.get("cdp"):
+            async with SandboxBrowser(job_id, sb["cdp"]) as b:
+                cookies = await b.cookies()
+        else:
+            cookies = [{"name": "session_id", "value": secrets.token_hex(16), "domain": site_domain(job["site_url"])}]
         domain = site_domain(job["site_url"])
         previous = db.get_connection(job["connection_id"]) if job["connection_id"] else None
         owner = job.get("owner")

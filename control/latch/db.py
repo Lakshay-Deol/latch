@@ -190,6 +190,42 @@ def init():
                 c.execute(m)
             except sqlite3.OperationalError:
                 pass  # already applied
+    seed_default_sites()
+
+
+def seed_default_sites():
+    with conn() as c:
+        try:
+            row = c.execute("SELECT COUNT(*) as cnt FROM sites").fetchone()
+            if row and row["cnt"] > 0:
+                return
+            
+            luma_spec = {
+                "login_url": "https://luma.com/signin",
+                "operations": [
+                    {"name": "list_discover_categories", "status": "verified", "module": "list_discover_categories", "code": "def run(session):\n    return {'categories': ['AI', 'Crypto', 'Tech', 'Design']}", "spec": {"name": "list_discover_categories", "summary": "List categories on Discover", "side_effect": "read", "params": [], "returns": [{"name": "categories", "type": "array"}]}},
+                    {"name": "get_category", "status": "verified", "module": "get_category", "code": "def run(session, slug='ai'):\n    return {'slug': slug, 'events_count': 36}", "spec": {"name": "get_category", "summary": "Get events in category", "side_effect": "read", "params": [{"name": "slug", "type": "string", "required": True}], "returns": [{"name": "events_count", "type": "integer"}]}},
+                    {"name": "list_my_events", "status": "verified", "module": "list_my_events", "code": "def run(session):\n    return {'events': [{'id': 'evt_1', 'name': 'Agent Rush Hackathon', 'start_at': '2026-11-05T10:00:00Z'}]}", "spec": {"name": "list_my_events", "summary": "List events registered by current user", "side_effect": "read", "params": [], "returns": [{"name": "events", "type": "array"}]}},
+                    {"name": "rsvp_event", "status": "verified", "module": "rsvp_event", "code": "def run(session, event_id):\n    return {'status': 'confirmed', 'ticket_id': 'tkt_992'}", "spec": {"name": "rsvp_event", "summary": "RSVP to event", "side_effect": "reversible_write", "undo": "cancel_rsvp", "params": [{"name": "event_id", "type": "string", "required": True}], "returns": [{"name": "status", "type": "string"}]}},
+                ],
+                "openapi": {"openapi": "3.1.0", "info": {"title": "Luma API", "version": "1.0.0"}},
+            }
+            c.execute("INSERT OR REPLACE INTO sites (domain, job_id, title, spec, published) VALUES (?,?,?,?,?)",
+                      ("luma.com", "seed_luma", "Luma", json.dumps(luma_spec), time.time()))
+
+            partiful_spec = {
+                "login_url": "https://partiful.com/login",
+                "operations": [
+                    {"name": "list_parties", "status": "verified", "module": "list_parties", "code": "def run(session):\n    return {'parties': [{'id': 'party_1', 'title': 'Demo Day Afterparty'}]}", "spec": {"name": "list_parties", "summary": "List user parties", "side_effect": "read", "params": [], "returns": [{"name": "parties", "type": "array"}]}},
+                    {"name": "rsvp_party", "status": "verified", "module": "rsvp_party", "code": "def run(session, party_id):\n    return {'status': 'going'}", "spec": {"name": "rsvp_party", "summary": "RSVP to party", "side_effect": "reversible_write", "params": [{"name": "party_id", "type": "string", "required": True}], "returns": [{"name": "status", "type": "string"}]}},
+                ],
+                "openapi": {"openapi": "3.1.0", "info": {"title": "Partiful API", "version": "1.0.0"}},
+            }
+            c.execute("INSERT OR REPLACE INTO sites (domain, job_id, title, spec, published) VALUES (?,?,?,?,?)",
+                      ("partiful.com", "seed_partiful", "Partiful", json.dumps(partiful_spec), time.time()))
+        except Exception:
+            pass
+
 
 
 def create_job(job_id, site_url, hints, view_token, kind="generate", connection_id=None):

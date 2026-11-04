@@ -24,6 +24,16 @@ def auth_cookie_names(cookies):
 
 async def wait_for_login(job_id, cdp, site, manual_flag: asyncio.Event, poll=4, timeout=1800):
     hinted = False
+    waited = 0
+    if not cdp:
+        while waited < timeout:
+            if manual_flag.is_set():
+                db.add_event(job_id, "login_detected", {"by": "human button"})
+                return True
+            await asyncio.sleep(poll)
+            waited += poll
+        return False
+
     async with SandboxBrowser(job_id, cdp) as b:
         baseline = auth_cookie_names(await b.cookies())
         waited = 0
