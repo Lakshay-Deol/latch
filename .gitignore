@@ -1,0 +1,11 @@
+.env
+.env.example
+Md files/
+
+infra/state.json
+__pycache__/
+*.pyc
+.mcp.json
+W&B hack/
+bench/
+video/build/
