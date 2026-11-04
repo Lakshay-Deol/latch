@@ -74,15 +74,28 @@ class SandboxBrowser:
 
     async def __aenter__(self):
         self._pw = await async_playwright().start()
-        self.browser = await self._pw.chromium.connect_over_cdp(f"http://{self.cdp}")
-        self.context = self.browser.contexts[0]
+        if self.cdp and str(self.cdp) != "None":
+            self.browser = await self._pw.chromium.connect_over_cdp(f"http://{self.cdp}")
+            self.context = self.browser.contexts[0] if self.browser.contexts else await self.browser.new_context()
+        else:
+            self.browser = await self._pw.chromium.launch(headless=True)
+            self.context = await self.browser.new_context()
+            page = await self.context.new_page()
+            job = db.get_job(self.job_id) if hasattr(self, "job_id") and self.job_id else None
+            if job and job.get("site_url"):
+                try:
+                    await page.goto(job["site_url"], wait_until="domcontentloaded", timeout=15000)
+                except Exception:
+                    pass
         if self.record:
             self.context.on("response", self._on_response)
         return self
 
     async def __aexit__(self, *exc):
-        # Disconnect only; the sandbox (and its logged-in session) stays alive.
         try:
+            if not self.cdp or str(self.cdp) == "None":
+                if self.browser:
+                    await self.browser.close()
             await self._pw.stop()
         except Exception:
             pass
@@ -90,7 +103,7 @@ class SandboxBrowser:
     @property
     def page(self):
         pages = [p for p in self.context.pages if not p.is_closed()]
-        return pages[-1]  # newest tab is the one the user just opened
+        return pages[-1] if pages else self.context.pages[0]
 
     async def _on_response(self, response):
         # Must never raise: an exception here would be lost in the event emitter and the request dropped.
