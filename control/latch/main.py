@@ -116,6 +116,25 @@ def guest_seats():
     return guests.seats()
 
 
+@app.post("/guest")
+def guest_create(request: Request, response: Response):
+    current = guests.from_cookie(ADMIN_PASSWORD, request.cookies.get(guests.COOKIE))
+    try:
+        guest_id = current or guests.start()
+    except guests.Full as e:
+        return JSONResponse({"detail": f"All {guests.MAX_GUESTS} guest seats are taken. Try again later.",
+                             "frees_at": e.frees_at}, status_code=409)
+    token = guests.cookie_value(ADMIN_PASSWORD, guest_id)
+    response.set_cookie(guests.COOKIE, token, httponly=True, secure=True, samesite="lax", max_age=guests.SEAT_HOURS * 3600)
+    return {"token": token, "guest_id": guest_id, "expires_in_hours": guests.SEAT_HOURS}
+
+
+@app.get("/guest")
+def guest_get(request: Request):
+    guest_id = guests.from_cookie(ADMIN_PASSWORD, request.cookies.get(guests.COOKIE))
+    return {"active": bool(guest_id), "guest_id": guest_id, "seats": guests.seats()}
+
+
 @app.post("/api/guest")
 def guest_start(request: Request, response: Response):
     if guests.from_cookie(ADMIN_PASSWORD, request.cookies.get(guests.COOKIE)):

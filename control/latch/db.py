@@ -124,6 +124,61 @@ MIGRATIONS = [
     "ALTER TABLE connections ADD COLUMN expires REAL",
     "ALTER TABLE jobs ADD COLUMN owner TEXT",
     "CREATE TABLE IF NOT EXISTS guests (id TEXT PRIMARY KEY, created REAL, expires REAL, ended INTEGER DEFAULT 0)",
+    """CREATE TABLE IF NOT EXISTS tasks (
+        id TEXT PRIMARY KEY,
+        session_id TEXT NOT NULL,
+        goal TEXT NOT NULL,
+        status TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )""",
+    """CREATE TABLE IF NOT EXISTS task_steps (
+        id TEXT PRIMARY KEY,
+        task_id TEXT NOT NULL,
+        idx INTEGER NOT NULL,
+        kind TEXT NOT NULL,
+        description TEXT NOT NULL,
+        destructive INTEGER NOT NULL DEFAULT 0,
+        status TEXT NOT NULL,
+        payload_json TEXT,
+        result_json TEXT
+    )""",
+    """CREATE TABLE IF NOT EXISTS receipts (
+        sha256 TEXT PRIMARY KEY,
+        operation_json TEXT,
+        result_json TEXT,
+        sandbox_id TEXT,
+        worker_vm TEXT,
+        containment_json TEXT,
+        approval_json TEXT,
+        created_at TEXT
+    )""",
+    """CREATE TABLE IF NOT EXISTS approvals (
+        id TEXT PRIMARY KEY,
+        task_id TEXT,
+        step_id TEXT,
+        operation TEXT,
+        details_json TEXT,
+        risk TEXT,
+        sandbox_id TEXT,
+        status TEXT,
+        requested_at TEXT,
+        decided_at TEXT,
+        decided_by TEXT
+    )""",
+    """CREATE TABLE IF NOT EXISTS dispatch_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        task_id TEXT NOT NULL,
+        ts REAL NOT NULL,
+        event TEXT NOT NULL,
+        fields_json TEXT
+    )""",
+    """CREATE TABLE IF NOT EXISTS skills (
+        sha256 TEXT PRIMARY KEY,
+        title TEXT,
+        domain TEXT,
+        content_json TEXT,
+        created_at TEXT
+    )""",
 ]
 
 
@@ -389,3 +444,162 @@ def save_session(job_id, cookies):
     with conn() as c:
         c.execute("INSERT OR REPLACE INTO sessions (job_id, cookies, captured) VALUES (?,?,?)",
                   (job_id, json.dumps(cookies), time.time()))
+
+
+# --- Tasks & Steps ---
+
+def create_task(task_id, session_id, goal, status="planned"):
+    now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    with conn() as c:
+        c.execute("INSERT INTO tasks (id, session_id, goal, status, created_at) VALUES (?,?,?,?,?)",
+                  (task_id, session_id, goal, status, now))
+
+
+def get_task(task_id):
+    with conn() as c:
+        row = c.execute("SELECT * FROM tasks WHERE id=?", (task_id,)).fetchone()
+    return dict(row) if row else None
+
+
+def list_tasks(session_id=None):
+    q = "SELECT * FROM tasks"
+    args = ()
+    if session_id:
+        q += " WHERE session_id=?"
+        args = (session_id,)
+    q += " ORDER BY created_at DESC"
+    with conn() as c:
+        return [dict(r) for r in c.execute(q, args)]
+
+
+def update_task(task_id, **fields):
+    cols = ", ".join(f"{k}=?" for k in fields)
+    with conn() as c:
+        c.execute(f"UPDATE tasks SET {cols} WHERE id=?", (*fields.values(), task_id))
+
+
+def save_step(step_id, task_id, idx, kind, description, destructive=0, status="pending", payload_json=None, result_json=None):
+    with conn() as c:
+        c.execute(
+            "INSERT OR REPLACE INTO task_steps (id, task_id, idx, kind, description, destructive, status, payload_json, result_json) "
+            "VALUES (?,?,?,?,?,?,?,?,?)",
+            (step_id, task_id, idx, kind, description, destructive, status, payload_json, result_json),
+        )
+
+
+def get_steps(task_id):
+    with conn() as c:
+        return [dict(r) for r in c.execute("SELECT * FROM task_steps WHERE task_id=? ORDER BY idx ASC", (task_id,))]
+
+
+def update_step(step_id, **fields):
+    cols = ", ".join(f"{k}=?" for k in fields)
+    with conn() as c:
+        c.execute(f"UPDATE task_steps SET {cols} WHERE id=?", (*fields.values(), step_id))
+
+
+def clear_steps(task_id):
+    with conn() as c:
+        c.execute("DELETE FROM task_steps WHERE task_id=?", (task_id,))
+
+
+# --- Receipts ---
+
+def save_receipt(sha256, operation_json, result_json, sandbox_id, worker_vm, containment_json, approval_json=None):
+    now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    with conn() as c:
+        c.execute(
+            "INSERT OR REPLACE INTO receipts (sha256, operation_json, result_json, sandbox_id, worker_vm, containment_json, approval_json, created_at) "
+            "VALUES (?,?,?,?,?,?,?,?)",
+            (sha256, operation_json, result_json, sandbox_id, worker_vm, containment_json, approval_json, now),
+        )
+
+
+def get_receipt(sha256):
+    with conn() as c:
+        row = c.execute("SELECT * FROM receipts WHERE sha256=?", (sha256,)).fetchone()
+    return dict(row) if row else None
+
+
+def list_receipts(limit=50):
+    with conn() as c:
+        return [dict(r) for r in c.execute("SELECT * FROM receipts ORDER BY created_at DESC LIMIT ?", (limit,))]
+
+
+# --- Approvals ---
+
+def create_approval(id, task_id, step_id, operation, details_json, risk, sandbox_id, status, requested_at):
+    with conn() as c:
+        c.execute(
+            "INSERT OR REPLACE INTO approvals (id, task_id, step_id, operation, details_json, risk, sandbox_id, status, requested_at) "
+            "VALUES (?,?,?,?,?,?,?,?,?)",
+            (id, task_id, step_id, operation, details_json, risk, sandbox_id, status, requested_at),
+        )
+
+
+def get_approval(approval_id):
+    with conn() as c:
+        row = c.execute("SELECT * FROM approvals WHERE id=?", (approval_id,)).fetchone()
+    return dict(row) if row else None
+
+
+def update_approval(approval_id, **fields):
+    cols = ", ".join(f"{k}=?" for k in fields)
+    with conn() as c:
+        c.execute(f"UPDATE approvals SET {cols} WHERE id=?", (*fields.values(), approval_id))
+
+
+def list_approvals(status=None):
+    q = "SELECT * FROM approvals"
+    args = ()
+    if status:
+        q += " WHERE status=?"
+        args = (status,)
+    q += " ORDER BY requested_at DESC"
+    with conn() as c:
+        return [dict(r) for r in c.execute(q, args)]
+
+
+# --- Dispatch Events ---
+
+def record_dispatch_event(task_id, event, **fields):
+    now = time.time()
+    with conn() as c:
+        c.execute(
+            "INSERT INTO dispatch_events (task_id, ts, event, fields_json) VALUES (?,?,?,?)",
+            (task_id, now, event, json.dumps(fields)),
+        )
+
+
+def get_dispatch_events(task_id):
+    with conn() as c:
+        rows = c.execute("SELECT * FROM dispatch_events WHERE task_id=? ORDER BY id ASC", (task_id,)).fetchall()
+        out = []
+        for r in rows:
+            d = dict(r)
+            d["fields"] = json.loads(d.get("fields_json") or "{}")
+            out.append(d)
+        return out
+
+
+# --- Skills ---
+
+def save_skill_record(sha256, title, domain, content_json):
+    now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    with conn() as c:
+        c.execute(
+            "INSERT OR REPLACE INTO skills (sha256, title, domain, content_json, created_at) VALUES (?,?,?,?,?)",
+            (sha256, title, domain, content_json, now),
+        )
+
+
+def get_skill_record(sha256):
+    with conn() as c:
+        row = c.execute("SELECT * FROM skills WHERE sha256=?", (sha256,)).fetchone()
+    return dict(row) if row else None
+
+
+def list_skill_records():
+    with conn() as c:
+        return [dict(r) for r in c.execute("SELECT * FROM skills ORDER BY created_at DESC")]
+
