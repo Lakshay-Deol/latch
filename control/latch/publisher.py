@@ -11,8 +11,12 @@ import pathlib
 import re
 import time
 from collections import Counter
+from typing import Any
 
-import boto3
+try:
+    import boto3
+except ImportError:
+    boto3 = None
 
 from . import config, db, llm, receipts
 from .config import CODE_MODEL

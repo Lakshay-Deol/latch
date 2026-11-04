@@ -41,7 +41,7 @@ def utcnow_iso() -> str:
 
 def assess_risk(operation: str, details: dict[str, Any] | None = None) -> str:
     """Assess risk level: purchase/delete/send/destroy = high; submit/rsvp/post = medium; else low."""
-    text = f"{operation} {json.dumps(details or {}) wiggle}".lower()
+    text = f"{operation} {json.dumps(details or {}) }".lower()
     if any(w in text for w in ["purchase", "delete", "destroy", "drop", "wipe", "pay", "send_email", "transfer"]):
         return "high"
     if any(w in text for w in ["submit", "rsvp", "post", "create", "modify", "update"]):

@@ -9,13 +9,13 @@ import time
 import zipfile
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
 
-from . import db, gateway, guests, jobs, lessons, liveview, mcp_server, race
+from . import approval_queue, attack_lab, db, gateway, guests, jobs, lessons, liveview, mcp_server, orchestrator, publisher, race, receipts, task_planner
 from .config import LIVE_BASE, ANTHROPIC_API_KEY, BROWSE_MODEL, FRONTIER_MODEL, HEALTH_CHECK_SECONDS, PUBLIC_URL
 from .endpoints import site_domain
 
@@ -553,9 +553,139 @@ async def call_operation(domain: str, operation: str, request: Request):
         except ValueError:
             raise gateway.GatewayError("bad_request", "body must be a JSON object")
         output, meta = await gateway.execute(conn, operation, params or {}, PUBLIC_URL)
-        return JSONResponse(output, headers={"X-Latch-Seconds": str(meta["seconds"])})
+        # Wrap response with execution receipt (Phase 4)
+        receipt_meta = {
+            "sandbox_id": meta.get("sandbox_id", "latch-runner-gateway"),
+            "worker_vm": meta.get("worker_ip", "10.10.0.1"),
+        }
+        published_output = publisher.publish(
+            operation={"domain": domain, "op": operation, "params": params},
+            result=output,
+            exec_meta=receipt_meta,
+        )
+        return JSONResponse(published_output, headers={"X-Latch-Seconds": str(meta["seconds"])})
     except gateway.GatewayError as e:
         return JSONResponse({"error": e.code, "message": e.message, **e.extra}, status_code=e.status)
+
+
+# --- Latch Platform Routes: Tasks, Receipts, Approvals, Attack Lab, WebSocket ---
+
+class PlanRequest(BaseModel):
+    goal: str
+
+class PlanUpdateRequest(BaseModel):
+    steps: list[dict]
+
+@app.post("/api/tasks/plan")
+def api_plan_task(req: PlanRequest, who=Depends(viewer)):
+    planned = task_planner.plan_task(req.goal)
+    task_id = f"task_{secrets.token_hex(6)}"
+    session_id = who.get("id") or "admin"
+    db.create_task(task_id, session_id, req.goal, status="planned")
+    out_steps = []
+    for i, s in enumerate(planned):
+        step_id = f"step_{secrets.token_hex(6)}"
+        db.save_step(step_id, task_id, i + 1, s.kind, s.description, 1 if s.destructive else 0, "pending")
+        out_steps.append({"id": step_id, "idx": i + 1, "kind": s.kind, "description": s.description, "destructive": s.destructive, "status": "pending"})
+    return {"task_id": task_id, "steps": out_steps}
+
+@app.put("/api/tasks/{task_id}/plan")
+def api_update_plan(task_id: str, req: PlanUpdateRequest, who=Depends(viewer)):
+    task = db.get_task(task_id)
+    if not task:
+        raise HTTPException(404, "Task not found")
+    db.clear_steps(task_id)
+    out_steps = []
+    for i, s in enumerate(req.steps):
+        step_id = s.get("id") or f"step_{secrets.token_hex(6)}"
+        kind = s.get("kind", "code")
+        desc = s.get("description", "")
+        dest = bool(s.get("destructive", False))
+        dest = task_planner.check_destructive_override(desc, dest)
+        db.save_step(step_id, task_id, i + 1, kind, desc, 1 if dest else 0, "pending")
+        out_steps.append({"id": step_id, "idx": i + 1, "kind": kind, "description": desc, "destructive": dest, "status": "pending"})
+    return {"task_id": task_id, "steps": out_steps}
+
+@app.post("/api/tasks/{task_id}/run")
+async def api_run_task(task_id: str, who=Depends(viewer)):
+    task = db.get_task(task_id)
+    if not task:
+        raise HTTPException(404, "Task not found")
+    asyncio.create_task(orchestrator.run_task(task_id))
+    return {"task_id": task_id, "status": "running"}
+
+@app.get("/api/tasks/{task_id}")
+def api_get_task(task_id: str, who=Depends(viewer)):
+    task = db.get_task(task_id)
+    if not task:
+        raise HTTPException(404, "Task not found")
+    steps = db.get_steps(task_id)
+    events = db.get_dispatch_events(task_id)
+    return {"task": task, "steps": steps, "events": events}
+
+@app.get("/api/tasks")
+def api_list_tasks(who=Depends(viewer)):
+    session_id = who.get("id") if who.get("role") == "guest" else None
+    return {"tasks": db.list_tasks(session_id)}
+
+@app.get("/api/receipts")
+def api_list_receipts():
+    return {"receipts": db.list_receipts()}
+
+@app.get("/api/receipts/{sha256}/verify")
+@app.get("/receipts/{sha256}/verify")
+def api_verify_receipt(sha256: str):
+    return receipts.verify_receipt(sha256)
+
+@app.post("/api/attack-lab/run")
+async def api_run_attack_lab():
+    run_data = await attack_lab.run_attack_suite()
+    return run_data
+
+@app.get("/api/attack-lab/{run_id}/stream")
+async def api_attack_lab_stream(run_id: str):
+    run_data = attack_lab.RUN_STORE.get(run_id)
+    if not run_data:
+        raise HTTPException(404, "Attack run not found")
+    return JSONResponse(run_data)
+
+@app.get("/api/approvals")
+def api_list_approvals():
+    return {"approvals": db.list_approvals("pending")}
+
+@app.post("/api/approvals/{approval_id}/approve")
+def api_approve(approval_id: str, who=Depends(viewer)):
+    appr = approval_queue.decide(approval_id, approved=True, user=who.get("role", "admin"))
+    return {"status": appr.status}
+
+@app.post("/api/approvals/{approval_id}/deny")
+def api_deny(approval_id: str, who=Depends(viewer)):
+    appr = approval_queue.decide(approval_id, approved=False, user=who.get("role", "admin"))
+    return {"status": appr.status}
+
+@app.websocket("/ws/status")
+async def ws_status(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            state = {
+                "type": "status",
+                "sandbox_id": "idle",
+                "worker_vm": "10.10.0.12",
+                "network": "blocked",
+                "filesystem": "read-only",
+                "secrets": "none",
+                "timeout_remaining_s": 0,
+                "mem_used_mb": 0,
+                "mem_limit_mb": 512,
+                "cpu_pct": 0.0,
+                "pids": 0,
+                "pids_limit": 128,
+            }
+            await websocket.send_json(state)
+            await asyncio.sleep(2)
+    except WebSocketDisconnect:
+        pass
 
 
 # --- The dashboard itself: served from this Vultr VM (Vercel only forwards the public domain here) ---------

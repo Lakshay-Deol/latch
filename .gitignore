@@ -1,5 +1,6 @@
 .env
 .env.example
+CHANGELOG.md
 Md files/
 
 infra/state.json

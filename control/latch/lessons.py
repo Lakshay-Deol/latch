@@ -9,7 +9,10 @@ import os
 import secrets
 import time
 
-import boto3
+try:
+    import boto3
+except ImportError:
+    boto3 = None
 
 from . import config
 
