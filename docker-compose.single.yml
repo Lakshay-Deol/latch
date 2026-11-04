@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  control:
+    build:
+      context: ./control
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - LATCH_DOMAIN=localhost
+      - LATCH_WORKER_HOSTS=worker:7000
+      - LATCH_DATA_DIR=/data
+      - LATCH_DB_PATH=/data/latch.db
+    volumes:
+      - latch_control_data:/data
+    networks:
+      - latch-internal
+    depends_on:
+      - worker
+
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - LATCH_BIND_IP=0.0.0.0
+      - LATCH_WORKER_TOKEN=latch-dev-worker-token-change-in-prod
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - latch-internal
+
+networks:
+  latch-internal:
+    driver: bridge
+
+volumes:
+  latch_control_data:
