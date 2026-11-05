@@ -2,6 +2,8 @@
 .env.example
 CHANGELOG.md
 Md files/
+data/
+.deep-copilot/
 
 infra/state.json
 __pycache__/

@@ -135,3 +135,4 @@ def verify_receipt(sha256_hash: str) -> dict[str, Any]:
         "worker_vm": row.get("worker_vm"),
         "timestamp": row.get("created_at"),
     }
+

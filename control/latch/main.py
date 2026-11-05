@@ -10,7 +10,7 @@ import zipfile
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
@@ -20,6 +20,7 @@ from .config import LIVE_BASE, ANTHROPIC_API_KEY, BROWSE_MODEL, FRONTIER_MODEL, 
 from .endpoints import site_domain
 
 ADMIN_PASSWORD = os.environ.get("LATCH_ADMIN_PASSWORD", "latch-admin-secret")
+COOKIE_SECURE = PUBLIC_URL.startswith("https://")
 SESSION_COOKIE = "latch_session"
 SESSION_VALUE = hmac.new(ADMIN_PASSWORD.encode(), b"latch-session", hashlib.sha256).hexdigest()
 RUNNING = ("starting", "needs_human", "exploring", "generating", "publishing", "racing")
@@ -77,11 +78,12 @@ def own_job(job, who):
 
 
 def live_url(job):
-    if not job or not job.get("view_token") or not job.get("vnc"):
+    if not job or not job.get("view_token"):
         return None
-    # noVNC resolves `path` relative to the page, so plain "websockify" lands on the proxied socket.
-    return (f"{LIVE_BASE}/live/{job['id']}/{job['view_token']}/vnc.html?autoconnect=true&resize=scale&reconnect=true"
-            f"&show_dot=true&path=websockify")
+    if job.get("vnc"):
+        return (f"{LIVE_BASE}/live/{job['id']}/{job['view_token']}/vnc.html?autoconnect=true&resize=scale&reconnect=true"
+                f"&show_dot=true&path=websockify")
+    return f"{PUBLIC_URL}/live/{job['id']}/{job['view_token']}/local.html"
 
 
 # --- Login (the UI itself is served by Vercel, which forwards /api here) ---------------------------
@@ -96,7 +98,7 @@ def login(body: Login, response: Response):
     if not secrets.compare_digest(body.password, ADMIN_PASSWORD):
         time.sleep(1)
         raise HTTPException(401, "wrong password")
-    response.set_cookie(SESSION_COOKIE, SESSION_VALUE, httponly=True, secure=True, samesite="lax",
+    response.set_cookie(SESSION_COOKIE, SESSION_VALUE, httponly=True, secure=COOKIE_SECURE, samesite="lax",
                         max_age=7 * 86400)
     return {"ok": True}
 
@@ -125,7 +127,7 @@ def guest_create(request: Request, response: Response):
         return JSONResponse({"detail": f"All {guests.MAX_GUESTS} guest seats are taken. Try again later.",
                              "frees_at": e.frees_at}, status_code=409)
     token = guests.cookie_value(ADMIN_PASSWORD, guest_id)
-    response.set_cookie(guests.COOKIE, token, httponly=True, secure=True, samesite="lax", max_age=guests.SEAT_HOURS * 3600)
+    response.set_cookie(guests.COOKIE, token, httponly=True, secure=COOKIE_SECURE, samesite="lax", max_age=guests.SEAT_HOURS * 3600)
     return {"token": token, "guest_id": guest_id, "expires_in_hours": guests.SEAT_HOURS}
 
 
@@ -144,7 +146,7 @@ def guest_start(request: Request, response: Response):
     except guests.Full as e:
         return JSONResponse({"detail": f"All {guests.MAX_GUESTS} guest seats are taken. Try again later.",
                              "frees_at": e.frees_at}, status_code=409)
-    response.set_cookie(guests.COOKIE, guests.cookie_value(ADMIN_PASSWORD, guest_id), httponly=True, secure=True,
+    response.set_cookie(guests.COOKIE, guests.cookie_value(ADMIN_PASSWORD, guest_id), httponly=True, secure=COOKIE_SECURE,
                         samesite="lax", max_age=2 * 86400)
     return {"ok": True}
 
@@ -585,7 +587,7 @@ def api_plan_task(req: PlanRequest, who=Depends(viewer)):
     out_steps = []
     for i, s in enumerate(planned):
         step_id = f"step_{secrets.token_hex(6)}"
-        db.save_step(step_id, task_id, i + 1, s.kind, s.description, 1 if s.destructive else 0, "pending")
+        db.save_task_step(step_id, task_id, i + 1, s.kind, s.description, 1 if s.destructive else 0, "pending")
         out_steps.append({"id": step_id, "idx": i + 1, "kind": s.kind, "description": s.description, "destructive": s.destructive, "status": "pending"})
     return {"task_id": task_id, "steps": out_steps}
 
@@ -602,7 +604,7 @@ def api_update_plan(task_id: str, req: PlanUpdateRequest, who=Depends(viewer)):
         desc = s.get("description", "")
         dest = bool(s.get("destructive", False))
         dest = task_planner.check_destructive_override(desc, dest)
-        db.save_step(step_id, task_id, i + 1, kind, desc, 1 if dest else 0, "pending")
+        db.save_task_step(step_id, task_id, i + 1, kind, desc, 1 if dest else 0, "pending")
         out_steps.append({"id": step_id, "idx": i + 1, "kind": kind, "description": desc, "destructive": dest, "status": "pending"})
     return {"task_id": task_id, "steps": out_steps}
 

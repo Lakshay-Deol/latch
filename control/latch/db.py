@@ -268,7 +268,9 @@ def events(job_id, after_id=0):
     return [dict(r) | {"data": json.loads(r["data"]) if r["data"] else None} for r in rows]
 
 
-def save_step(job_id, step, **fields):
+def save_step(job_id, step=None, *args, **fields):
+    if len(args) >= 3 or ("task_id" in fields):
+        return save_task_step(job_id, step, *args, **fields)
     with conn() as c:
         c.execute(
             "INSERT OR REPLACE INTO steps (job_id, step, action, label, is_write, url_before, url_after, detail) "
@@ -514,7 +516,7 @@ def update_task(task_id, **fields):
         c.execute(f"UPDATE tasks SET {cols} WHERE id=?", (*fields.values(), task_id))
 
 
-def save_step(step_id, task_id, idx, kind, description, destructive=0, status="pending", payload_json=None, result_json=None):
+def save_task_step(step_id, task_id, idx, kind, description, destructive=0, status="pending", payload_json=None, result_json=None):
     with conn() as c:
         c.execute(
             "INSERT OR REPLACE INTO task_steps (id, task_id, idx, kind, description, destructive, status, payload_json, result_json) "

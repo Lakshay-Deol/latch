@@ -9,3 +9,4 @@ def test_env_hygiene_check():
 
     leaked = [l for l in lines if re.search(r"LATCH_|KEY|TOKEN|SECRET", l, re.IGNORECASE)]
     assert len(leaked) == 0
+

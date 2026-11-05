@@ -66,8 +66,53 @@ async def live_ws(ws: WebSocket, job_id: str, token: str):
         await upstream_cm.__aexit__(None, None, None)
 
 
+def render_local_html(site_url: str) -> str:
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {{
+      margin: 0; padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #1c1917; color: #f5f5f4;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100vh; box-sizing: border-box; text-align: center;
+    }}
+    .badge {{
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 9999px; background: #292524;
+      border: 1px solid #44403c; font-size: 13px; color: #d6d3d1; margin-bottom: 16px;
+    }}
+    .dot {{ width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }}
+    h2 {{ margin: 0 0 10px 0; font-size: 20px; font-weight: 600; color: #fff; }}
+    p {{ margin: 0 0 20px 0; font-size: 14px; color: #a8a29e; max-width: 460px; line-height: 1.5; }}
+    .btn {{
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 8px; background: #ea580c; color: #fff;
+      font-weight: 500; font-size: 14px; text-decoration: none; transition: background 0.15s;
+    }}
+    .btn:hover {{ background: #c2410c; }}
+    .url {{ font-family: monospace; color: #fdba74; word-break: break-all; margin-top: 14px; font-size: 12px; }}
+  </style>
+</head>
+<body>
+  <div class="badge"><div class="dot"></div> Local Desktop Sandbox</div>
+  <h2>Chromium Browser Window Opened</h2>
+  <p>A Chromium browser window has opened on your computer with this site loaded. Interact, navigate, or sign in directly there, then click <strong>Done</strong> below.</p>
+  <a class="btn" href="{site_url}" target="_blank" rel="noreferrer">Open Site in New Tab ↗</a>
+  <div class="url">{site_url}</div>
+</body>
+</html>"""
+
+
 @router.get("/live/{job_id}/{token}/{path:path}")
 async def live_http(job_id: str, token: str, path: str):
+    if path == "local.html":
+        job = db.get_job(job_id)
+        if not job or not job.get("view_token") or not secrets.compare_digest(job["view_token"], token):
+            raise HTTPException(404, "live view not available")
+        return Response(render_local_html(job.get("site_url", "")), media_type="text/html")
     vnc = sandbox_vnc(job_id, token)
     try:
         async with httpx.AsyncClient(timeout=15) as client:

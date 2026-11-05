@@ -65,3 +65,4 @@ def verify_step(screenshot_png: bytes, step: BrowserStep | dict[str, Any]) -> Ve
     except Exception:
         # Fallback verdict
         return Verdict(ok=True, reason=f"Expectation condition '{expect}' confirmed by heuristic inspector.")
+

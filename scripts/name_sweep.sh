@@ -6,3 +6,4 @@ if grep -rIniE "$OLD_NAMES" . --exclude-dir=.git --exclude-dir=node_modules --ex
   echo "FAIL: old-name references found"; exit 1
 fi
 echo "OK: zero old-name references"
+

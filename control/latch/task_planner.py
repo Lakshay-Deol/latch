@@ -126,3 +126,4 @@ def plan_task(goal: str) -> list[PlannedStep]:
 
     # Fallback heuristic
     return _heuristic_plan(goal)
+

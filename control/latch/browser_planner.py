@@ -91,3 +91,4 @@ def plan_browser(goal: str, start_url: str | None = None) -> list[BrowserStep]:
         s.destructive = check_destructive_override(f"{s.action} {s.target} {s.expect}", s.destructive)
 
     return steps
+

@@ -14,3 +14,4 @@ def test_guest_expiration():
     active = db.active_guests()
     active_ids = [g["id"] for g in active]
     assert guest_id not in active_ids
+

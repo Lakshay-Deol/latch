@@ -15,3 +15,4 @@ def test_sandbox_destroyed_event_sequence():
     event_names = [e["event"] for e in events]
     assert "sandbox_destroyed" in event_names
     assert event_names[-1] == "sandbox_destroyed"
+

@@ -16,3 +16,4 @@ def test_publisher_wraps_receipt():
     assert published["receipt"]["sandbox_id"] == "latch-runner-publish-1"
     assert published["receipt"]["worker_vm"] == "10.10.0.12"
     assert "containment" in published["receipt"]
+

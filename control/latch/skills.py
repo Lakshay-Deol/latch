@@ -82,3 +82,4 @@ def verify_skill(sha256_hash: str) -> dict[str, Any]:
         "domain": record.get("domain"),
         "created_at": record.get("created_at"),
     }
+

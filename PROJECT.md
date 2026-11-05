@@ -37,5 +37,6 @@ Latch supports both patterns:
 
 1. **Control VM**: Runs FastAPI control plane, SQLite DB (`/data/latch.db`), task orchestrator, approval queue, and WebSocket status broadcaster.
 2. **Worker VMs**: Run hardened `latch-worker` daemons in an isolated Vultr VPC. Daemons build disposable `latch-runner` and `latch-browser` containers.
-3. **Vultr Serverless Inference**: Qwen 3.8 and GLM 5.3 models for planning, vision verification, and code synthesis.
+3. **Vultr Serverless Inference**: DeepSeek (`deepseek-v4.1-flash-1017`) and GLM models for reasoning, task planning, browser verification, and code synthesis.
 4. **Vultr Object Storage**: S3-compatible buckets (`latch-apis`, `latch-skills`, `latch-receipts`) storing canonical JSON objects and receipts.
+

@@ -71,3 +71,4 @@ touch /root/latch-single-bootstrap-done
 
 if __name__ == "__main__":
     main()
+

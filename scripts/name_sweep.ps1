@@ -18,3 +18,4 @@ if ($matches) {
 
 Write-Host "OK: zero old-name references" -ForegroundColor Green
 exit 0
+

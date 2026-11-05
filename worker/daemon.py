@@ -175,3 +175,4 @@ def delete_sandbox(name: str):
         except Exception:
             pass
     return {"deleted": name}
+

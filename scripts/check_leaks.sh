@@ -23,3 +23,4 @@ if [ "$LEAKS_FOUND" -ne 0 ]; then
 fi
 
 echo "OK: zero leaks found in image definitions"
+

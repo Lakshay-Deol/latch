@@ -166,3 +166,4 @@ async def run_task(task_id: str) -> None:
             return
 
     db.update_task(task_id, status="done")
+

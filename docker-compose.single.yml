@@ -40,3 +40,4 @@ networks:
 
 volumes:
   latch_control_data:
+

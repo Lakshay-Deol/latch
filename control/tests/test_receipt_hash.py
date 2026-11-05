@@ -63,3 +63,4 @@ def test_tamper_detection():
     assert tampered_verification["valid"] is False
     assert tampered_verification["expected"] == digest
     assert tampered_verification["actual"] != digest
+

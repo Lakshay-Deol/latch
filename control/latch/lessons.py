@@ -20,22 +20,49 @@ BUCKET = getattr(config, "BUCKET_SKILLS", "latch-skills")
 KEY, LEGACY_KEY = "lessons.json", "lessons.md"
 
 
+def _local_file():
+    return getattr(config, "DATA_DIR", None) and (config.DATA_DIR / KEY)
+
+
 def _s3():
     endpoint = getattr(config, "S3_ENDPOINT", "") or os.environ.get("S3_ENDPOINT", "")
     key = getattr(config, "S3_ACCESS_KEY", "") or os.environ.get("S3_ACCESS_KEY", "")
     secret = getattr(config, "S3_SECRET_KEY", "") or os.environ.get("S3_SECRET_KEY", "")
-    return boto3.client("s3", endpoint_url=endpoint, aws_access_key_id=key, aws_secret_access_key=secret)
+    if endpoint and key and secret and boto3:
+        try:
+            return boto3.client("s3", endpoint_url=endpoint, aws_access_key_id=key, aws_secret_access_key=secret)
+        except Exception:
+            return None
+    return None
 
 
 def load_all():
-    try:
-        return json.loads(_s3().get_object(Bucket=BUCKET, Key=KEY)["Body"].read())
-    except Exception:
-        return []
+    s3 = _s3()
+    if s3:
+        try:
+            return json.loads(s3.get_object(Bucket=BUCKET, Key=KEY)["Body"].read())
+        except Exception:
+            pass
+    local = _local_file()
+    if local and local.exists():
+        try:
+            return json.loads(local.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return []
 
 
 def save_all(items):
-    _s3().put_object(Bucket=BUCKET, Key=KEY, Body=json.dumps(items, indent=1).encode(), ContentType="application/json")
+    s3 = _s3()
+    if s3:
+        try:
+            s3.put_object(Bucket=BUCKET, Key=KEY, Body=json.dumps(items, indent=1).encode(), ContentType="application/json")
+            return
+        except Exception:
+            pass
+    local = _local_file()
+    if local:
+        local.write_text(json.dumps(items, indent=1), encoding="utf-8")
 
 
 def load():

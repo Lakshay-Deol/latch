@@ -22,3 +22,4 @@ def test_planner_output_structure():
     rsvp_steps = [s for s in plan if "rsvp" in s.description.lower()]
     for s in rsvp_steps:
         assert s.destructive is True
+

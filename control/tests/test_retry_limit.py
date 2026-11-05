@@ -14,3 +14,4 @@ def test_retry_bound():
 
     assert len(attempts_recorded) == 3
     assert attempts_recorded == [1, 2, 3]
+

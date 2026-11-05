@@ -80,6 +80,12 @@ class SandboxBrowser:
         else:
             self.browser = await self._pw.chromium.launch(headless=True)
             self.context = await self.browser.new_context()
+            sess = db.get_session(self.job_id) if hasattr(self, "job_id") and self.job_id else None
+            if sess:
+                try:
+                    await self.context.add_cookies(sess)
+                except Exception:
+                    pass
             page = await self.context.new_page()
             job = db.get_job(self.job_id) if hasattr(self, "job_id") and self.job_id else None
             if job and job.get("site_url"):

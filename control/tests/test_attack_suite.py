@@ -38,3 +38,4 @@ def test_attack_evaluation_rules():
     result_write = {"stderr": "Read-only file system", "exit_code": 1, "inspect": {"State": {}, "HostConfig": {"ReadonlyRootfs": True}}}
     verdict_write = attack_lab.evaluate_attack(spec_write, result_write)
     assert verdict_write["blocked"] is True
+

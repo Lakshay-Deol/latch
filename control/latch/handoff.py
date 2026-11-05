@@ -26,13 +26,52 @@ async def wait_for_login(job_id, cdp, site, manual_flag: asyncio.Event, poll=4, 
     hinted = False
     waited = 0
     if not cdp:
-        while waited < timeout:
-            if manual_flag.is_set():
-                db.add_event(job_id, "login_detected", {"by": "human button"})
-                return True
-            await asyncio.sleep(poll)
-            waited += poll
-        return False
+        # Local desktop fallback: launch visible (headful) Chromium so the user can interact & log in!
+        from playwright.async_api import async_playwright
+        pw = None
+        browser = None
+        try:
+            pw = await async_playwright().start()
+            browser = await pw.chromium.launch(headless=False)
+            context = await browser.new_context()
+            page = await context.new_page()
+            try:
+                await page.goto(site, wait_until="domcontentloaded", timeout=20000)
+            except Exception:
+                pass
+            while waited < timeout:
+                if manual_flag.is_set():
+                    db.add_event(job_id, "login_detected", {"by": "human button"})
+                    try:
+                        cookies = await context.cookies()
+                        if cookies:
+                            db.save_session(job_id, cookies)
+                    except Exception:
+                        pass
+                    return True
+                await asyncio.sleep(poll)
+                waited += poll
+            return False
+        except Exception as e:
+            db.add_event(job_id, "error", {"browser_launch_error": str(e)[:200]})
+            while waited < timeout:
+                if manual_flag.is_set():
+                    db.add_event(job_id, "login_detected", {"by": "human button"})
+                    return True
+                await asyncio.sleep(poll)
+                waited += poll
+            return False
+        finally:
+            if browser:
+                try:
+                    await browser.close()
+                except Exception:
+                    pass
+            if pw:
+                try:
+                    await pw.stop()
+                except Exception:
+                    pass
 
     async with SandboxBrowser(job_id, cdp) as b:
         baseline = auth_cookie_names(await b.cookies())
