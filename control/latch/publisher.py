@@ -196,17 +196,34 @@ def openapi(domain, title, ops, base_url):
 
 
 def _s3():
-    return boto3.client("s3", endpoint_url=os.environ["S3_ENDPOINT"],
-                        aws_access_key_id=os.environ["S3_ACCESS_KEY"],
-                        aws_secret_access_key=os.environ["S3_SECRET_KEY"])
+    endpoint = getattr(config, "S3_ENDPOINT", "") or os.environ.get("LATCH_S3_ENDPOINT", "") or os.environ.get("S3_ENDPOINT", "")
+    key = getattr(config, "S3_ACCESS_KEY", "") or os.environ.get("LATCH_S3_ACCESS_KEY", "") or os.environ.get("S3_ACCESS_KEY", "")
+    secret = getattr(config, "S3_SECRET_KEY", "") or os.environ.get("LATCH_S3_SECRET_KEY", "") or os.environ.get("S3_SECRET_KEY", "")
+    if not (boto3 and endpoint and key and secret):
+        return None
+    return boto3.client("s3", endpoint_url=endpoint,
+                        aws_access_key_id=key,
+                        aws_secret_access_key=secret)
 
 
 def upload(domain, files):
+    # Always persist locally to disk first
+    pub_dir = pathlib.Path("data/published") / domain
+    for name, body in files.items():
+        p = pub_dir / name
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(body, encoding="utf-8")
+
     s3 = _s3()
+    if not s3:
+        return
     for name, body in files.items():
         ctype = "application/json" if name.endswith(".json") else "text/markdown" if name.endswith(".md") \
             else "text/x-python"
-        s3.put_object(Bucket=BUCKET, Key=f"{domain}/{name}", Body=body.encode(), ContentType=ctype)
+        try:
+            s3.put_object(Bucket=BUCKET, Key=f"{domain}/{name}", Body=body.encode(), ContentType=ctype)
+        except Exception as exc:
+            print(f"[publisher] S3 upload error for {name}: {exc}")
 
 
 def readme(domain, title, ops, base_url):
