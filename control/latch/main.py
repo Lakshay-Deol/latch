@@ -10,7 +10,7 @@ import zipfile
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
@@ -318,7 +318,8 @@ def site_detail(domain: str, who=Depends(viewer)):
     ops = []
     for o in site["spec"]["operations"]:
         s = o["spec"]
-        public = site["spec"]["openapi"]["paths"].get(f"/v1/{domain}/{o['name']}", {}).get("post", {})
+        oapi_paths = (site.get("spec", {}).get("openapi") or {}).get("paths", {})
+        public = oapi_paths.get(f"/v1/{domain}/{o['name']}", {}).get("post", {})
         ops.append({"name": o["name"], "status": o["status"], "side_effect": s.get("side_effect"),
                     "summary": s.get("summary"), "description": s.get("description"), "undo": s.get("undo"),
                     "params": [{k: p.get(k) for k in ("name", "type", "required", "description")}
@@ -708,3 +709,19 @@ app.mount("/static", _Static(directory=WEB / "static"), name="static")
 @app.get("/", include_in_schema=False)
 def dashboard():
     return FileResponse(WEB / "index.html", headers=NO_CACHE)
+
+
+@app.get("/sites", include_in_schema=False)
+def sites_page():
+    return RedirectResponse("/#/sites")
+
+
+@app.get("/sites/{domain}", include_in_schema=False)
+def site_redirect(domain: str):
+    return RedirectResponse(f"/#/site/{domain}")
+
+
+@app.get("/site/{domain}", include_in_schema=False)
+def site_page(domain: str):
+    return RedirectResponse(f"/#/site/{domain}")
+

@@ -57,12 +57,14 @@ def element_listing(elements):
 def resolve_element(page, element, elements):
     """Models sometimes answer with the element's text instead of its number; accept both."""
     try:
-        return page.locator(f'[data-sk="{int(element)}"]').first
+        val = int(element)
+        return page.locator(f'[data-latch="{val}"], [data-sk="{val}"]').first
     except (TypeError, ValueError):
         wanted = str(element or "").strip().lower()
         for e in elements:
             if wanted and wanted in e["text"].lower():
-                return page.locator(f'[data-sk="{e["id"]}"]').first
+                eid = e["id"]
+                return page.locator(f'[data-latch="{eid}"], [data-sk="{eid}"]').first
         raise ValueError(f"unknown element {element!r}")
 
 
