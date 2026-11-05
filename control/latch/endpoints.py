@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 NOISE_PATH = re.compile(
     r"/cdn-cgi/|insights|analytics|telemetry|/ping\b|/track|/log(s|ging)?\b|metrics|beacon|/collect|"
-    r"sentry|/rum\b|/vitals|heartbeat|/events?/batch|"
+    r"sentry|/rum\b|/vitals|heartbeat|/events?/batch|isalive|"
     r"/_next/static/|\.(css|js|mjs|map|png|jpe?g|gif|svg|webp|avif|ico|woff2?|ttf|otf)$", re.I)
 # An id segment is numeric, or a long token containing a digit (uuid, evt-Ab12..., slug gtl3o3ug).
 # Hyphenated words like "get-following-calendars" have no digit and stay literal.
@@ -40,9 +40,13 @@ def site_domain(url):
 
 def is_app_api(method, url, resource_type, domain):
     u = urlparse(url)
-    if not (u.hostname or "").endswith(domain):
+    host = (u.hostname or "").lower()
+    base = domain.split(".")[0].lower()
+    # Match domain directly (luma.com), or same core organization name across TLDs (algolia.net for algolia.com)
+    matches_host = host.endswith(domain) or (base and len(base) > 3 and (f".{base}." in f".{host}." or host.startswith(f"{base}.")))
+    if not matches_host:
         return False
-    if NOISE_PATH.search(u.path):
+    if NOISE_PATH.search(u.path) or NOISE_PATH.search(host):
         return False
     # Server-rendered apps: form posts arrive as document requests.
     return resource_type in API_TYPES or (resource_type == "document" and method != "GET")
