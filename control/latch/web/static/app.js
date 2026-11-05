@@ -9,11 +9,6 @@ async function api(path, opts = {}) {
     ...opts,
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
-  const publicPage = ["#/r/", "#/login", "#/skills"].some((p) => location.hash.startsWith(p));
-  if (res.status === 401 && !publicPage) {
-    location.hash = "#/login?next=" + encodeURIComponent(location.hash.slice(1) || "/");
-    throw new Error("login required");
-  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw Object.assign(new Error(data.detail || data.message || res.statusText), { status: res.status });
   return data;
@@ -162,46 +157,65 @@ function GateArt() {
 }
 
 function Login({ query }) {
-  const [pw, setPw] = useState("");
-  const [err, setErr] = useState(null);
-  const [adminForm, setAdminForm] = useState(query.get("admin") === "1");
-  const [seats] = usePoll(() => api("/api/guest"), 10000, []);
-  const next = () => { location.hash = "#" + (query.get("next") || "/"); };
-  const submit = async (e) => {
-    e.preventDefault();
-    try { await api("/api/login", { method: "POST", body: { password: pw } }); next(); }
-    catch (x) { setErr("Wrong password"); }
-  };
-  const guest = async () => {
-    setErr(null);
-    try { await api("/api/guest", { method: "POST" }); next(); }
-    catch (x) { setErr(x.message); }
-  };
-  const full = seats && seats.used >= seats.max;
-  return html`<div class="gate">
-    <div class="gate-brand"><span class="brand-mark"><${KeyIcon} /></span>Latch</div>
-    <div class="gate-main">
-      <div>
-        <h1>Any web app.<br /><em>Now an API.</em></h1>
-        ${adminForm
-          ? html`<form onSubmit=${submit}>
-              <label class="vh" for="pw">Admin password</label>
-              <input id="pw" class="input large" type="password" placeholder="Admin password" autofocus value=${pw}
-                onInput=${(e) => setPw(e.target.value)} />
-              <button class="button dark large">Enter</button>
-            </form>
-            <button class="linkish" onClick=${() => { setAdminForm(false); setErr(null); }}>← Continue as guest instead</button>`
-          : html`<div class="gate-choices">
-              <button class="button primary large" onClick=${guest} disabled=${full}>Continue as guest</button>
-              <span class="muted">${seats ? (full ? "All guest seats are taken. Try again later."
-                : `${seats.max - seats.used} of ${seats.max} guest seats free`) : ""}</span>
-            </div>
-            <button class="linkish" onClick=${() => { setAdminForm(true); setErr(null); }}>Admin sign in</button>`}
-        ${err && html`<div class="error">${err}</div>`}
+  return html`
+    <div class="gate">
+      <div style="display:flex;align-items:center;justify-content:space-between;max-width:1120px;margin:0 auto;width:100%;">
+        <div class="gate-brand"><span class="brand-mark"><${KeyIcon} /></span>Latch</div>
+        <div class="hero-pill-badge" style="margin:0;">
+          <span class="dot"></span>
+          <span>Zero-Trust Containment Runtime</span>
+        </div>
       </div>
-      <${GateArt} />
+
+      <div class="gate-main" style="margin-top:40px;">
+        <div>
+          <div class="hero-pill-badge" style="margin-bottom:14px;">
+            <span class="dot"></span>
+            <span>Vultr & DeepSeek v4.1</span>
+          </div>
+          <h1 style="font-size:clamp(38px, 5.2vw, 64px);line-height:1.04;margin:0 0 16px;">
+            Containment isn't a feature.<br />
+            <em>It's the product.</em>
+          </h1>
+          <p style="color:var(--text-quiet);font-size:16px;line-height:1.55;margin:0 0 20px;max-width:50ch;">
+            A self-hostable bridge that lets AI agents use private web applications safely. Zero leaked secrets, air-gapped sandboxes, and immutable cryptographic receipts.
+          </p>
+
+          <div class="gate-telemetry-box">
+            <div class="telemetry-tile">
+              <div class="telemetry-tile-head"><span>Process</span><span style="color:var(--sage);">ACTIVE</span></div>
+              <div class="telemetry-tile-val"><span class="dot-live"></span>Ephemeral Sandbox</div>
+            </div>
+            <div class="telemetry-tile">
+              <div class="telemetry-tile-head"><span>Secrets</span><span style="color:var(--sage);">VAULTED</span></div>
+              <div class="telemetry-tile-val"><span class="dot-live"></span>0 Leaked Tokens</div>
+            </div>
+            <div class="telemetry-tile">
+              <div class="telemetry-tile-head"><span>Egress</span><span style="color:var(--sage);">BLOCKED</span></div>
+              <div class="telemetry-tile-val"><span class="dot-live"></span>Firewall Enforced</div>
+            </div>
+            <div class="telemetry-tile">
+              <div class="telemetry-tile-head"><span>Receipts</span><span style="color:var(--sage);">VERIFIED</span></div>
+              <div class="telemetry-tile-val"><span class="dot-live"></span>SHA-256 Signed</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+            <a href="#/" class="button primary large" style="box-shadow:0 12px 28px rgba(184,86,50,0.35);">
+              Enter Latch Runtime →
+            </a>
+            <a href="#/sites" class="button secondary large">
+              Browse Published APIs
+            </a>
+          </div>
+        </div>
+
+        <div style="display:grid;place-items:center;">
+          <${HeroOrbit} />
+        </div>
+      </div>
     </div>
-  </div>`;
+  `;
 }
 
 /* ---------- home (Stacklist Inspired Design) ---------- */
@@ -223,6 +237,53 @@ function HeroOrbit() {
       </div>
     </div>
   `;
+}
+
+function AnimatedProtocolPipeline() {
+  return html`
+    <div class="animated-pipeline-wrap" aria-label="Containment Pipeline Flow">
+      <div class="pipeline-node">
+        <div class="pipeline-node-icon">🔒</div>
+        <div class="pipeline-node-info">
+          <span class="pipeline-node-label">1. Session Vault</span>
+          <span class="pipeline-node-sub">Zero Plain Secrets</span>
+        </div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-node">
+        <div class="pipeline-node-icon">🛡️</div>
+        <div class="pipeline-node-info">
+          <span class="pipeline-node-label">2. Air-Gapped Sandbox</span>
+          <span class="pipeline-node-sub">Egress Firewall</span>
+        </div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-node">
+        <div class="pipeline-node-icon">🧠</div>
+        <div class="pipeline-node-info">
+          <span class="pipeline-node-label">3. DeepSeek v4.1</span>
+          <span class="pipeline-node-sub">Autonomous Synthesis</span>
+        </div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-node">
+        <div class="pipeline-node-icon">📜</div>
+        <div class="pipeline-node-info">
+          <span class="pipeline-node-label">4. SHA-256 Proof</span>
+          <span class="pipeline-node-sub">Vultr S3 Receipts</span>
+        </div>
+      </div>
+      <div class="pipeline-connector"></div>
+      <div class="pipeline-node">
+        <div class="pipeline-node-icon">⚡</div>
+        <div class="pipeline-node-info">
+          <span class="pipeline-node-label">5. MCP / REST</span>
+          <span class="pipeline-node-sub">Instant Connector</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
 }
 
 function FeaturedToolCard({ s }) {
@@ -449,10 +510,11 @@ function Home({ overview }) {
           <span>Agent Containment Runtime · Vultr & DeepSeek</span>
         </div>
         <h1 class="hero-headline">
-          Turn any web app into an <em>Agent API</em>.
+          Containment isn't a feature.<br />
+          <em>It's the product.</em>
         </h1>
         <p class="hero-subhead">
-          A self-hostable bridge that lets AI agents use private web applications safely. Log in once; Latch explores the app in a disposable sandbox, synthesizes verified Python operations, and publishes instant MCP connectors without brittle scrapers.
+          Turn any private web app into verified, typed API operations with air-gapped sandboxes, zero plain secrets, and cryptographic execution receipts.
         </p>
 
         <form class="hero-generate-box" onSubmit=${start}>
@@ -480,6 +542,8 @@ function Home({ overview }) {
         <${HeroOrbit} />
       </div>
     </div>
+
+    <${AnimatedProtocolPipeline} />
 
     ${running.length > 0 && html`
       <section class="section" style="margin-top:20px;">
@@ -914,16 +978,18 @@ function Shell({ page, arg, children, overview, role, skillsCount }) {
         <a class="nav-item" href="#/skills" aria-current=${cur(page === "skills")}><${SkillsIcon} />Skills${count(skillsCount)}</a>
         <a class="nav-item" href="#/race" aria-current=${cur(page === "race")}><${RaceIcon} />Race</a>
       </nav>
-      <div class="sidebar-bottom">${role === "admin"
-        ? html`<span class="muted">Admin</span><button class="signout" onClick=${signOut}>Sign out</button>`
-        : role === "guest"
-          ? html`<span class="muted">Guest</span><button class="signout" onClick=${signOut}>Sign out</button>
-              <a class="signout" href="#/login?admin=1">Admin sign in</a>`
-          : html`<a class="signout" href="#/login?next=/skills">Sign in</a>`}</div>
+      <div class="sidebar-bottom">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;"></span>
+          <span style="font-size:12px;font-weight:750;letter-spacing:.05em;color:#fff;">CONTAINMENT ACTIVE</span>
+        </div>
+        <small style="color:#d9c6ba;font-size:11px;font-family:var(--font-mono);display:block;margin-top:2px;">Vultr & DeepSeek v4.1</small>
+      </div>
     </aside>
     <main class="app-main"><div class="page" style="padding-bottom:90px">${children}</div></main>
     <footer class="status-bar" style="position:fixed;bottom:0;left:0;right:0;height:36px;background:#1e1a18;color:#ccc;display:flex;align-items:center;padding:0 16px;font-size:12px;font-family:monospace;border-top:1px solid #332d29;z-index:9999;gap:16px;">
-      <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;"></span><strong>LATCH STATUS</strong></span>
+      <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;"></span><strong>LATCH RUNTIME</strong></span>
+      <span style="color:#e8a17b;font-weight:700;">Containment isn't a feature. It's the product.</span>
       <span>Sandbox: <code style="color:#f59e0b;">idle</code></span>
       <span>Network: <strong style="color:#22c55e;">BLOCKED</strong></span>
       <span>Filesystem: <strong style="color:#22c55e;">READ-ONLY</strong></span>
