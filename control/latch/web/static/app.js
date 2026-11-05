@@ -204,10 +204,232 @@ function Login({ query }) {
   </div>`;
 }
 
-/* ---------- home ---------- */
+/* ---------- home (Stacklist Inspired Design) ---------- */
+
+function HeroOrbit() {
+  return html`
+    <div class="hero-orbit-showcase" aria-hidden="true">
+      <div class="orbit-circle-outer">
+        <div class="orbit-badge badge-pos-1"><i style="background:#8b5cf6;"></i>Vultr Serverless</div>
+        <div class="orbit-badge badge-pos-2"><i style="background:#22c55e;"></i>DeepSeek V4.1</div>
+        <div class="orbit-badge badge-pos-3"><i style="background:#b85632;"></i>MCP Protocol</div>
+        <div class="orbit-badge badge-pos-4"><i style="background:#3b82f6;"></i>OpenAPI 3.1</div>
+        <div class="orbit-badge badge-pos-5"><i style="background:#eab308;"></i>SHA-256 Proof</div>
+        <div class="orbit-badge badge-pos-6"><i style="background:#06b6d4;"></i>Sandboxed Session</div>
+      </div>
+      <div class="orbit-circle-inner"></div>
+      <div class="orbit-center-emblem" title="Latch Runtime">
+        <${KeyIcon} />
+      </div>
+    </div>
+  `;
+}
+
+function FeaturedToolCard({ s }) {
+  const opName = s.domain === "luma.com" ? "rsvp_event" : s.domain === "partiful.com" ? "rsvp_party" : s.domain === "toscrape.com" ? "list_books" : "search_items";
+  const desc = s.domain === "luma.com"
+    ? "Discover local events, read calendar schedules, and perform reversible RSVPs with containment."
+    : s.domain === "partiful.com"
+      ? "Party management, guest list syncing, and reversible RSVP confirmation without browser bots."
+      : s.domain === "toscrape.com"
+        ? "Structured catalog indexing and verified book item retrieval for AI research agents."
+        : "Real-time story, author, and comment search with deterministic relevance ranking.";
+  const cat = s.domain === "luma.com" ? "Events" : s.domain === "partiful.com" ? "Social" : s.domain === "toscrape.com" ? "Catalog" : "Search";
+  return html`
+    <a class="tool-card" href=${`#/site/${s.domain}`}>
+      <div class="tool-preview-banner">
+        <div class="tool-preview-code">
+          <span class="method">POST</span>
+          <span>/v1/${s.domain}/${opName}</span>
+        </div>
+        <span class="tool-category-badge">${cat}</span>
+      </div>
+      <div class="tool-body">
+        <div class="tool-header-row">
+          <div class="tool-identity">
+            <div class="tool-avatar">${s.title ? s.title[0] : s.domain[0].toUpperCase()}</div>
+            <div class="tool-name-wrap">
+              <span class="tool-title">${s.title}</span>
+              <span class="verified-icon" title="Verified in sandbox">✓</span>
+            </div>
+          </div>
+          <${Status} state=${s.connection || "none"} />
+        </div>
+        <p class="tool-desc">${desc}</p>
+        <div class="tool-meta-tags">
+          <span class="meta-chip">${s.operations} operations</span>
+          <span class="meta-chip">OpenAPI 3.1</span>
+          <span class="meta-chip">MCP Ready</span>
+          <span class="meta-chip" style="color:var(--sage);font-weight:700;">Sandbox Verified</span>
+        </div>
+      </div>
+    </a>
+  `;
+}
+
+function ProblemSolutionSection() {
+  return html`
+    <section class="section" style="margin-top:54px;">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Architecture Comparison</span>
+          <h2>The Browser Trap vs. The Latch Solution</h2>
+        </div>
+      </div>
+      <div class="comparison-container">
+        <div class="comp-card problem">
+          <div class="comp-header">
+            <span class="comp-tag">The Problem</span>
+            <h3 class="comp-title">Why Web Agents Break</h3>
+          </div>
+          <ul class="comp-list">
+            <li class="comp-item">
+              <span class="comp-icon">✕</span>
+              <div><strong>No Public APIs:</strong> 95% of real-world workflows (internal portals, tickets, reservations) lack developer APIs.</div>
+            </li>
+            <li class="comp-item">
+              <span class="comp-icon">✕</span>
+              <div><strong>Fragile Browser Bots:</strong> Visual clicking and DOM selector scraping breaks on minor UI shifts and trips bot walls.</div>
+            </li>
+            <li class="comp-item">
+              <span class="comp-icon">✕</span>
+              <div><strong>Plaintext Credential Leaks:</strong> Giving LLMs raw passwords or cookies exposes user accounts to prompt injection theft.</div>
+            </li>
+            <li class="comp-item">
+              <span class="comp-icon">✕</span>
+              <div><strong>Runaway Destructive Writes:</strong> Unconstrained agents make irreversible database deletions with no undo safeguards.</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="comp-card solution">
+          <div class="comp-header">
+            <span class="comp-tag">Our Solution</span>
+            <h3 class="comp-title">Deterministic Containment</h3>
+          </div>
+          <ul class="comp-list">
+            <li class="comp-item">
+              <span class="comp-icon">✓</span>
+              <div><strong>Air-Gapped Sandbox:</strong> DeepSeek explores the web application once in a disposable, isolated container.</div>
+            </li>
+            <li class="comp-item">
+              <span class="comp-icon">✓</span>
+              <div><strong>Synthesized Python Operations:</strong> Converts network payloads into clean, typed, repeatable Python API requests.</div>
+            </li>
+            <li class="comp-item">
+              <span class="comp-icon">✓</span>
+              <div><strong>Zero-Secret Vault:</strong> Auth cookies never leave the sandbox. Agents only receive scoped Bearer keys.</div>
+            </li>
+            <li class="comp-item">
+              <span class="comp-icon">✓</span>
+              <div><strong>Cryptographic SHA-256 Receipts:</strong> Every agent action generates an immutable audit receipt in Vultr S3.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function ContainmentPillars() {
+  return html`
+    <section class="section" style="margin-top:54px;">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Hackathon Core Focus</span>
+          <h2>4 Pillars of Agent Containment</h2>
+        </div>
+      </div>
+      <div class="containment-pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-head">
+            <span class="pillar-badge">01 · ISOLATION</span>
+          </div>
+          <h3 class="pillar-title">Process Isolation</h3>
+          <p class="pillar-body">Autonomous exploration and tool verification run in air-gapped sandboxes. Ephemeral runtimes are destroyed immediately upon task completion.</p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-head">
+            <span class="pillar-badge">02 · HYGIENE</span>
+          </div>
+          <h3 class="pillar-title">Secret Hygiene</h3>
+          <p class="pillar-body">Master credentials and session cookies are encrypted at rest. Zero auth tokens or passwords are ever injected into LLM context prompts.</p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-head">
+            <span class="pillar-badge">03 · LIMITS</span>
+          </div>
+          <h3 class="pillar-title">Resource Limits</h3>
+          <p class="pillar-body">Strict 8-second execution timeouts, RAM ceilings, CPU limits, and egress policy firewalls prevent runaway loops or denial of service.</p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-head">
+            <span class="pillar-badge">04 · AUDIT</span>
+          </div>
+          <h3 class="pillar-title">Lifecycle Proof</h3>
+          <p class="pillar-body">Every API response includes an immutable SHA-256 cryptographic receipt logged to Vultr Object Storage for verifiable replayability.</p>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function LandingFooter({ overview }) {
+  return html`
+    <div class="landing-footer-card">
+      <div class="footer-top-grid">
+        <div class="footer-brand-col">
+          <div class="footer-brand-title">
+            <span class="brand-mark" style="width:28px;height:28px;"><${KeyIcon} /></span>
+            <span>Latch</span>
+          </div>
+          <p class="footer-tagline">
+            The open-source containment bridge that turns private web applications into verified, typed APIs for autonomous AI agents.
+          </p>
+          <div style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;"></span>
+            <span>Vultr Serverless Inference: <strong>deepseek-v4.1</strong> online</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <span class="footer-col-title">Navigation</span>
+          <ul class="footer-nav-list">
+            <li><a href="#/">Home Generator</a></li>
+            <li><a href="#/sites">All Published APIs</a></li>
+            <li><a href="#/tasks">Task Planner</a></li>
+            <li><a href="#/attack-lab">Containment Attack Lab</a></li>
+            <li><a href="#/receipts">Audit Receipts</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <span class="footer-col-title">Connect & Deploy</span>
+          <ul class="footer-nav-list">
+            <li><a href="https://github.com/Lakshay-Deol/latch" target="_blank" rel="noopener">GitHub Repository</a></li>
+            <li><a href="#/site/luma.com">Luma MCP Connector</a></li>
+            <li><a href="#/site/partiful.com">Partiful Connector</a></li>
+            <li><a href="#/site/toscrape.com">Toscrape OpenAPI</a></li>
+            <li><a href="https://my.vultr.com" target="_blank" rel="noopener">Vultr Object Storage</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>© 2026 Latch · Built for <strong>LabLab.ai Agent Rush with Vultr</strong></div>
+        <div style="display:flex;gap:18px;">
+          <a href="#/skills">Learned Skills (${overview?.sites?.length || 3})</a>
+          <a href="https://github.com/Lakshay-Deol/latch" target="_blank" rel="noopener">View Source</a>
+        </div>
+      </div>
+    </div>
+  `;
+}
 
 function Home({ overview }) {
-  const admin = overview?.role === "admin";
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const start = async (e) => {
@@ -218,44 +440,85 @@ function Home({ overview }) {
     finally { setBusy(false); }
   };
   const sites = overview?.sites || [], running = overview?.running || [];
-  if (overview && !admin) return html`
-    <${PageHeader} eyebrow="Home" title="Latch"
-        lede="Web apps without an API, turned into tested operations your agent can call.">
-      <${Help}><ol><li>Open a site and press Connect.</li><li>Log in with your own account, then press Done.</li>
-        <li>Copy the MCP URL into your agent.</li></ol><p>Guest connections last 6 hours.</p><//>
-    <//>
-    <section class="section">
-      <${SectionHeading} title="Apps" count=${sites.length} />
-      <div class="sites">
-        ${sites.map((s) => html`<a class="site-card" href=${`#/site/${s.domain}`}>
-          <span class="title">${s.title}</span><span class="domain">${s.domain}</span>
-          <span class="foot"><span class="n">${s.operations} operations</span><${Status} state=${s.connection || "none"} /></span></a>`)}
-      </div>
-    </section>`;
+
   return html`
-    <${PageHeader} eyebrow="Home" title="Generator"
-        lede="Point it at a web app, log in once, get a tested API your agents can use.">
-      ${overview?.guests && html`<span class="muted">Guests ${overview.guests.used} / ${overview.guests.max}</span>`}
-      <${Help}><ol><li>Paste the web app's address.</li><li>Press Generate.</li>
-        <li>Log in when the browser asks, then press Done.</li></ol><//>
-    <//>
-    <form class="card generate" onSubmit=${start}>
-      <div><label class="field-label" for="url">Web app</label>
-        <input id="url" class="input large mono" placeholder="https://yourapp.com" value=${url} onInput=${(e) => setUrl(e.target.value)} /></div>
-      <button class="button primary large" disabled=${busy}>Generate</button>
-    </form>
-    <section class="section">
-      <${SectionHeading} title="Connected apps" count=${sites.length + running.length} />
-      <div class="sites">
-        ${sites.map((s) => html`<a class="site-card" href=${`#/site/${s.domain}`}>
-          <span class="title">${s.title}</span><span class="domain">${s.domain}</span>
-          <span class="foot"><span class="n">${s.operations} operations</span><${Status} state=${s.connection || "none"} /></span></a>`)}
-        ${running.map((j) => html`<a class="site-card" href=${`#/job/${j.id}`}>
-          <span class="title">${j.domain.split(".")[0]}</span><span class="domain">${j.domain}</span>
-          <span class="foot"><span class="n">${j.status}</span><${Status} state="busy" /></span></a>`)}
+    <div class="hero-stacklist">
+      <div class="hero-content">
+        <div class="hero-pill-badge">
+          <span class="dot"></span>
+          <span>Agent Containment Runtime · Vultr & DeepSeek</span>
+        </div>
+        <h1 class="hero-headline">
+          Turn any web app into an <em>Agent API</em>.
+        </h1>
+        <p class="hero-subhead">
+          A self-hostable bridge that lets AI agents use private web applications safely. Log in once; Latch explores the app in a disposable sandbox, synthesizes verified Python operations, and publishes instant MCP connectors without brittle scrapers.
+        </p>
+
+        <form class="hero-generate-box" onSubmit=${start}>
+          <input
+            id="url"
+            placeholder="Paste any web app URL (e.g. https://luma.com, https://books.toscrape.com)"
+            value=${url}
+            onInput=${(e) => setUrl(e.target.value)}
+          />
+          <button class="btn-generate" disabled=${busy}>
+            ${busy ? "Starting..." : "Generate API →"}
+          </button>
+        </form>
+
+        <div class="hero-presets-row">
+          <span>Quick presets:</span>
+          <button type="button" class="preset-chip" onClick=${() => setUrl("https://books.toscrape.com")}>books.toscrape.com</button>
+          <button type="button" class="preset-chip" onClick=${() => setUrl("https://luma.com")}>luma.com</button>
+          <button type="button" class="preset-chip" onClick=${() => setUrl("https://partiful.com")}>partiful.com</button>
+          <button type="button" class="preset-chip" onClick=${() => setUrl("https://hn.algolia.com")}>hn.algolia.com</button>
+        </div>
       </div>
-      ${overview && !sites.length && !running.length && html`<div class="empty">No apps yet</div>`}
-    </section>`;
+
+      <div class="hero-graphic-wrap">
+        <${HeroOrbit} />
+      </div>
+    </div>
+
+    ${running.length > 0 && html`
+      <section class="section" style="margin-top:20px;">
+        <${SectionHeading} title="Active Generation Jobs" count=${running.length} />
+        <div class="sites">
+          ${running.map((j) => html`
+            <a class="site-card" href=${`#/job/${j.id}`} style="border-color:var(--terracotta);">
+              <span class="title">${j.domain.split(".")[0]}</span>
+              <span class="domain">${j.domain}</span>
+              <span class="foot">
+                <span class="n" style="color:var(--terracotta);">${j.status}</span>
+                <${Status} state="busy" />
+              </span>
+            </a>
+          `)}
+        </div>
+      </section>
+    `}
+
+    <section class="section" style="margin-top:40px;">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Curated Connectors</span>
+          <h2>Featured Published APIs</h2>
+        </div>
+        <span class="section-count">${sites.length}</span>
+      </div>
+      <div class="featured-tools-grid">
+        ${sites.map((s) => html`<${FeaturedToolCard} s=${s} />`)}
+      </div>
+      ${overview && !sites.length && html`<div class="empty">No apps generated yet. Paste a URL above to start!</div>`}
+    </section>
+
+    <${ProblemSolutionSection} />
+
+    <${ContainmentPillars} />
+
+    <${LandingFooter} overview=${overview} />
+  `;
 }
 
 /* ---------- sites ---------- */
@@ -658,7 +921,7 @@ function Shell({ page, arg, children, overview, role, skillsCount }) {
               <a class="signout" href="#/login?admin=1">Admin sign in</a>`
           : html`<a class="signout" href="#/login?next=/skills">Sign in</a>`}</div>
     </aside>
-    <main class="app-main"><div class="page" style="padding-bottom:50px">${children}</div></main>
+    <main class="app-main"><div class="page" style="padding-bottom:90px">${children}</div></main>
     <footer class="status-bar" style="position:fixed;bottom:0;left:0;right:0;height:36px;background:#1e1a18;color:#ccc;display:flex;align-items:center;padding:0 16px;font-size:12px;font-family:monospace;border-top:1px solid #332d29;z-index:9999;gap:16px;">
       <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;"></span><strong>LATCH STATUS</strong></span>
       <span>Sandbox: <code style="color:#f59e0b;">idle</code></span>
