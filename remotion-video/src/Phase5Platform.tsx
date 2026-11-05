@@ -14,32 +14,24 @@ export const Phase5Platform: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const landingProgress = spring({
-    frame,
-    fps,
-    config: { damping: 15 },
-  });
+  const titleProgress = spring({ frame, fps, config: { damping: 14 } });
+  const platformProgress = spring({ frame: frame - 25, fps, config: { damping: 12 } });
+  const receiptProgress = spring({ frame: frame - 70, fps, config: { damping: 12 } });
 
-  const receiptProgress = spring({
-    frame: frame - 100,
-    fps,
-    config: { damping: 15 },
-  });
-
-  const subtleZoom = interpolate(frame, [0, 730], [1, 1.05]);
+  const subtleZoom = interpolate(frame, [0, 780], [1, 1.04]);
 
   return (
     <div
       style={{
         width: "100%",
         height: "100%",
-        backgroundColor: "#160e0b",
+        backgroundColor: "#0d0c0b",
         backgroundImage:
-          "radial-gradient(circle at 50% 20%, rgba(184, 86, 50, 0.22) 0%, transparent 70%)",
-        color: "#ffffff",
-        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+          "radial-gradient(circle at 50% 28%, rgba(194, 85, 42, 0.14) 0%, rgba(13, 12, 11, 0.98) 75%)",
+        color: "#fdfbf7",
+        fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
         position: "relative",
-        padding: "60px 80px",
+        padding: "50px 80px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -47,94 +39,79 @@ export const Phase5Platform: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      <Audio src={staticFile("voice_phase5.wav")} />
-      <Audio src={staticFile("chime.wav")} volume={0.25} />
+      <Audio src={staticFile("voice_phase5.mp3")} />
+      <Audio src={staticFile("chime.wav")} volume={0.15} />
 
-      {/* Top Header Badge */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: "8px 26px",
-          borderRadius: 999,
-          backgroundColor: "rgba(184, 86, 50, 0.15)",
-          border: "1px solid rgba(232, 161, 123, 0.4)",
-          marginBottom: 16,
-        }}
-      >
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            backgroundColor: "#e8a17b",
-          }}
-        />
-        <span
-          style={{
-            fontSize: 16,
-            fontWeight: 800,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "#e8a17b",
-          }}
-        >
-          Phase 5 · The Live Platform & Deterministic Operations
-        </span>
-      </div>
-
+      {/* Main Title - No Eyebrow */}
       <h1
         style={{
-          fontSize: 50,
+          fontSize: 52,
           fontWeight: 850,
-          margin: "0 0 28px 0",
-          letterSpacing: "-0.02em",
+          margin: "15px 0 30px 0",
           textAlign: "center",
+          letterSpacing: "-0.03em",
+          opacity: titleProgress,
+          transform: `scale(${titleProgress})`,
+          color: "#fdfbf7",
         }}
       >
-        Live Sandboxed Operations & <span style={{ color: "#e8a17b" }}>Cryptographic Proofs</span>
+        Live Sandboxed Operations &{" "}
+        <span
+          style={{
+            background: "linear-gradient(135deg, #e8a17b 0%, #b85632 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          Cryptographic Proofs
+        </span>
       </h1>
 
-      {/* Side-by-side view: Live UI Screenshot + Real S3 Receipt JSON */}
+      {/* Side-by-Side: Live UI Platform and Vultr S3 Canonical Receipt */}
       <div
         style={{
           display: "flex",
-          gap: 32,
+          gap: 24,
           width: "100%",
-          maxWidth: 1680,
-          alignItems: "center",
+          maxWidth: 1700,
+          alignItems: "stretch",
         }}
       >
-        {/* Live UI Platform */}
+        {/* Left: Platform Preview */}
         <div
           style={{
-            flex: 1.3,
-            borderRadius: 24,
+            flex: 1.25,
+            borderRadius: 22,
             overflow: "hidden",
-            border: "2px solid rgba(232, 161, 123, 0.4)",
-            boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
-            opacity: landingProgress,
-            transform: `scale(${subtleZoom})`,
+            boxShadow: "0 24px 50px rgba(0,0,0,0.7)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderTop: "2px solid #b85632",
+            backgroundColor: "rgba(22, 20, 18, 0.85)",
+            opacity: platformProgress,
+            transform: `translateY(${(1 - platformProgress) * 40}px) scale(${subtleZoom})`,
           }}
         >
           <Img
             src={staticFile("latch_landing.png")}
-            style={{ width: "100%", display: "block" }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
         </div>
 
-        {/* Real S3 Receipt Panel */}
+        {/* Right: Vultr S3 Signed Receipt */}
         <div
           style={{
             flex: 1,
-            backgroundColor: "rgba(25, 16, 12, 0.95)",
-            border: "1.5px solid rgba(234, 179, 8, 0.4)",
-            borderRadius: 24,
+            backgroundColor: "rgba(22, 20, 18, 0.85)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "2px solid #eab308",
+            borderRadius: 22,
             padding: 28,
-            boxShadow: "0 20px 48px rgba(0,0,0,0.5)",
+            display: "flex",
+            flexDirection: "column",
+            boxShadow: "0 24px 50px rgba(0,0,0,0.7)",
             opacity: receiptProgress,
-            transform: `translateX(${(1 - receiptProgress) * 40}px)`,
+            transform: `translateY(${(1 - receiptProgress) * 40}px)`,
           }}
         >
           <div
@@ -142,20 +119,21 @@ export const Phase5Platform: React.FC = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: 14,
+              marginBottom: 16,
             }}
           >
-            <span style={{ fontSize: 13, fontWeight: 800, color: "#facc15" }}>
+            <span style={{ fontSize: 13, fontWeight: 850, color: "#facc15", letterSpacing: "0.08em" }}>
               VULTR S3 RECEIPT · CANONICAL SHA-256
             </span>
             <span
               style={{
-                padding: "4px 10px",
-                borderRadius: 8,
+                padding: "4px 12px",
+                borderRadius: 999,
                 backgroundColor: "rgba(234, 179, 8, 0.2)",
                 color: "#fde047",
-                fontWeight: 750,
                 fontSize: 12,
+                fontWeight: 750,
+                border: "1px solid rgba(234, 179, 8, 0.4)",
               }}
             >
               Auditable Proof
@@ -164,18 +142,20 @@ export const Phase5Platform: React.FC = () => {
 
           <pre
             style={{
-              backgroundColor: "#090605",
-              padding: 16,
-              borderRadius: 14,
-              fontFamily: "monospace",
-              fontSize: 12.5,
-              color: "#fef08a",
-              lineHeight: 1.45,
+              flex: 1,
               margin: 0,
+              backgroundColor: "#09090b",
+              borderRadius: 14,
+              padding: 18,
+              color: "#f5f5f5",
+              fontSize: 13,
+              lineHeight: 1.5,
+              fontFamily: "monospace",
+              border: "1px solid rgba(255,255,255,0.08)",
               overflow: "hidden",
             }}
           >
-            {`{
+{`{
   "operation": "toscrape.com/search_books",
   "result": {
     "results": [
@@ -185,7 +165,7 @@ export const Phase5Platform: React.FC = () => {
   },
   "receipt": {
     "sandbox_id": "latch-sandbox-microvm-01",
-    "worker_vm": "155.138.217.237",
+    "deployment": "Vultr Cloud Compute",
     "sha256": "af0d03b56bbe0a1a278a9f9ab6a2554a571c2756db5e64ecf021745ace5556a0",
     "containment": {
       "network_mode": "none",
@@ -202,4 +182,3 @@ export const Phase5Platform: React.FC = () => {
     </div>
   );
 };
-

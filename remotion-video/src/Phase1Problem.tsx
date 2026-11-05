@@ -21,35 +21,35 @@ export const Phase1Problem: React.FC = () => {
   });
 
   const card1Progress = spring({
-    frame: frame - 60,
+    frame: frame - 50,
     fps,
-    config: { damping: 15 },
+    config: { damping: 12 },
   });
   const card2Progress = spring({
-    frame: frame - 120,
+    frame: frame - 100,
     fps,
-    config: { damping: 15 },
+    config: { damping: 12 },
   });
   const card3Progress = spring({
-    frame: frame - 180,
+    frame: frame - 150,
     fps,
-    config: { damping: 15 },
+    config: { damping: 12 },
   });
 
-  const starRotation = interpolate(frame, [0, 810], [0, 180]);
+  const starRotation = interpolate(frame, [0, 820], [0, 180]);
 
   return (
     <div
       style={{
         width: "100%",
         height: "100%",
-        backgroundColor: "#160e0b",
+        backgroundColor: "#0d0c0b",
         backgroundImage:
-          "radial-gradient(circle at 50% 30%, rgba(184, 86, 50, 0.18) 0%, transparent 70%)",
-        color: "#fff6ed",
-        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+          "radial-gradient(circle at 50% 28%, rgba(194, 85, 42, 0.14) 0%, rgba(13, 12, 11, 0.98) 75%)",
+        color: "#fdfbf7",
+        fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
         position: "relative",
-        padding: "80px 100px",
+        padding: "60px 80px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -57,190 +57,159 @@ export const Phase1Problem: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      <Audio src={staticFile("voice_phase1.wav")} />
-      <Audio src={staticFile("whoosh.wav")} volume={0.15} />
+      <Audio src={staticFile("voice_phase1.mp3")} />
+      <Audio src={staticFile("whoosh.wav")} volume={0.2} />
 
-      {/* Top Header Badge */}
-      <div
+      {/* Main Title - No Eyebrow */}
+      <h1
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: "8px 24px",
-          borderRadius: 999,
-          backgroundColor: "rgba(184, 86, 50, 0.15)",
-          border: "1px solid rgba(232, 161, 123, 0.3)",
-          marginBottom: 32,
-        }}
-      >
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            backgroundColor: "#e8a17b",
-          }}
-        />
-        <span
-          style={{
-            fontSize: 16,
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "#e8a17b",
-          }}
-        >
-          Phase 1 · The Agent Containment Crisis
-        </span>
-      </div>
-
-      {/* Hero Headline */}
-      <div
-        style={{
-          transform: `scale(${titleScale})`,
+          fontSize: 66,
+          fontWeight: 850,
+          margin: "30px 0 0 0",
           textAlign: "center",
-          marginBottom: 40,
+          letterSpacing: "-0.03em",
+          lineHeight: 1.15,
+          transform: `scale(${titleScale})`,
+          opacity: titleScale,
+          color: "#fdfbf7",
         }}
       >
-        <h1
+        Containment isn't a feature.
+        <br />
+        <span
           style={{
-            fontSize: 72,
-            fontWeight: 850,
-            margin: 0,
-            lineHeight: 1.1,
-            letterSpacing: "-0.03em",
-          }}
-        >
-          Containment isn't a feature.
-        </h1>
-        <h1
-          style={{
-            fontSize: 72,
-            fontWeight: 850,
-            margin: 0,
-            lineHeight: 1.1,
-            color: "#e8a17b",
             fontStyle: "italic",
+            background: "linear-gradient(135deg, #e8a17b 0%, #b85632 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
           }}
         >
           It's the product.
-        </h1>
+        </span>
+      </h1>
+
+      {/* 3D Metallic Star Centerpiece */}
+      <div
+        style={{
+          margin: "24px 0",
+          transform: `rotate(${starRotation}deg)`,
+          filter: "drop-shadow(0 0 45px rgba(232, 161, 123, 0.35))",
+        }}
+      >
+        <MetallicStar size={110} />
       </div>
 
-      {/* Visual Center with Metallic Star */}
-      <div style={{ marginBottom: 44 }}>
-        <MetallicStar size={130} rotation={starRotation} />
-      </div>
-
-      {/* 3 Vulnerability Cards showing why uncontained agents fail */}
+      {/* 3 Risk Pillar Cards */}
       <div
         style={{
           display: "flex",
-          gap: 32,
+          gap: 24,
           width: "100%",
-          maxWidth: 1400,
-          justifyContent: "center",
+          maxWidth: 1560,
+          marginTop: 10,
         }}
       >
+        {/* Card 1 */}
         <div
           style={{
             flex: 1,
+            backgroundColor: "rgba(22, 20, 18, 0.85)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "2px solid #ef4444",
+            borderRadius: 22,
             padding: 32,
-            borderRadius: 24,
-            backgroundColor: "rgba(25, 16, 12, 0.9)",
-            border: "1.5px solid rgba(239, 68, 68, 0.4)",
-            boxShadow: "0 16px 32px rgba(0,0,0,0.4)",
+            boxShadow: "0 20px 45px rgba(0, 0, 0, 0.6)",
             opacity: card1Progress,
             transform: `translateY(${(1 - card1Progress) * 40}px)`,
           }}
         >
-          <div
+          <span
             style={{
-              display: "inline-block",
-              padding: "4px 12px",
-              borderRadius: 8,
-              backgroundColor: "rgba(239, 68, 68, 0.15)",
-              color: "#f87171",
-              fontSize: 13,
-              fontWeight: 800,
-              marginBottom: 12,
+              fontSize: 12,
+              fontWeight: 850,
+              color: "#ef4444",
+              letterSpacing: "0.08em",
             }}
           >
-            CRITICAL RISK #1
-          </div>
-          <h3 style={{ fontSize: 24, margin: "0 0 10px 0" }}>Secret Exfiltration</h3>
-          <p style={{ fontSize: 16, color: "#d9c6ba", lineHeight: 1.5, margin: 0 }}>
-            Unconstrained agents access <code>/proc/1/environ</code>, leaking cloud credentials, API keys, and internal secrets.
+            CRITICAL RISK 1
+          </span>
+          <h3 style={{ fontSize: 24, margin: "10px 0 10px 0", color: "#fdfbf7", fontWeight: 700 }}>
+            Secret Exfiltration
+          </h3>
+          <p style={{ fontSize: 16, color: "#a8a29e", lineHeight: 1.55, margin: 0 }}>
+            Unconstrained agents access <code>/proc/1/environ</code>, leaking cloud credentials, API keys, and sensitive session tokens to untrusted prompts.
           </p>
         </div>
 
+        {/* Card 2 */}
         <div
           style={{
             flex: 1,
+            backgroundColor: "rgba(22, 20, 18, 0.85)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "2px solid #f97316",
+            borderRadius: 22,
             padding: 32,
-            borderRadius: 24,
-            backgroundColor: "rgba(25, 16, 12, 0.9)",
-            border: "1.5px solid rgba(239, 68, 68, 0.4)",
-            boxShadow: "0 16px 32px rgba(0,0,0,0.4)",
+            boxShadow: "0 20px 45px rgba(0, 0, 0, 0.6)",
             opacity: card2Progress,
             transform: `translateY(${(1 - card2Progress) * 40}px)`,
           }}
         >
-          <div
+          <span
             style={{
-              display: "inline-block",
-              padding: "4px 12px",
-              borderRadius: 8,
-              backgroundColor: "rgba(239, 68, 68, 0.15)",
-              color: "#f87171",
-              fontSize: 13,
-              fontWeight: 800,
-              marginBottom: 12,
+              fontSize: 12,
+              fontWeight: 850,
+              color: "#f97316",
+              letterSpacing: "0.08em",
             }}
           >
-            CRITICAL RISK #2
-          </div>
-          <h3 style={{ fontSize: 24, margin: "0 0 10px 0" }}>Runaway Fork Bombs</h3>
-          <p style={{ fontSize: 16, color: "#d9c6ba", lineHeight: 1.5, margin: 0 }}>
-            Without kernel cgroup PID ceilings, infinite loops spawn subshell cascades that crash the host operating system.
+            CRITICAL RISK 2
+          </span>
+          <h3 style={{ fontSize: 24, margin: "10px 0 10px 0", color: "#fdfbf7", fontWeight: 700 }}>
+            Runaway Fork Bombs
+          </h3>
+          <p style={{ fontSize: 16, color: "#a8a29e", lineHeight: 1.55, margin: 0 }}>
+            Without kernel cgroup PID ceilings, recursive tool-use loops spawn subshell cascades that crash the host compute node.
           </p>
         </div>
 
+        {/* Card 3 */}
         <div
           style={{
             flex: 1,
+            backgroundColor: "rgba(22, 20, 18, 0.85)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "2px solid #eab308",
+            borderRadius: 22,
             padding: 32,
-            borderRadius: 24,
-            backgroundColor: "rgba(25, 16, 12, 0.9)",
-            border: "1.5px solid rgba(239, 68, 68, 0.4)",
-            boxShadow: "0 16px 32px rgba(0,0,0,0.4)",
+            boxShadow: "0 20px 45px rgba(0, 0, 0, 0.6)",
             opacity: card3Progress,
             transform: `translateY(${(1 - card3Progress) * 40}px)`,
           }}
         >
-          <div
+          <span
             style={{
-              display: "inline-block",
-              padding: "4px 12px",
-              borderRadius: 8,
-              backgroundColor: "rgba(239, 68, 68, 0.15)",
-              color: "#f87171",
-              fontSize: 13,
-              fontWeight: 800,
-              marginBottom: 12,
+              fontSize: 12,
+              fontWeight: 850,
+              color: "#eab308",
+              letterSpacing: "0.08em",
             }}
           >
-            CRITICAL RISK #3
-          </div>
-          <h3 style={{ fontSize: 24, margin: "0 0 10px 0" }}>Fragile DOM Bots</h3>
-          <p style={{ fontSize: 16, color: "#d9c6ba", lineHeight: 1.5, margin: 0 }}>
-            Visual clicking fails on minor UI shifts and trips anti-bot challenges. Latch replaces bots with typed Python APIs.
+            CRITICAL RISK 3
+          </span>
+          <h3 style={{ fontSize: 24, margin: "10px 0 10px 0", color: "#fdfbf7", fontWeight: 700 }}>
+            Fragile DOM Bots
+          </h3>
+          <p style={{ fontSize: 16, color: "#a8a29e", lineHeight: 1.55, margin: 0 }}>
+            Visual clicking fails on minor UI shifts and trips anti-bot challenges. Latch replaces fragile bots with deterministic, sandboxed Python APIs.
           </p>
         </div>
       </div>
 
-      <Subtitle text="As AI agents transition to executing real commands, uncontained access is dangerous. At Latch, containment is the product." />
+      <Subtitle text="Autonomous agents are executing real actions on the web. At Latch, containment isn't a feature — it is the product." />
     </div>
   );
 };
-

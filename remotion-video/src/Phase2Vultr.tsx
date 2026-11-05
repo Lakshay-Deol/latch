@@ -14,43 +14,23 @@ export const Phase2Vultr: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const headerProgress = spring({
-    frame,
-    fps,
-    config: { damping: 14 },
-  });
+  const titleProgress = spring({ frame, fps, config: { damping: 14 } });
+  const vmImageProgress = spring({ frame: frame - 40, fps, config: { damping: 12 } });
+  const inferenceProgress = spring({ frame: frame - 90, fps, config: { damping: 12 } });
+  const storageProgress = spring({ frame: frame - 140, fps, config: { damping: 12 } });
 
-  // 3 sequential zooms/transitions for the Vultr assets
-  const vmImageProgress = spring({
-    frame: frame - 20,
-    fps,
-    config: { damping: 15 },
-  });
-
-  const storageProgress = spring({
-    frame: frame - 160,
-    fps,
-    config: { damping: 15 },
-  });
-
-  const inferenceProgress = spring({
-    frame: frame - 300,
-    fps,
-    config: { damping: 15 },
-  });
-
-  const subtleFloat = Math.sin(frame / 20) * 6;
+  const subtleFloat = Math.sin(frame / 20) * 4;
 
   return (
     <div
       style={{
         width: "100%",
         height: "100%",
-        backgroundColor: "#0d131f",
+        backgroundColor: "#0d0c0b",
         backgroundImage:
-          "radial-gradient(circle at 50% 25%, rgba(0, 123, 252, 0.22) 0%, transparent 70%)",
-        color: "#ffffff",
-        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+          "radial-gradient(circle at 50% 28%, rgba(194, 85, 42, 0.14) 0%, rgba(13, 12, 11, 0.98) 75%)",
+        color: "#fdfbf7",
+        fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
         position: "relative",
         padding: "60px 80px",
         display: "flex",
@@ -60,82 +40,60 @@ export const Phase2Vultr: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      <Audio src={staticFile("voice_phase2.wav")} />
+      <Audio src={staticFile("voice_phase2.mp3")} />
       <Audio src={staticFile("shield_on.wav")} volume={0.2} />
 
-      {/* Top Vultr Badge */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: "8px 26px",
-          borderRadius: 999,
-          backgroundColor: "rgba(0, 123, 252, 0.15)",
-          border: "1px solid rgba(0, 123, 252, 0.4)",
-          marginBottom: 20,
-          opacity: headerProgress,
-        }}
-      >
-        <span
-          style={{
-            width: 10,
-            height: 10,
-            borderRadius: "50%",
-            backgroundColor: "#007bfc",
-            boxShadow: "0 0 10px #007bfc",
-          }}
-        />
-        <span
-          style={{
-            fontSize: 16,
-            fontWeight: 800,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "#60a5fa",
-          }}
-        >
-          Phase 2 · Built Ground-Up on Vultr Cloud Infrastructure
-        </span>
-      </div>
-
+      {/* Main Title - No Eyebrow */}
       <h1
         style={{
-          fontSize: 52,
+          fontSize: 54,
           fontWeight: 850,
-          margin: "0 0 32px 0",
-          letterSpacing: "-0.02em",
+          margin: "20px 0 35px 0",
           textAlign: "center",
-          opacity: headerProgress,
+          letterSpacing: "-0.03em",
+          opacity: titleProgress,
+          transform: `scale(${titleProgress})`,
+          color: "#fdfbf7",
         }}
       >
-        Powering Agent Containment with <span style={{ color: "#38bdf8" }}>Vultr</span>
+        Built Ground-Up on{" "}
+        <span
+          style={{
+            background: "linear-gradient(135deg, #007bfc 0%, #38bdf8 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          Vultr Cloud Infrastructure
+        </span>
       </h1>
 
-      {/* Central 3-Column Showcase of User's Actual Vultr Dashboard Assets */}
+      {/* 3 Unified Pillar Cards with User's Uploaded Vultr Screenshots */}
       <div
         style={{
           display: "flex",
-          gap: 28,
+          gap: 24,
           width: "100%",
           maxWidth: 1720,
           justifyContent: "center",
           alignItems: "stretch",
         }}
       >
-        {/* Card 1: Vultr Cloud Compute Instance */}
+        {/* Card 1: Vultr Cloud Compute */}
         <div
           style={{
             flex: 1.2,
-            backgroundColor: "rgba(15, 23, 42, 0.85)",
-            border: "1.5px solid rgba(0, 123, 252, 0.4)",
-            borderRadius: 24,
+            backgroundColor: "rgba(22, 20, 18, 0.85)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "2px solid #007bfc",
+            borderRadius: 22,
             padding: 24,
             display: "flex",
             flexDirection: "column",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
+            boxShadow: "0 20px 45px rgba(0,0,0,0.6)",
             opacity: vmImageProgress,
-            transform: `translateY(${(1 - vmImageProgress) * 50 + subtleFloat}px)`,
+            transform: `translateY(${(1 - vmImageProgress) * 40 + subtleFloat}px)`,
           }}
         >
           <div
@@ -143,21 +101,23 @@ export const Phase2Vultr: React.FC = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: 16,
+              marginBottom: 14,
             }}
           >
             <div>
               <span
                 style={{
-                  fontSize: 13,
-                  fontWeight: 800,
+                  fontSize: 12,
+                  fontWeight: 850,
                   color: "#38bdf8",
-                  letterSpacing: "0.06em",
+                  letterSpacing: "0.08em",
                 }}
               >
                 VULTR CLOUD COMPUTE
               </span>
-              <h3 style={{ fontSize: 22, margin: "4px 0 0 0" }}>Live VM: 155.138.217.237</h3>
+              <h3 style={{ fontSize: 21, margin: "4px 0 0 0", color: "#fdfbf7", fontWeight: 700 }}>
+                Live Deployment Node
+              </h3>
             </div>
             <span
               style={{
@@ -165,21 +125,21 @@ export const Phase2Vultr: React.FC = () => {
                 borderRadius: 999,
                 backgroundColor: "rgba(34, 197, 94, 0.2)",
                 color: "#4ade80",
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: 750,
                 border: "1px solid rgba(34, 197, 94, 0.4)",
               }}
             >
-              ● Running
+              ● Atlanta, US
             </span>
           </div>
 
           <div
             style={{
-              borderRadius: 16,
+              borderRadius: 14,
               overflow: "hidden",
               border: "1px solid rgba(255,255,255,0.1)",
-              marginBottom: 16,
+              marginBottom: 14,
               boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
             }}
           >
@@ -189,8 +149,8 @@ export const Phase2Vultr: React.FC = () => {
             />
           </div>
 
-          <p style={{ fontSize: 15, color: "#94a3b8", lineHeight: 1.5, margin: 0 }}>
-            Ubuntu 24.04 LTS instance running the FastAPI Control Plane and the local Docker worker daemon on a private subnet.
+          <p style={{ fontSize: 14, color: "#a8a29e", lineHeight: 1.5, margin: 0 }}>
+            Ubuntu 24.04 LTS instance running the FastAPI Control Plane and the local Docker worker daemon on an isolated private subnet.
           </p>
         </div>
 
@@ -198,15 +158,17 @@ export const Phase2Vultr: React.FC = () => {
         <div
           style={{
             flex: 1,
-            backgroundColor: "rgba(15, 23, 42, 0.85)",
-            border: "1.5px solid rgba(139, 92, 246, 0.4)",
-            borderRadius: 24,
+            backgroundColor: "rgba(22, 20, 18, 0.85)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "2px solid #8b5cf6",
+            borderRadius: 22,
             padding: 24,
             display: "flex",
             flexDirection: "column",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
+            boxShadow: "0 20px 45px rgba(0,0,0,0.6)",
             opacity: inferenceProgress,
-            transform: `translateY(${(1 - inferenceProgress) * 50 - subtleFloat}px)`,
+            transform: `translateY(${(1 - inferenceProgress) * 40 - subtleFloat}px)`,
           }}
         >
           <div
@@ -214,21 +176,23 @@ export const Phase2Vultr: React.FC = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: 16,
+              marginBottom: 14,
             }}
           >
             <div>
               <span
                 style={{
-                  fontSize: 13,
-                  fontWeight: 800,
-                  color: "#a78bfa",
-                  letterSpacing: "0.06em",
+                  fontSize: 12,
+                  fontWeight: 850,
+                  color: "#c084fc",
+                  letterSpacing: "0.08em",
                 }}
               >
                 VULTR SERVERLESS INFERENCE
               </span>
-              <h3 style={{ fontSize: 22, margin: "4px 0 0 0" }}>DeepSeek v4.1 Flash</h3>
+              <h3 style={{ fontSize: 21, margin: "4px 0 0 0", color: "#fdfbf7", fontWeight: 700 }}>
+                DeepSeek v4.1 Flash
+              </h3>
             </div>
             <span
               style={{
@@ -236,7 +200,7 @@ export const Phase2Vultr: React.FC = () => {
                 borderRadius: 999,
                 backgroundColor: "rgba(139, 92, 246, 0.2)",
                 color: "#c4b5fd",
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: 750,
                 border: "1px solid rgba(139, 92, 246, 0.4)",
               }}
@@ -247,10 +211,10 @@ export const Phase2Vultr: React.FC = () => {
 
           <div
             style={{
-              borderRadius: 16,
+              borderRadius: 14,
               overflow: "hidden",
               border: "1px solid rgba(255,255,255,0.1)",
-              marginBottom: 16,
+              marginBottom: 14,
               boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
             }}
           >
@@ -260,7 +224,7 @@ export const Phase2Vultr: React.FC = () => {
             />
           </div>
 
-          <p style={{ fontSize: 15, color: "#94a3b8", lineHeight: 1.5, margin: 0 }}>
+          <p style={{ fontSize: 14, color: "#a8a29e", lineHeight: 1.5, margin: 0 }}>
             Ultra-fast token synthesis for task planning, reasoning, and generating verifiable Python operations.
           </p>
         </div>
@@ -269,15 +233,17 @@ export const Phase2Vultr: React.FC = () => {
         <div
           style={{
             flex: 1.1,
-            backgroundColor: "rgba(15, 23, 42, 0.85)",
-            border: "1.5px solid rgba(234, 179, 8, 0.4)",
-            borderRadius: 24,
+            backgroundColor: "rgba(22, 20, 18, 0.85)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "2px solid #eab308",
+            borderRadius: 22,
             padding: 24,
             display: "flex",
             flexDirection: "column",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
+            boxShadow: "0 20px 45px rgba(0,0,0,0.6)",
             opacity: storageProgress,
-            transform: `translateY(${(1 - storageProgress) * 50 + subtleFloat}px)`,
+            transform: `translateY(${(1 - storageProgress) * 40 + subtleFloat}px)`,
           }}
         >
           <div
@@ -285,21 +251,23 @@ export const Phase2Vultr: React.FC = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: 16,
+              marginBottom: 14,
             }}
           >
             <div>
               <span
                 style={{
-                  fontSize: 13,
-                  fontWeight: 800,
+                  fontSize: 12,
+                  fontWeight: 850,
                   color: "#facc15",
-                  letterSpacing: "0.06em",
+                  letterSpacing: "0.08em",
                 }}
               >
                 VULTR OBJECT STORAGE
               </span>
-              <h3 style={{ fontSize: 22, margin: "4px 0 0 0" }}>atl2.vultrobjects.com</h3>
+              <h3 style={{ fontSize: 21, margin: "4px 0 0 0", color: "#fdfbf7", fontWeight: 700 }}>
+                atl2.vultrobjects.com
+              </h3>
             </div>
             <span
               style={{
@@ -307,7 +275,7 @@ export const Phase2Vultr: React.FC = () => {
                 borderRadius: 999,
                 backgroundColor: "rgba(234, 179, 8, 0.2)",
                 color: "#fde047",
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: 750,
                 border: "1px solid rgba(234, 179, 8, 0.4)",
               }}
@@ -319,31 +287,26 @@ export const Phase2Vultr: React.FC = () => {
           <div
             style={{
               position: "relative",
-              borderRadius: 16,
+              borderRadius: 14,
               overflow: "hidden",
               border: "1px solid rgba(255,255,255,0.1)",
-              marginBottom: 16,
+              marginBottom: 14,
               boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
             }}
           >
             <Img
-              src={frame > 520 ? staticFile("vultr_storage_manage.png") : staticFile("vultr_buckets.png")}
-              style={{
-                width: "100%",
-                display: "block",
-                transition: "opacity 0.4s ease-in-out",
-              }}
+              src={frame > 480 ? staticFile("vultr_storage_manage.png") : staticFile("vultr_buckets.png")}
+              style={{ width: "100%", display: "block" }}
             />
           </div>
 
-          <p style={{ fontSize: 15, color: "#94a3b8", lineHeight: 1.5, margin: 0 }}>
+          <p style={{ fontSize: 14, color: "#a8a29e", lineHeight: 1.5, margin: 0 }}>
             Dedicated buckets: <code>latch-apis</code> (31 specs), <code>latch-receipts</code> (12 proofs), and <code>latch-skills</code> (15 lessons).
           </p>
         </div>
       </div>
 
-      <Subtitle text="Latch is built ground up on Vultr: Cloud Compute at 155.138.217.237, Serverless Inference with DeepSeek, and S3 Storage." />
+      <Subtitle text="Latch is engineered ground up on Vultr: Cloud Compute for runners, Serverless Inference with DeepSeek, and S3 Storage." />
     </div>
   );
 };
-

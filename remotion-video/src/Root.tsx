@@ -10,22 +10,22 @@ import { Phase6Conclusion } from "./Phase6Conclusion";
 export const MainVideo: React.FC = () => {
   return (
     <Series>
-      <Series.Sequence durationInFrames={810}>
+      <Series.Sequence durationInFrames={820}>
         <Phase1Problem />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={960}>
+      <Series.Sequence durationInFrames={910}>
         <Phase2Vultr />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={885}>
+      <Series.Sequence durationInFrames={890}>
         <Phase3Synthesis />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={1000}>
+      <Series.Sequence durationInFrames={970}>
         <Phase4Containment />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={730}>
+      <Series.Sequence durationInFrames={780}>
         <Phase5Platform />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={700}>
+      <Series.Sequence durationInFrames={570}>
         <Phase6Conclusion />
       </Series.Sequence>
     </Series>
@@ -38,7 +38,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="LatchDemo"
         component={MainVideo}
-        durationInFrames={5085}
+        durationInFrames={4940}
         fps={30}
         width={1920}
         height={1080}
@@ -46,7 +46,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Phase1"
         component={Phase1Problem}
-        durationInFrames={810}
+        durationInFrames={820}
         fps={30}
         width={1920}
         height={1080}
@@ -54,7 +54,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Phase2"
         component={Phase2Vultr}
-        durationInFrames={960}
+        durationInFrames={910}
         fps={30}
         width={1920}
         height={1080}
@@ -62,7 +62,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Phase3"
         component={Phase3Synthesis}
-        durationInFrames={885}
+        durationInFrames={890}
         fps={30}
         width={1920}
         height={1080}
@@ -70,7 +70,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Phase4"
         component={Phase4Containment}
-        durationInFrames={1000}
+        durationInFrames={970}
         fps={30}
         width={1920}
         height={1080}
@@ -78,7 +78,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Phase5"
         component={Phase5Platform}
-        durationInFrames={730}
+        durationInFrames={780}
         fps={30}
         width={1920}
         height={1080}
@@ -86,7 +86,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Phase6"
         component={Phase6Conclusion}
-        durationInFrames={700}
+        durationInFrames={570}
         fps={30}
         width={1920}
         height={1080}
@@ -94,4 +94,3 @@ export const RemotionRoot: React.FC = () => {
     </>
   );
 };
-
