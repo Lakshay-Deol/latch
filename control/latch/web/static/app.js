@@ -220,20 +220,64 @@ function Login({ query }) {
 
 /* ---------- home (Stacklist Inspired Design) ---------- */
 
+function MetallicStar() {
+  return html`
+    <svg viewBox="0 0 100 100" class="metallic-star" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="chromeGlow" cx="40%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="35%" stop-color="#e2e8f0"/>
+          <stop offset="65%" stop-color="#94a3b8"/>
+          <stop offset="100%" stop-color="#475569"/>
+        </radialGradient>
+        <linearGradient id="bevelLight" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+          <stop offset="50%" stop-color="#cbd5e1" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#475569" stop-opacity="0.1"/>
+        </linearGradient>
+        <linearGradient id="bevelDark" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#64748b" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#1e293b" stop-opacity="0.9"/>
+        </linearGradient>
+      </defs>
+      <!-- 4-pointed metallic chrome star -->
+      <path d="M 50 4 C 50 32, 68 50, 96 50 C 68 50, 50 68, 50 96 C 50 68, 32 50, 4 50 C 32 50, 50 32, 50 4 Z" fill="url(#chromeGlow)"/>
+      <!-- 3D Bevel facet overlays -->
+      <path d="M 50 4 C 50 32, 68 50, 96 50 L 50 50 Z" fill="url(#bevelLight)"/>
+      <path d="M 50 96 C 50 68, 32 50, 4 50 L 50 50 Z" fill="url(#bevelDark)"/>
+      <!-- Inner Diamond Cutout -->
+      <polygon points="50,34 66,50 50,66 34,50" fill="#ffffff" opacity="0.9"/>
+      <polygon points="50,38 62,50 50,62 38,50" fill="var(--paper)"/>
+    </svg>
+  `;
+}
+
 function HeroOrbit() {
   return html`
     <div class="hero-orbit-showcase" aria-hidden="true">
       <div class="orbit-circle-outer">
-        <div class="orbit-badge badge-pos-1"><i style="background:#8b5cf6;"></i>Vultr Serverless</div>
-        <div class="orbit-badge badge-pos-2"><i style="background:#22c55e;"></i>DeepSeek V4.1</div>
-        <div class="orbit-badge badge-pos-3"><i style="background:#b85632;"></i>MCP Protocol</div>
-        <div class="orbit-badge badge-pos-4"><i style="background:#3b82f6;"></i>OpenAPI 3.1</div>
-        <div class="orbit-badge badge-pos-5"><i style="background:#eab308;"></i>SHA-256 Proof</div>
-        <div class="orbit-badge badge-pos-6"><i style="background:#06b6d4;"></i>Sandboxed Session</div>
+        <div class="orbit-disc disc-pos-1" title="Luma Calendar API">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="orbit-disc disc-pos-2" title="DeepSeek & Vultr Inference">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="orbit-disc disc-pos-3" title="Partiful Social API">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        </div>
+        <div class="orbit-disc disc-pos-4" title="Cursor AI Agent Sandbox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </div>
+        <div class="orbit-disc disc-pos-5" title="Hacker News & Algolia Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div class="orbit-disc disc-pos-6" title="Books Catalog Sandbox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
       </div>
       <div class="orbit-circle-inner"></div>
-      <div class="orbit-center-emblem" title="Latch Runtime">
-        <${KeyIcon} />
+      <div class="orbit-center-chrome" title="Latch Containment Core">
+        <${MetallicStar} />
       </div>
     </div>
   `;
@@ -286,7 +330,7 @@ function AnimatedProtocolPipeline() {
 }
 
 function FeaturedToolCard({ s }) {
-  const opName = s.domain === "luma.com" ? "rsvp_event" : s.domain === "partiful.com" ? "rsvp_party" : s.domain === "toscrape.com" ? "list_books" : "search_items";
+  const opName = s.domain === "luma.com" ? "rsvp_event" : s.domain === "partiful.com" ? "rsvp_party" : s.domain === "toscrape.com" ? "search_books" : "search_stories";
   const desc = s.domain === "luma.com"
     ? "Discover local events, read calendar schedules, and perform reversible RSVPs with containment."
     : s.domain === "partiful.com"
