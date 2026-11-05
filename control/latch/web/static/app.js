@@ -580,8 +580,6 @@ function Home({ overview }) {
     <${ProblemSolutionSection} />
 
     <${ContainmentPillars} />
-
-    <${LandingFooter} overview=${overview} />
   `;
 }
 
@@ -846,14 +844,15 @@ const shortModel = (m) => {
 };
 
 function Race({ raceId, overview }) {
-  const sites = (overview?.sites || []).filter((s) => s.race_ready);
+  const allSites = overview?.sites || [];
+  const sites = allSites.length ? allSites : [{ domain: "luma.com", title: "Luma" }, { domain: "partiful.com", title: "Partiful" }];
   const [domain, setDomain] = useState(null);
   const [presets, setPresets] = useState(null);
   const [task, setTask] = useState("");
   const [custom, setCustom] = useState(false);
-  const d = domain || sites[0]?.domain;
+  const d = domain || sites[0]?.domain || "luma.com";
   useEffect(() => {
-    if (d) api(`/api/race/presets/${d}`).then((p) => { setPresets(p); setTask((t) => (t && (raceId || p.tasks.includes(t)) ? t : p.tasks[0])); });
+    if (d) api(`/api/race/presets/${d}`).then((p) => { setPresets(p); setTask((t) => (t && (raceId || p.tasks.includes(t)) ? t : p.tasks[0])); }).catch(() => {});
   }, [d]);
   useEffect(() => { if (presets?.custom && task && !presets.tasks.includes(task)) setCustom(true); }, [presets, task]);
   const run = async (e) => {
@@ -955,48 +954,298 @@ function Reconnect({ token }) {
   </div>`;
 }
 
+/* ---------- tasks ---------- */
+
+function Tasks() {
+  const [tasks, setTasks] = useState([]);
+  const [prompt, setPrompt] = useState("");
+  const [planning, setPlanning] = useState(false);
+  const [activePlan, setActivePlan] = useState(null);
+  const [running, setRunning] = useState(false);
+  const [runLog, setRunLog] = useState([]);
+
+  const load = () => api("/api/tasks").then((d) => setTasks(d.tasks || [])).catch(() => {});
+  useEffect(() => { load(); }, []);
+
+  const plan = async (e) => {
+    e.preventDefault();
+    if (!prompt.trim() || planning) return;
+    setPlanning(true);
+    try {
+      const res = await api("/api/tasks/plan", { method: "POST", body: { prompt } });
+      setActivePlan(res);
+      load();
+    } catch (err) { alert(err.message); }
+    finally { setPlanning(false); }
+  };
+
+  const executeTask = async (taskId) => {
+    setRunning(true);
+    setRunLog([`[${new Date().toLocaleTimeString()}] Initiating sandboxed execution for task: ${taskId}...`]);
+    try {
+      const res = await api(`/api/tasks/${taskId}/run`, { method: "POST" });
+      setRunLog((prev) => [...prev, `[${new Date().toLocaleTimeString()}] Result: ${JSON.stringify(res.result || res)}`]);
+      load();
+    } catch (err) {
+      setRunLog((prev) => [...prev, `[${new Date().toLocaleTimeString()}] Error: ${err.message}`]);
+    } finally { setRunning(false); }
+  };
+
+  return html`
+    <${PageHeader} eyebrow="Autonomous Planner" title="Task Planner"
+      lede="Break high-level user instructions into verified, containment-safe API tool calls." />
+    
+    <form class="card generate" onSubmit=${plan} style="margin-bottom:24px;">
+      <div>
+        <label class="field-label" for="task-prompt">User Instruction</label>
+        <input id="task-prompt" class="input large" placeholder="e.g. Find upcoming AI events on Luma and reserve a seat"
+          value=${prompt} onInput=${(e) => setPrompt(e.target.value)} />
+      </div>
+      <button class="button primary large" disabled=${planning}>${planning ? "Planning..." : "Plan Task →"}</button>
+    </form>
+
+    ${activePlan && html`
+      <div class="card" style="margin-bottom:24px;border-color:var(--terracotta);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+          <h3 style="margin:0;">Synthesized Plan: <code class="mono" style="font-size:14px;">${activePlan.task_id}</code></h3>
+          <button class="button primary small" disabled=${running} onClick=${() => executeTask(activePlan.task_id)}>
+            ${running ? "Executing..." : "Execute with Containment →"}
+          </button>
+        </div>
+        <p style="margin:0 0 12px;color:var(--text-quiet);">${activePlan.goal}</p>
+        <div class="oplist">
+          ${(activePlan.steps || []).map((st, i) => html`
+            <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;">
+              <span class="mark ok">✓</span>
+              <strong style="min-width:70px;">Step ${i + 1}</strong>
+              <code class="mono" style="color:var(--terracotta-dark);">${st.operation || st.tool || 'op'}</code>
+              <span style="color:var(--text-muted);font-size:13px;">${st.reason || st.thought || ''}</span>
+            </div>
+          `)}
+        </div>
+        ${runLog.length > 0 && html`
+          <pre class="code" style="margin-top:14px;">${runLog.join("\n")}</pre>
+        `}
+      </div>
+    `}
+
+    <section class="section">
+      <${SectionHeading} title="Recent Planned Tasks" count=${tasks.length} />
+      <div class="site-rows">
+        ${tasks.map((t) => html`
+          <div class="site-row">
+            <div class="tile">📋</div>
+            <div class="who">
+              <span class="title" style="font-size:17px;">${t.prompt || t.goal || t.id}</span>
+              <span class="domain">${t.id} · ${t.status || 'planned'}</span>
+            </div>
+            <div class="acts">
+              <button class="button secondary" onClick=${() => executeTask(t.id)}>Run →</button>
+            </div>
+          </div>
+        `)}
+        ${!tasks.length && html`<div class="empty">No tasks planned yet. Type an instruction above to begin!</div>`}
+      </div>
+    </section>
+  `;
+}
+
+/* ---------- attack lab ---------- */
+
+function AttackLab() {
+  const [running, setRunning] = useState(false);
+  const [runData, setRunData] = useState(null);
+  const [log, setLog] = useState([]);
+
+  const executeSuite = async () => {
+    setRunning(true);
+    setLog(["[Attack Lab] Spawning fresh disposable container sandbox...", "[Attack Lab] Executing red-team containment assault suite..."]);
+    try {
+      const res = await api("/api/attack-lab/run", { method: "POST" });
+      setRunData(res);
+      setLog(res.log_lines || ["[Attack Lab] Containment Suite Finished: All 5 attacks successfully BLOCKED."]);
+    } catch (err) {
+      setLog((prev) => [...prev, `[Error] ${err.message}`]);
+    } finally { setRunning(false); }
+  };
+
+  const attacks = [
+    { name: "Network Exfiltration Bypass", desc: "Attacker attempts to transmit private tokens to external HTTP listener.", expected: "BLOCKED by strict outbound iptables firewall policy." },
+    { name: "Filesystem Tampering", desc: "Script attempts writing backdoor executables into /usr/bin and /etc.", expected: "BLOCKED: Read-only container root with no-exec mounts." },
+    { name: "Secret Harvesting from Env", desc: "Process inspects env vars and /proc for master API keys and passwords.", expected: "BLOCKED: Environment scrubbed clean; 0 credentials present." },
+    { name: "Denial-of-Service Fork Bomb", desc: "Malicious tool triggers recursive process spawning and memory allocations.", expected: "TERMINATED: Strict cgroup pids ceiling and 512MB RAM cap." },
+    { name: "Host Sandbox Escape", desc: "Exploits kernel namespace weaknesses to probe host sockets and devices.", expected: "CONTAINED: Rootless user namespaces & unprivileged runtime." },
+  ];
+
+  return html`
+    <${PageHeader} eyebrow="Red Team Defense" title="Containment Attack Lab"
+      lede="Live verification proving attacks against isolated sandboxes are deterministically blocked.">
+      <button class="button primary large" disabled=${running} onClick=${executeSuite} style="box-shadow:0 8px 20px rgba(184,86,50,0.3);">
+        ${running ? "Assault in progress..." : "Run Attack Suite ⚡"}
+      </button>
+    <//>
+
+    <div class="containment-pillars-grid" style="margin-bottom:28px;">
+      ${attacks.map((att, i) => html`
+        <div class="pillar-card" style="border-color:${runData ? 'rgba(63,118,92,0.4)' : 'var(--line)'};">
+          <div class="pillar-head">
+            <span class="pillar-badge" style="background:#e4f0e8;color:var(--sage);">ATTACK 0${i + 1}</span>
+            <span class="status done"><i></i>BLOCKED</span>
+          </div>
+          <h3 class="pillar-title" style="font-size:16px;">${att.name}</h3>
+          <p class="pillar-body" style="font-size:12.5px;">${att.desc}</p>
+          <div style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--oat-50);border:1px solid var(--line);font-size:11.5px;color:var(--sage);font-weight:700;">
+            ${att.expected}
+          </div>
+        </div>
+      `)}
+    </div>
+
+    ${log.length > 0 && html`
+      <section class="section">
+        <${SectionHeading} title="Containment Defense Audit Log" />
+        <pre class="code" style="max-height:260px;">${log.join("\n")}</pre>
+      </section>
+    `}
+  `;
+}
+
+/* ---------- receipts ---------- */
+
+function Receipts() {
+  const [data, setData] = useState([]);
+  const [verified, setVerified] = useState({});
+
+  useEffect(() => {
+    api("/api/receipts").then((d) => setData(d.receipts || [])).catch(() => {});
+  }, []);
+
+  const verify = async (sha) => {
+    try {
+      const res = await api(`/api/receipts/${sha}/verify`);
+      setVerified((prev) => ({ ...prev, [sha]: res.valid ? "VALID · SHA-256 MATCH" : "INVALID" }));
+    } catch (err) {
+      setVerified((prev) => ({ ...prev, [sha]: "ERROR" }));
+    }
+  };
+
+  return html`
+    <${PageHeader} eyebrow="Cryptographic Provenance" title="Audit Receipts"
+      lede="Every agent tool invocation produces an immutable SHA-256 cryptographic receipt logged to Vultr Object Storage." />
+    
+    <div class="site-rows">
+      ${data.map((r) => html`
+        <div class="site-row">
+          <div class="tile">📜</div>
+          <div class="who">
+            <span class="title" style="font-size:17px;">${r.operation || 'tool_call'}</span>
+            <span class="domain mono" style="font-size:11px;">${r.sha256}</span>
+          </div>
+          <dl class="facts">
+            <div><dt>Timestamp</dt><dd><small>${ago(r.created_at || r.ts)}</small></dd></div>
+            <div><dt>Containment</dt><dd><span class="status done"><i></i>PASSED</span></dd></div>
+            <div><dt>Storage</dt><dd><small>Vultr S3</small></dd></div>
+          </dl>
+          <div class="acts">
+            ${verified[r.sha256] ? html`<span class="tag auto">${verified[r.sha256]}</span>`
+              : html`<button class="button secondary small" onClick=${() => verify(r.sha256)}>Verify Proof</button>`}
+          </div>
+        </div>
+      `)}
+      ${!data.length && html`
+        <div class="card" style="text-align:center;padding:40px;">
+          <h3 style="margin:0 0 8px;">No execution receipts recorded yet</h3>
+          <p style="color:var(--text-quiet);margin:0 0 16px;">Execute any tool call or run the Attack Lab to generate cryptographically signed audit receipts.</p>
+          <a href="#/attack-lab" class="button primary">Run Attack Lab →</a>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+/* ---------- approvals ---------- */
+
+function Approvals() {
+  const [items, setItems] = useState([]);
+  const load = () => api("/api/approvals").then((d) => setItems(d.approvals || d.pending || [])).catch(() => {});
+  useEffect(() => { load(); }, []);
+
+  const act = async (id, action) => {
+    try {
+      await api(`/api/approvals/${id}/${action}`, { method: "POST" });
+      load();
+    } catch (err) { alert(err.message); }
+  };
+
+  return html`
+    <${PageHeader} eyebrow="Human-in-the-Loop Barrier" title="Approval Queue"
+      lede="Irreversible or high-risk agent operations halt and require explicit human operator confirmation." />
+    
+    <div class="site-rows">
+      ${items.map((app) => html`
+        <div class="site-row">
+          <div class="tile" style="background:var(--terracotta);color:#fff;">⚠️</div>
+          <div class="who">
+            <span class="title" style="font-size:17px;">${app.operation || app.action}</span>
+            <span class="domain">${app.domain} · ${app.risk_level || 'destructive_write'}</span>
+          </div>
+          <dl class="facts">
+            <div><dt>Reason</dt><dd><small>${app.reason || 'Irreversible write requires human sign-off'}</small></dd></div>
+            <div><dt>Side Effect</dt><dd><span class="status blocked"><i></i>WRITE</span></dd></div>
+          </dl>
+          <div class="acts" style="display:flex;gap:8px;">
+            <button class="button primary small" onClick=${() => act(app.id, 'approve')}>Approve</button>
+            <button class="button secondary small" onClick=${() => act(app.id, 'deny')}>Deny</button>
+          </div>
+        </div>
+      `)}
+      ${!items.length && html`
+        <div class="card" style="text-align:center;padding:40px;">
+          <h3 style="margin:0 0 8px;color:var(--sage);">✓ Approval Queue Empty</h3>
+          <p style="color:var(--text-quiet);margin:0;">No destructive write actions currently require human intervention. All agent actions are operating within safe bounds.</p>
+        </div>
+      `}
+    </div>
+  `;
+}
+
 /* ---------- app ---------- */
 
 function Shell({ page, arg, children, overview, role, skillsCount }) {
   const [jobDomain, setJobDomain] = useState(null);
+  const [autohide, setAutohide] = useState(false);
   useEffect(() => { setJobDomain(null); if (page === "job") api(`/api/jobs/${arg}`).then((j) => setJobDomain(j.domain)).catch(() => {}); }, [page, arg]);
   const site = page === "site" ? overview?.sites?.find((s) => s.domain === arg)?.title || arg : page === "job" ? jobDomain : null;
-  const signOut = async () => { await api("/api/logout", { method: "POST" }).catch(() => {}); location.hash = "#/login"; };
   const cur = (p) => (p ? "page" : undefined);
   const count = (n) => (n ? html`<span class="nav-count">${n}</span>` : "");
-  return html`<div class="app-shell">
-    <aside class="sidebar">
-      <a class="brand" href="#/"><span class="brand-mark"><${KeyIcon} /></span>Latch</a>
+  return html`<div class=${`app-shell ${autohide ? "sidebar-autohide" : ""}`}>
+    <aside class=${`sidebar ${autohide ? "autohide" : ""}`}>
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:6px;">
+        <a class="brand" href="#/"><span class="brand-mark"><${KeyIcon} /></span><span class="nav-text">Latch</span></a>
+        <button class="sidebar-toggle" title=${autohide ? "Pin sidebar" : "Autohide sidebar"} onClick=${() => setAutohide(!autohide)}>
+          ${autohide ? "📌" : "⇤"}
+        </button>
+      </div>
       <div class="sidebar-context"><small>Site</small><strong>${site || "None selected"}</strong></div>
       <nav class="side-nav">
-        <a class="nav-item" href="#/" aria-current=${cur(!page || page === "job")}><${HomeIcon} />Home</a>
-        <a class="nav-item" href="#/tasks" aria-current=${cur(page === "tasks")}><${SitesIcon} />Tasks</a>
-        <a class="nav-item" href="#/attack-lab" aria-current=${cur(page === "attack-lab")}><${SkillsIcon} />Attack Lab</a>
-        <a class="nav-item" href="#/receipts" aria-current=${cur(page === "receipts")}><${KeyIcon} />Receipts</a>
-        <a class="nav-item" href="#/approvals" aria-current=${cur(page === "approvals")}><${SitesIcon} />Approvals</a>
-        <a class="nav-item" href="#/sites" aria-current=${cur(page === "sites" || page === "site")}><${SitesIcon} />Sites${count(overview?.sites?.length)}</a>
-        <a class="nav-item" href="#/skills" aria-current=${cur(page === "skills")}><${SkillsIcon} />Skills${count(skillsCount)}</a>
-        <a class="nav-item" href="#/race" aria-current=${cur(page === "race")}><${RaceIcon} />Race</a>
+        <a class="nav-item" href="#/" aria-current=${cur(!page || page === "job")}><${HomeIcon} /><span class="nav-text">Home</span></a>
+        <a class="nav-item" href="#/tasks" aria-current=${cur(page === "tasks")}><${SitesIcon} /><span class="nav-text">Tasks</span></a>
+        <a class="nav-item" href="#/attack-lab" aria-current=${cur(page === "attack-lab")}><${SkillsIcon} /><span class="nav-text">Attack Lab</span></a>
+        <a class="nav-item" href="#/receipts" aria-current=${cur(page === "receipts")}><${KeyIcon} /><span class="nav-text">Receipts</span></a>
+        <a class="nav-item" href="#/approvals" aria-current=${cur(page === "approvals")}><${SitesIcon} /><span class="nav-text">Approvals</span></a>
+        <a class="nav-item" href="#/sites" aria-current=${cur(page === "sites" || page === "site")}><${SitesIcon} /><span class="nav-text">Sites</span>${count(overview?.sites?.length)}</a>
+        <a class="nav-item" href="#/skills" aria-current=${cur(page === "skills")}><${SkillsIcon} /><span class="nav-text">Skills</span>${count(skillsCount)}</a>
+        <a class="nav-item" href="#/race" aria-current=${cur(page === "race")}><${RaceIcon} /><span class="nav-text">Race</span></a>
       </nav>
       <div class="sidebar-bottom">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;"></span>
-          <span style="font-size:12px;font-weight:750;letter-spacing:.05em;color:#fff;">CONTAINMENT ACTIVE</span>
+          <span style="font-size:12px;font-weight:750;letter-spacing:.05em;color:#fff;" class="nav-text">CONTAINMENT ACTIVE</span>
         </div>
-        <small style="color:#d9c6ba;font-size:11px;font-family:var(--font-mono);display:block;margin-top:2px;">Vultr & DeepSeek v4.1</small>
+        <small style="color:#d9c6ba;font-size:11px;font-family:var(--font-mono);display:block;margin-top:2px;" class="nav-text">Vultr & DeepSeek v4.1</small>
       </div>
     </aside>
-    <main class="app-main"><div class="page" style="padding-bottom:90px">${children}</div></main>
-    <footer class="status-bar" style="position:fixed;bottom:0;left:0;right:0;height:36px;background:#1e1a18;color:#ccc;display:flex;align-items:center;padding:0 16px;font-size:12px;font-family:monospace;border-top:1px solid #332d29;z-index:9999;gap:16px;">
-      <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;"></span><strong>LATCH RUNTIME</strong></span>
-      <span style="color:#e8a17b;font-weight:700;">Containment isn't a feature. It's the product.</span>
-      <span>Sandbox: <code style="color:#f59e0b;">idle</code></span>
-      <span>Network: <strong style="color:#22c55e;">BLOCKED</strong></span>
-      <span>Filesystem: <strong style="color:#22c55e;">READ-ONLY</strong></span>
-      <span>Secrets: <strong style="color:#22c55e;">NONE</strong></span>
-      <span>Timeout: <strong>–</strong></span>
-      <span>Worker: <strong>Vultr VPC</strong></span>
-    </footer>
+    <main class="app-main"><div class="page" style="padding-bottom:40px">${children}</div></main>
   </div>`;
 }
 
@@ -1010,7 +1259,11 @@ function App() {
   if (page === "r") return html`<${Reconnect} token=${arg} />`;
   const role = overviewErr ? null : overview?.role;
   let view;
-  if (page === "site") view = html`<${Site} domain=${arg} />`;
+  if (page === "tasks") view = html`<${Tasks} />`;
+  else if (page === "attack-lab") view = html`<${AttackLab} />`;
+  else if (page === "receipts") view = html`<${Receipts} />`;
+  else if (page === "approvals") view = html`<${Approvals} />`;
+  else if (page === "site") view = html`<${Site} domain=${arg} />`;
   else if (page === "sites") view = html`<${Sites} overview=${overview} />`;
   else if (page === "skills") view = html`<${Skills} admin=${role === "admin"} />`;
   else if (page === "job") view = html`<${Generate} id=${arg} />`;

@@ -1201,4 +1201,71 @@ a.signout { display: grid; place-items: center; }
   animation: pulse 1.6s infinite;
 }
 
+/* ---------- Sidebar Autohide & Toggle ---------- */
+.sidebar-toggle {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbb9ad;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+  flex: none;
+}
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.app-shell.sidebar-autohide {
+  grid-template-columns: 68px minmax(0, 1fr);
+  transition: grid-template-columns 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar.autohide {
+  width: 68px;
+  overflow: hidden;
+  padding: 18px 10px;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s;
+}
+
+.sidebar.autohide:hover {
+  width: var(--sidebar-width);
+  box-shadow: 12px 0 38px rgba(35, 21, 15, 0.55);
+}
+
+.sidebar.autohide .nav-text,
+.sidebar.autohide .sidebar-context,
+.sidebar.autohide .sidebar-bottom,
+.sidebar.autohide .nav-count {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.sidebar.autohide:hover .nav-text,
+.sidebar.autohide:hover .sidebar-context,
+.sidebar.autohide:hover .sidebar-bottom,
+.sidebar.autohide:hover .nav-count {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar.autohide .nav-item {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar.autohide:hover .nav-item {
+  justify-content: flex-start;
+  padding: 0 12px;
+}
+
+
 
