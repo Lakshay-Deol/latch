@@ -58,3 +58,4 @@ echo "  Latch is LIVE on your Vultr Instance!"
 echo "  Live URL: http://155.138.217.237:8000"
 echo "  Status:   systemctl status latch"
 echo "=========================================================="
+

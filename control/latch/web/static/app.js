@@ -1164,8 +1164,6 @@ function Shell({ page, arg, children, overview, role, skillsCount }) {
         <a class="nav-item" href="#/receipts" aria-current=${cur(page === "receipts")}><${KeyIcon} /><span class="nav-text">Receipts</span></a>
         <a class="nav-item" href="#/approvals" aria-current=${cur(page === "approvals")}><${SitesIcon} /><span class="nav-text">Approvals</span></a>
         <a class="nav-item" href="#/sites" aria-current=${cur(page === "sites" || page === "site")}><${SitesIcon} /><span class="nav-text">Sites</span>${count(overview?.sites?.length)}</a>
-        <a class="nav-item" href="#/skills" aria-current=${cur(page === "skills")}><${SkillsIcon} /><span class="nav-text">Skills</span>${count(skillsCount)}</a>
-        <a class="nav-item" href="#/race" aria-current=${cur(page === "race")}><${RaceIcon} /><span class="nav-text">Race</span></a>
       </nav>
       <div class="sidebar-bottom">
         <div style="display:flex;align-items:center;gap:8px;">

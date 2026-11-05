@@ -2,6 +2,15 @@
 
 > **Containment isn't a feature. It's the product.**
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-155.138.217.237-22c55e?style=for-the-badge&logo=vultr)](http://155.138.217.237)
+[![GitHub](https://img.shields.io/badge/GitHub-Lakshay--Deol%2Flatch-b85632?style=for-the-badge&logo=github)](https://github.com/Lakshay-Deol/latch)
+[![Inference](https://img.shields.io/badge/Vultr_Inference-DeepSeek_v4.1-3b82f6?style=for-the-badge)](https://vultr.com)
+[![Storage](https://img.shields.io/badge/Vultr_S3-Active-eab308?style=for-the-badge)](https://vultr.com)
+
+**🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)
+
+![Latch Platform](assets/preview.png)
+
 **Latch** is an open-source, containment-first autonomous agent platform built ground-up on Vultr Cloud infrastructure. It turns user goals and web applications into tested, isolated execution workflows — writing and running code or operating a real browser — while guaranteeing that every action stays strictly confined inside a disposable sandbox.
 
 ---
@@ -200,7 +209,7 @@ python infra/provision.py
 | **Cloud Compute (VC2 / VHP)** | High-performance Control Plane and isolated Worker VMs |
 | **VPC (Virtual Private Cloud)** | Isolated `10.10.0.0/24` subnet for inter-node control traffic |
 | **Firewall Groups** | Restricts public access to 80/443 on Control; Worker ports accessible only over VPC |
-| **Object Storage (S3)** | Persistent store for verifiable skills (`latch-skills`) and receipts (`latch-receipts`) |
+| **Object Storage (S3)** | Persistent store for generated OpenAPI specs (`latch-apis`) and cryptographic receipts (`latch-receipts`) |
 | **Serverless Inference** | DeepSeek (`deepseek-v4.1-flash-1017`) for task planning, code synthesis, and browser verification |
 
 ---
@@ -208,8 +217,8 @@ python infra/provision.py
 ## 9. Hackathon Submission Expectations
 
 - [x] **GitHub repository with setup and documentation**: [https://github.com/Lakshay-Deol/latch](https://github.com/Lakshay-Deol/latch)
-- [x] **Vultr VM backend deployment**: Automated provisioning via `infra/provision-single.py` and `infra/provision.py`
-- [x] **Public demo URL**: Caddy TLS reverse proxy with automatic SSL on `https://<ip>.sslip.io`
+- [x] **Vultr VM backend deployment**: Live on Vultr Cloud Compute at `155.138.217.237`
+- [x] **Public demo URL**: [http://155.138.217.237](http://155.138.217.237) (and [http://155.138.217.237:8000](http://155.138.217.237:8000))
 - [x] **Recorded demo video**: *Coming soon*
 - [x] **Clear architecture and use-case explanation**: Comprehensive documentation and diagrams in `README.md` and `PROJECT.md`
 - [x] **One containment moment shown in the video**: Live Attack Lab demonstration proving kernel-enforced sandboxing
