@@ -287,7 +287,9 @@ function AnimatedProtocolPipeline() {
   return html`
     <div class="animated-pipeline-wrap" aria-label="Containment Pipeline Flow">
       <div class="pipeline-node">
-        <div class="pipeline-node-icon">🔒</div>
+        <div class="pipeline-node-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <div class="pipeline-node-info">
           <span class="pipeline-node-label">1. Session Vault</span>
           <span class="pipeline-node-sub">Zero Plain Secrets</span>
@@ -295,7 +297,9 @@ function AnimatedProtocolPipeline() {
       </div>
       <div class="pipeline-connector"></div>
       <div class="pipeline-node">
-        <div class="pipeline-node-icon">🛡️</div>
+        <div class="pipeline-node-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
         <div class="pipeline-node-info">
           <span class="pipeline-node-label">2. Air-Gapped Sandbox</span>
           <span class="pipeline-node-sub">Egress Firewall</span>
@@ -303,15 +307,19 @@ function AnimatedProtocolPipeline() {
       </div>
       <div class="pipeline-connector"></div>
       <div class="pipeline-node">
-        <div class="pipeline-node-icon">🧠</div>
+        <div class="pipeline-node-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+        </div>
         <div class="pipeline-node-info">
           <span class="pipeline-node-label">3. DeepSeek v4.1</span>
-          <span class="pipeline-node-sub">Autonomous Synthesis</span>
+          <span class="pipeline-node-sub">Synthesis</span>
         </div>
       </div>
       <div class="pipeline-connector"></div>
       <div class="pipeline-node">
-        <div class="pipeline-node-icon">📜</div>
+        <div class="pipeline-node-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
         <div class="pipeline-node-info">
           <span class="pipeline-node-label">4. SHA-256 Proof</span>
           <span class="pipeline-node-sub">Vultr S3 Receipts</span>
@@ -319,7 +327,9 @@ function AnimatedProtocolPipeline() {
       </div>
       <div class="pipeline-connector"></div>
       <div class="pipeline-node">
-        <div class="pipeline-node-icon">⚡</div>
+        <div class="pipeline-node-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
         <div class="pipeline-node-info">
           <span class="pipeline-node-label">5. MCP / REST</span>
           <span class="pipeline-node-sub">Instant Connector</span>
@@ -330,14 +340,14 @@ function AnimatedProtocolPipeline() {
 }
 
 function FeaturedToolCard({ s }) {
-  const opName = s.domain === "luma.com" ? "rsvp_event" : s.domain === "partiful.com" ? "rsvp_party" : s.domain === "toscrape.com" ? "search_books" : "search_stories";
+  const opName = s.domain === "luma.com" ? "list_discover_categories" : s.domain === "partiful.com" ? "list_parties" : s.domain === "toscrape.com" ? "search_books" : "search_stories";
   const desc = s.domain === "luma.com"
-    ? "Discover local events, read calendar schedules, and perform reversible RSVPs with containment."
+    ? "Events discovery, calendar indexing, and verified RSVP execution."
     : s.domain === "partiful.com"
-      ? "Party management, guest list syncing, and reversible RSVP confirmation without browser bots."
+      ? "Social guest lists, party management, and verified RSVP confirmations."
       : s.domain === "toscrape.com"
-        ? "Structured catalog indexing and verified book item retrieval for AI research agents."
-        : "Real-time story, author, and comment search with deterministic relevance ranking.";
+        ? "Book catalog search, inventory queries, and sandboxed basket additions."
+        : "Real-time story and comment search with relevance ranking.";
   const cat = s.domain === "luma.com" ? "Events" : s.domain === "partiful.com" ? "Social" : s.domain === "toscrape.com" ? "Catalog" : "Search";
   return html`
     <a class="tool-card" href=${`#/site/${s.domain}`}>
@@ -361,87 +371,22 @@ function FeaturedToolCard({ s }) {
         </div>
         <p class="tool-desc">${desc}</p>
         <div class="tool-meta-tags">
-          <span class="meta-chip">${s.operations} operations</span>
+          <span class="meta-chip">${s.operations} verified ops</span>
+          <span class="meta-chip">${s.reads || 0} reads · ${s.writes || 0} writes</span>
           <span class="meta-chip">OpenAPI 3.1</span>
-          <span class="meta-chip">MCP Ready</span>
-          <span class="meta-chip" style="color:var(--sage);font-weight:700;">Sandbox Verified</span>
         </div>
       </div>
     </a>
   `;
 }
 
-function ProblemSolutionSection() {
+function ContainmentGuarantees() {
   return html`
-    <section class="section" style="margin-top:54px;">
+    <section class="section" style="margin-top:48px;">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">Architecture Comparison</span>
-          <h2>The Browser Trap vs. The Latch Solution</h2>
-        </div>
-      </div>
-      <div class="comparison-container">
-        <div class="comp-card problem">
-          <div class="comp-header">
-            <span class="comp-tag">The Problem</span>
-            <h3 class="comp-title">Why Web Agents Break</h3>
-          </div>
-          <ul class="comp-list">
-            <li class="comp-item">
-              <span class="comp-icon">✕</span>
-              <div><strong>No Public APIs:</strong> 95% of real-world workflows (internal portals, tickets, reservations) lack developer APIs.</div>
-            </li>
-            <li class="comp-item">
-              <span class="comp-icon">✕</span>
-              <div><strong>Fragile Browser Bots:</strong> Visual clicking and DOM selector scraping breaks on minor UI shifts and trips bot walls.</div>
-            </li>
-            <li class="comp-item">
-              <span class="comp-icon">✕</span>
-              <div><strong>Plaintext Credential Leaks:</strong> Giving LLMs raw passwords or cookies exposes user accounts to prompt injection theft.</div>
-            </li>
-            <li class="comp-item">
-              <span class="comp-icon">✕</span>
-              <div><strong>Runaway Destructive Writes:</strong> Unconstrained agents make irreversible database deletions with no undo safeguards.</div>
-            </li>
-          </ul>
-        </div>
-
-        <div class="comp-card solution">
-          <div class="comp-header">
-            <span class="comp-tag">Our Solution</span>
-            <h3 class="comp-title">Deterministic Containment</h3>
-          </div>
-          <ul class="comp-list">
-            <li class="comp-item">
-              <span class="comp-icon">✓</span>
-              <div><strong>Air-Gapped Sandbox:</strong> DeepSeek explores the web application once in a disposable, isolated container.</div>
-            </li>
-            <li class="comp-item">
-              <span class="comp-icon">✓</span>
-              <div><strong>Synthesized Python Operations:</strong> Converts network payloads into clean, typed, repeatable Python API requests.</div>
-            </li>
-            <li class="comp-item">
-              <span class="comp-icon">✓</span>
-              <div><strong>Zero-Secret Vault:</strong> Auth cookies never leave the sandbox. Agents only receive scoped Bearer keys.</div>
-            </li>
-            <li class="comp-item">
-              <span class="comp-icon">✓</span>
-              <div><strong>Cryptographic SHA-256 Receipts:</strong> Every agent action generates an immutable audit receipt in Vultr S3.</div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
-  `;
-}
-
-function ContainmentPillars() {
-  return html`
-    <section class="section" style="margin-top:54px;">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow">Hackathon Core Focus</span>
-          <h2>4 Pillars of Agent Containment</h2>
+          <span class="eyebrow">Architecture</span>
+          <h2>Containment Guarantees</h2>
         </div>
       </div>
       <div class="containment-pillars-grid">
@@ -449,87 +394,35 @@ function ContainmentPillars() {
           <div class="pillar-head">
             <span class="pillar-badge">01 · ISOLATION</span>
           </div>
-          <h3 class="pillar-title">Process Isolation</h3>
-          <p class="pillar-body">Autonomous exploration and tool verification run in air-gapped sandboxes. Ephemeral runtimes are destroyed immediately upon task completion.</p>
+          <h3 class="pillar-title">Air-Gapped Sandbox</h3>
+          <p class="pillar-body">Autonomous tool verification runs in disposable microVMs with zero-egress network policies.</p>
         </div>
 
         <div class="pillar-card">
           <div class="pillar-head">
-            <span class="pillar-badge">02 · HYGIENE</span>
+            <span class="pillar-badge">02 · SECRETS</span>
           </div>
-          <h3 class="pillar-title">Secret Hygiene</h3>
-          <p class="pillar-body">Master credentials and session cookies are encrypted at rest. Zero auth tokens or passwords are ever injected into LLM context prompts.</p>
+          <h3 class="pillar-title">Zero Plain Secrets</h3>
+          <p class="pillar-body">Master session cookies remain in vault storage; agents only receive scoped Bearer keys.</p>
         </div>
 
         <div class="pillar-card">
           <div class="pillar-head">
-            <span class="pillar-badge">03 · LIMITS</span>
+            <span class="pillar-badge">03 · CONTROL</span>
           </div>
-          <h3 class="pillar-title">Resource Limits</h3>
-          <p class="pillar-body">Strict 8-second execution timeouts, RAM ceilings, CPU limits, and egress policy firewalls prevent runaway loops or denial of service.</p>
+          <h3 class="pillar-title">Operator Approval Gate</h3>
+          <p class="pillar-body">Destructive mutations require explicit human confirmation before dispatch.</p>
         </div>
 
         <div class="pillar-card">
           <div class="pillar-head">
             <span class="pillar-badge">04 · AUDIT</span>
           </div>
-          <h3 class="pillar-title">Lifecycle Proof</h3>
-          <p class="pillar-body">Every API response includes an immutable SHA-256 cryptographic receipt logged to Vultr Object Storage for verifiable replayability.</p>
+          <h3 class="pillar-title">SHA-256 Lifecycle Proof</h3>
+          <p class="pillar-body">Every execution generates an immutable cryptographic receipt stored in Vultr S3.</p>
         </div>
       </div>
     </section>
-  `;
-}
-
-function LandingFooter({ overview }) {
-  return html`
-    <div class="landing-footer-card">
-      <div class="footer-top-grid">
-        <div class="footer-brand-col">
-          <div class="footer-brand-title">
-            <span class="brand-mark" style="width:28px;height:28px;"><${KeyIcon} /></span>
-            <span>Latch</span>
-          </div>
-          <p class="footer-tagline">
-            The open-source containment bridge that turns private web applications into verified, typed APIs for autonomous AI agents.
-          </p>
-          <div style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
-            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;"></span>
-            <span>Vultr Serverless Inference: <strong>deepseek-v4.1</strong> online</span>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <span class="footer-col-title">Navigation</span>
-          <ul class="footer-nav-list">
-            <li><a href="#/">Home Generator</a></li>
-            <li><a href="#/sites">All Published APIs</a></li>
-            <li><a href="#/tasks">Task Planner</a></li>
-            <li><a href="#/attack-lab">Containment Attack Lab</a></li>
-            <li><a href="#/receipts">Audit Receipts</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <span class="footer-col-title">Connect & Deploy</span>
-          <ul class="footer-nav-list">
-            <li><a href="https://github.com/Lakshay-Deol/latch" target="_blank" rel="noopener">GitHub Repository</a></li>
-            <li><a href="#/site/luma.com">Luma MCP Connector</a></li>
-            <li><a href="#/site/partiful.com">Partiful Connector</a></li>
-            <li><a href="#/site/toscrape.com">Toscrape OpenAPI</a></li>
-            <li><a href="https://my.vultr.com" target="_blank" rel="noopener">Vultr Object Storage</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom-bar">
-        <div>© 2026 Latch · Built for <strong>LabLab.ai Agent Rush with Vultr</strong></div>
-        <div style="display:flex;gap:18px;">
-          <a href="#/skills">Learned Skills (${overview?.sites?.length || 3})</a>
-          <a href="https://github.com/Lakshay-Deol/latch" target="_blank" rel="noopener">View Source</a>
-        </div>
-      </div>
-    </div>
   `;
 }
 
@@ -548,16 +441,12 @@ function Home({ overview }) {
   return html`
     <div class="hero-stacklist">
       <div class="hero-content">
-        <div class="hero-pill-badge">
-          <span class="dot"></span>
-          <span>Agent Containment Runtime · Vultr & DeepSeek</span>
-        </div>
         <h1 class="hero-headline">
           Containment isn't a feature.<br />
           <em>It's the product.</em>
         </h1>
         <p class="hero-subhead">
-          Turn any private web app into verified, typed API operations with air-gapped sandboxes, zero plain secrets, and cryptographic execution receipts.
+          Deterministic containment and verified, typed APIs for autonomous AI agents.
         </p>
 
         <form class="hero-generate-box" onSubmit=${start}>
@@ -620,9 +509,7 @@ function Home({ overview }) {
       ${overview && !sites.length && html`<div class="empty">No apps generated yet. Paste a URL above to start!</div>`}
     </section>
 
-    <${ProblemSolutionSection} />
-
-    <${ContainmentPillars} />
+    <${ContainmentGuarantees} />
   `;
 }
 
@@ -1077,7 +964,7 @@ function Tasks() {
       <div class="site-rows">
         ${tasks.map((t) => html`
           <div class="site-row">
-            <div class="tile">📋</div>
+            <div class="tile"><${SitesIcon} /></div>
             <div class="who">
               <span class="title" style="font-size:17px;">${t.prompt || t.goal || t.id}</span>
               <span class="domain">${t.id} · ${t.status || 'planned'}</span>
@@ -1124,7 +1011,7 @@ function AttackLab() {
     <${PageHeader} eyebrow="Red Team Defense" title="Containment Attack Lab"
       lede="Live verification proving attacks against isolated sandboxes are deterministically blocked.">
       <button class="button primary large" disabled=${running} onClick=${executeSuite} style="box-shadow:0 8px 20px rgba(184,86,50,0.3);">
-        ${running ? "Assault in progress..." : "Run Attack Suite ⚡"}
+        ${running ? "Assault in progress..." : "Run Attack Suite"}
       </button>
     <//>
 
@@ -1179,7 +1066,7 @@ function Receipts() {
     <div class="site-rows">
       ${data.map((r) => html`
         <div class="site-row">
-          <div class="tile">📜</div>
+          <div class="tile"><${KeyIcon} /></div>
           <div class="who">
             <span class="title" style="font-size:17px;">${r.operation || 'tool_call'}</span>
             <span class="domain mono" style="font-size:11px;">${r.sha256}</span>
@@ -1227,7 +1114,7 @@ function Approvals() {
     <div class="site-rows">
       ${items.map((app) => html`
         <div class="site-row">
-          <div class="tile" style="background:var(--terracotta);color:#fff;">⚠️</div>
+          <div class="tile" style="background:var(--terracotta);color:#fff;font-weight:800;font-size:16px;">!</div>
           <div class="who">
             <span class="title" style="font-size:17px;">${app.operation || app.action}</span>
             <span class="domain">${app.domain} · ${app.risk_level || 'destructive_write'}</span>
@@ -1266,7 +1153,7 @@ function Shell({ page, arg, children, overview, role, skillsCount }) {
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:6px;">
         <a class="brand" href="#/"><span class="brand-mark"><${KeyIcon} /></span><span class="nav-text">Latch</span></a>
         <button class="sidebar-toggle" title=${autohide ? "Pin sidebar" : "Autohide sidebar"} onClick=${() => setAutohide(!autohide)}>
-          ${autohide ? "📌" : "⇤"}
+          ${autohide ? "⇥" : "⇤"}
         </button>
       </div>
       <div class="sidebar-context"><small>Site</small><strong>${site || "None selected"}</strong></div>

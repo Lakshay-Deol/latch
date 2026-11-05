@@ -400,7 +400,7 @@ def publish_receipt(operation: str | dict, result: Any = None, exec_meta: dict |
     )
 
 
-def publish(arg1, arg2=None, exec_meta=None, **kwargs):
+def publish(arg1=None, arg2=None, exec_meta=None, **kwargs):
     """Unified publisher dispatch: returns a coroutine for site jobs, or a dict receipt for executions."""
     if exec_meta is not None or "result" in kwargs or "operation" in kwargs or (arg2 is not None and not isinstance(arg2, str)):
         operation = kwargs.get("operation", arg1)

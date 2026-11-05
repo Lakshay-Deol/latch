@@ -11,11 +11,15 @@ import traceback
 sys.path[:0] = ["/work", "/opt/runner"]
 import runtime  # noqa: E402
 
+import os
+import pathlib
+
 MAX_OUTPUT = 20_000
 
 
 def main():
-    with open("/work/input.json") as f:
+    inp_file = "/work/input.json" if os.path.exists("/work/input.json") else "input.json"
+    with open(inp_file) as f:
         inp = json.load(f)
     results = []
     for call in inp["calls"]:

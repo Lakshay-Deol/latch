@@ -15,6 +15,9 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 WORKER_DIR = ROOT_DIR / "worker"
 
 def main():
+    import dotenv
+    dotenv.load_dotenv(ROOT_DIR / ".env")
+
     print("=" * 60)
     print("  Starting Latch Local Environment")
     print("=" * 60)

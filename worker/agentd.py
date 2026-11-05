@@ -114,7 +114,37 @@ class RunRequest(BaseModel):
 
 @app.post("/run", dependencies=[Depends(auth)])
 def run_code(req: RunRequest):
-    """Execute untrusted generated code in a throwaway, capped container and return its JSON output."""
+    """Execute untrusted generated code in a throwaway container (or local sandbox runner) and return its JSON output."""
+    if not client:
+        import pathlib
+        import subprocess
+        import sys
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmppath = pathlib.Path(tmpdir)
+            for name, content in {**req.files, "input.json": json.dumps(req.input)}.items():
+                p = tmppath / name
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text(content, encoding="utf-8")
+            runner_script = pathlib.Path(__file__).resolve().parent.parent / "sandbox" / "runner" / "runner.py"
+            env = os.environ.copy()
+            sep = ";" if os.name == "nt" else ":"
+            env["PYTHONPATH"] = f"{tmpdir}{sep}{runner_script.parent}{sep}{os.environ.get('PYTHONPATH', '')}"
+            proc = subprocess.run(
+                [sys.executable, str(runner_script)],
+                cwd=tmpdir,
+                capture_output=True,
+                text=True,
+                timeout=req.timeout,
+                env=env,
+            )
+            out = proc.stdout.strip()
+            err = proc.stderr[-2000:]
+            try:
+                return {"ok": proc.returncode == 0, "results": json.loads(out.splitlines()[-1]), "stderr": err}
+            except (ValueError, IndexError):
+                return {"ok": False, "error": "runner produced no JSON", "stdout": out[-2000:], "stderr": err, "results": []}
+
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w") as tar:
         for name, content in {**req.files, "input.json": json.dumps(req.input)}.items():
