@@ -11,6 +11,11 @@
 
 ![Latch Platform](assets/preview.png)
 
+### 🎬 Video Walkthrough & Containment Demonstration
+- **Full High-Definition Demo Video (3-Minute Tour & Challenge 1 Defense):** [`docs/latch_demo.mp4`](docs/latch_demo.mp4)
+- Programmatically synthesized using **Remotion** in [`remotion-video/`](remotion-video/).
+- Demonstrates Vultr Cloud Compute (`155.138.217.237`), Vultr Serverless Inference (DeepSeek v4.1), Vultr S3 Storage (`atl2.vultrobjects.com`), and live Challenge 1 kernel containment moments.
+
 **Latch** is an open-source, containment-first autonomous agent platform built ground-up on **Vultr Cloud infrastructure**. It turns user goals and web applications into tested, isolated execution workflows — synthesizing typed Python operations and automating headless browsers — while guaranteeing that every agent action stays strictly confined inside a disposable, air-gapped sandbox.
 
 ---
@@ -204,4 +209,5 @@ pytest
 - [x] **Backend & Deployment Architecture**: Dual-container architecture with air-gapped sandboxing
 - [x] **Agent Real-Task Execution**: Sandboxed API execution for search, catalog, and event workflows
 - [x] **Challenge 1 Containment Moment**: Kernel-enforced secret isolation, zero-egress network policies, and SHA-256 receipts demonstrated in the Attack Lab
-- [x] **Live Public Link**: Accessible at [http://155.138.217.237:8000](http://155.138.217.237:8000)
+- [x] **Demo Video (3 Minutes)**: Full Remotion walkthrough with audio narration & sound effects in `docs/latch_demo.mp4`
+- [x] **Live Public Link**: Accessible at [http://155.138.217.237](http://155.138.217.237) and [http://155.138.217.237:8000](http://155.138.217.237:8000)

@@ -12,3 +12,6 @@ __pycache__/
 W&B hack/
 bench/
 video/build/
+node_modules/
+remotion-video/node_modules/
+remotion-video/out/
