@@ -225,7 +225,7 @@ def readme(domain, title, ops, base_url):
     return "\n".join(lines) + "\n"
 
 
-async def publish(job_id, base_url):
+async def publish_site(job_id, base_url):
     job = db.get_job(job_id)
     domain = site_domain(job["site_url"])
     title = domain.split(".")[0].capitalize()
@@ -357,7 +357,7 @@ async def relink_sources(domain, base_url, use_model=True):
     return found
 
 
-def publish(operation: str | dict, result: Any, exec_meta: dict | None = None) -> dict:
+def publish_receipt(operation: str | dict, result: Any = None, exec_meta: dict | None = None) -> dict:
     """Publish an execution result with an attached cryptographic SHA-256 receipt.
     
     Used by API endpoints to guarantee every response carries containment proof.
@@ -381,4 +381,14 @@ def publish(operation: str | dict, result: Any, exec_meta: dict | None = None) -
         containment=containment,
         approval=approval,
     )
+
+
+def publish(arg1, arg2=None, exec_meta=None, **kwargs):
+    """Unified publisher dispatch: returns a coroutine for site jobs, or a dict receipt for executions."""
+    if exec_meta is not None or "result" in kwargs or "operation" in kwargs or (arg2 is not None and not isinstance(arg2, str)):
+        operation = kwargs.get("operation", arg1)
+        result = kwargs.get("result", arg2)
+        meta = kwargs.get("exec_meta", exec_meta)
+        return publish_receipt(operation, result, meta)
+    return publish_site(arg1, arg2)
 
