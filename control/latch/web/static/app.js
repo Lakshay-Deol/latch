@@ -284,7 +284,6 @@ function AnimatedProtocolPipeline() {
     </div>
   `;
 }
-}
 
 function FeaturedToolCard({ s }) {
   const opName = s.domain === "luma.com" ? "rsvp_event" : s.domain === "partiful.com" ? "rsvp_party" : s.domain === "toscrape.com" ? "list_books" : "search_items";
