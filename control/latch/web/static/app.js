@@ -888,13 +888,121 @@ function Reconnect({ token }) {
 
 /* ---------- tasks ---------- */
 
+function TaskDetail({ taskId, onClose, onRerun }) {
+  const [data, setData] = useState(null);
+  const [poll, setPoll] = useState(true);
+
+  const fetchDetail = () => {
+    api(`/api/tasks/${taskId}`).then((res) => {
+      setData(res);
+      if (res?.task?.status !== "running" && res?.task?.status !== "awaiting_approval") {
+        setPoll(false);
+      }
+    }).catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchDetail();
+    if (!poll) return;
+    const interval = setInterval(fetchDetail, 1200);
+    return () => clearInterval(interval);
+  }, [taskId, poll]);
+
+  if (!data) return html`<div class="card" style="margin-bottom:24px;padding:24px;">Loading task details...</div>`;
+
+  const { task, steps = [], events = [] } = data;
+  const receiptEvent = events.find((e) => e.event === "receipt_hashed");
+  const sha = receiptEvent?.fields?.sha256;
+  const isRunning = task.status === "running" || task.status === "awaiting_approval";
+
+  return html`
+    <div class="card" style="margin-bottom:28px;border-color:var(--terracotta);background:var(--ivory);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--text-quiet);">${task.id}</span>
+          <h3 style="margin:4px 0 0;font-size:18px;">${task.goal}</h3>
+        </div>
+        <div class="row" style="gap:10px;">
+          <button class="button primary small" disabled=${isRunning} onClick=${() => { setPoll(true); onRerun(task.id); }}>
+            ${isRunning ? "Executing..." : "Re-run in Sandbox →"}
+          </button>
+          <button class="button secondary small" onClick=${onClose}>Close</button>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span class="status ${task.status === 'done' ? 'done' : isRunning ? 'live' : 'queued'}">
+          <i></i>${(task.status || 'planned').toUpperCase()}
+        </span>
+        <span style="font-size:12px;color:var(--text-quiet);">${steps.length} planned steps</span>
+      </div>
+
+      <!-- Steps breakdown -->
+      <div class="oplist" style="margin-bottom:18px;">
+        ${steps.map((st, i) => html`
+          <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span class="mark ${st.status === 'done' ? 'ok' : st.status === 'running' ? 'busy' : 'idle'}">
+              ${st.status === 'done' ? '✓' : st.status === 'running' ? '↻' : '–'}
+            </span>
+            <strong style="min-width:60px;font-size:13px;">Step ${i + 1}</strong>
+            <code class="mono" style="color:var(--terracotta-dark);font-size:11px;padding:2px 6px;background:var(--oat-50);border-radius:4px;text-transform:uppercase;">
+              ${st.kind}
+            </code>
+            <span style="color:var(--text);font-size:13px;flex:1;">${st.description}</span>
+            ${st.destructive && html`
+              <span style="font-size:10.5px;padding:2px 7px;background:rgba(184,86,50,0.1);color:var(--terracotta);border-radius:4px;font-weight:700;">
+                APPROVAL REQUIRED
+              </span>
+            `}
+          </div>
+        `)}
+      </div>
+
+      <!-- Execution Output & Code Trace -->
+      ${steps.some((s) => s.payload_json) && html`
+        <div style="margin-top:14px;">
+          <label class="field-label">Sandbox Generated Code</label>
+          <pre class="code" style="max-height:220px;font-size:12px;">${steps.map((s) => s.payload_json).filter(Boolean).join("\n\n")}</pre>
+        </div>
+      `}
+
+      <!-- Containment Dispatch Trace -->
+      ${events.length > 0 && html`
+        <div style="margin-top:18px;">
+          <label class="field-label">Containment Execution Lifecycle</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+            ${events.map((ev) => html`
+              <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:8px;background:var(--oat-50);border:1px solid var(--line);font-size:11px;font-family:var(--font-mono);color:var(--espresso-800);">
+                <span style="color:var(--terracotta);font-weight:700;">•</span>
+                <span>${ev.event}</span>
+                ${ev.fields?.sandbox_id && html`<small style="color:var(--text-quiet);">(${ev.fields.sandbox_id})</small>`}
+              </span>
+            `)}
+          </div>
+        </div>
+      `}
+
+      <!-- Cryptographic Proof Card -->
+      ${sha && html`
+        <div style="margin-top:20px;padding:14px 16px;border-radius:12px;background:var(--paper);border:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--terracotta-dark);letter-spacing:.05em;text-transform:uppercase;">
+              Cryptographic Audit Receipt
+            </div>
+            <code class="mono" style="font-size:11.5px;color:var(--espresso-950);">${sha}</code>
+          </div>
+          <a class="button secondary small" href="#/receipts">View in Audit Receipts →</a>
+        </div>
+      `}
+    </div>
+  `;
+}
+
 function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [planning, setPlanning] = useState(false);
-  const [activePlan, setActivePlan] = useState(null);
-  const [running, setRunning] = useState(false);
-  const [runLog, setRunLog] = useState([]);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
 
   const load = () => api("/api/tasks").then((d) => setTasks(d.tasks || [])).catch(() => {});
   useEffect(() => { load(); }, []);
@@ -905,22 +1013,18 @@ function Tasks() {
     setPlanning(true);
     try {
       const res = await api("/api/tasks/plan", { method: "POST", body: { goal: prompt, prompt } });
-      setActivePlan(res);
+      setSelectedTaskId(res.task_id);
       load();
     } catch (err) { alert(err.message); }
     finally { setPlanning(false); }
   };
 
   const executeTask = async (taskId) => {
-    setRunning(true);
-    setRunLog([`[${new Date().toLocaleTimeString()}] Initiating sandboxed execution for task: ${taskId}...`]);
     try {
-      const res = await api(`/api/tasks/${taskId}/run`, { method: "POST" });
-      setRunLog((prev) => [...prev, `[${new Date().toLocaleTimeString()}] Result: ${JSON.stringify(res.result || res)}`]);
+      await api(`/api/tasks/${taskId}/run`, { method: "POST" });
+      setSelectedTaskId(taskId);
       load();
-    } catch (err) {
-      setRunLog((prev) => [...prev, `[${new Date().toLocaleTimeString()}] Error: ${err.message}`]);
-    } finally { setRunning(false); }
+    } catch (err) { alert(err.message); }
   };
 
   return html`
@@ -936,30 +1040,12 @@ function Tasks() {
       <button class="button primary large" disabled=${planning}>${planning ? "Planning..." : "Plan Task →"}</button>
     </form>
 
-    ${activePlan && html`
-      <div class="card" style="margin-bottom:24px;border-color:var(--terracotta);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
-          <h3 style="margin:0;">Synthesized Plan: <code class="mono" style="font-size:14px;">${activePlan.task_id}</code></h3>
-          <button class="button primary small" disabled=${running} onClick=${() => executeTask(activePlan.task_id)}>
-            ${running ? "Executing..." : "Execute with Containment →"}
-          </button>
-        </div>
-        <p style="margin:0 0 12px;color:var(--text-quiet);">${activePlan.goal}</p>
-        <div class="oplist">
-          ${(activePlan.steps || []).map((st, i) => html`
-            <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-              <span class="mark ok">✓</span>
-              <strong style="min-width:65px;">Step ${i + 1}</strong>
-              <code class="mono" style="color:var(--terracotta-dark);text-transform:uppercase;font-size:11.5px;padding:2px 6px;background:var(--oat-50);border-radius:4px;">${st.kind || st.operation || 'code'}</code>
-              <span style="color:var(--text);font-size:13.5px;flex:1;">${st.description || st.reason || ''}</span>
-              ${st.destructive && html`<span style="font-size:11px;padding:3px 8px;background:rgba(184,86,50,0.12);color:var(--terracotta);border-radius:4px;font-weight:700;">REQUIRES APPROVAL</span>`}
-            </div>
-          `)}
-        </div>
-        ${runLog.length > 0 && html`
-          <pre class="code" style="margin-top:14px;">${runLog.join("\n")}</pre>
-        `}
-      </div>
+    ${selectedTaskId && html`
+      <${TaskDetail}
+        taskId=${selectedTaskId}
+        onClose=${() => setSelectedTaskId(null)}
+        onRerun=${executeTask}
+      />
     `}
 
     <section class="section">
@@ -973,11 +1059,14 @@ function Tasks() {
               <span class="domain">${t.id} · Created: ${(t.created_at || '').slice(0, 19).replace('T', ' ')}</span>
             </div>
             <dl class="facts">
-              <div><dt>Status</dt><dd><span class="status ${t.status === 'done' ? 'done' : t.status === 'running' ? 'busy' : 'idle'}"><i></i>${(t.status || 'planned').toUpperCase()}</span></dd></div>
+              <div><dt>Status</dt><dd><span class="status ${t.status === 'done' ? 'done' : t.status === 'running' ? 'live' : 'queued'}"><i></i>${(t.status || 'planned').toUpperCase()}</span></dd></div>
             </dl>
-            <div class="acts">
-              <button class="button ${t.status === 'done' ? 'secondary' : 'primary'}" onClick=${() => executeTask(t.id)}>
-                ${t.status === 'done' ? 'Re-run →' : 'Run →'}
+            <div class="acts" style="display:flex;gap:8px;">
+              <button class="button secondary small" onClick=${() => setSelectedTaskId(t.id)}>
+                Inspect Output
+              </button>
+              <button class="button ${t.status === 'done' ? 'secondary' : 'primary'} small" onClick=${() => executeTask(t.id)}>
+                ${t.status === 'done' ? 'Re-run' : 'Run'}
               </button>
             </div>
           </div>
