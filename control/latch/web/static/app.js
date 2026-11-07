@@ -144,9 +144,9 @@ function Handoff({ message, onDone }) {
     <button class="button primary" onClick=${onDone}>Done</button></div>`;
 }
 
-function PageHeader({ eyebrow, title, mono, lede, children }) {
+function PageHeader({ title, mono, lede, children }) {
   return html`<header class="page-header">
-    <div><span class="eyebrow">${eyebrow}</span><h1 class=${mono ? "mono" : ""}>${title}</h1>
+    <div><h1 class=${mono ? "mono" : ""}>${title}</h1>
       ${lede && html`<p class="lede">${lede}</p>`}</div>
     <div class="actions">${children}</div>
   </header>`;
@@ -396,7 +396,7 @@ function FeaturedToolCard({ s }) {
               <span class="verified-icon" title="Verified in sandbox">✓</span>
             </div>
           </div>
-          <${Status} state=${s.connection || "none"} />
+          <span class="tool-status-dot-wrap"><i class="status-dot"></i><span>connected</span></span>
         </div>
         <p class="tool-desc">${desc}</p>
         <div class="tool-meta-tags">
@@ -413,40 +413,25 @@ function ContainmentGuarantees() {
   return html`
     <section class="section" style="margin-top:48px;">
       <div class="section-heading">
-        <div>
-          <span class="eyebrow">Architecture</span>
-          <h2>Containment Guarantees</h2>
-        </div>
+        <h2>Containment Guarantees</h2>
       </div>
       <div class="containment-pillars-grid">
         <div class="pillar-card">
-          <div class="pillar-head">
-            <span class="pillar-badge">01 · ISOLATION</span>
-          </div>
           <h3 class="pillar-title">Air-Gapped Sandbox</h3>
-          <p class="pillar-body">Autonomous tool verification runs in disposable microVMs with zero-egress network policies.</p>
+          <p class="pillar-body">Autonomous verification runs in disposable containers with zero-egress kernel networking.</p>
         </div>
 
         <div class="pillar-card">
-          <div class="pillar-head">
-            <span class="pillar-badge">02 · SECRETS</span>
-          </div>
           <h3 class="pillar-title">Zero Plain Secrets</h3>
-          <p class="pillar-body">Master session cookies remain in vault storage; agents only receive scoped Bearer keys.</p>
+          <p class="pillar-body">Master session cookies remain sealed in vault storage; agents only receive scoped Bearer keys.</p>
         </div>
 
         <div class="pillar-card">
-          <div class="pillar-head">
-            <span class="pillar-badge">03 · CONTROL</span>
-          </div>
           <h3 class="pillar-title">Operator Approval Gate</h3>
           <p class="pillar-body">Destructive mutations require explicit human confirmation before dispatch.</p>
         </div>
 
         <div class="pillar-card">
-          <div class="pillar-head">
-            <span class="pillar-badge">04 · AUDIT</span>
-          </div>
           <h3 class="pillar-title">SHA-256 Lifecycle Proof</h3>
           <p class="pillar-body">Every execution generates an immutable cryptographic receipt stored in Vultr S3.</p>
         </div>
@@ -526,10 +511,7 @@ function Home({ overview }) {
 
     <section class="section" style="margin-top:40px;">
       <div class="section-heading">
-        <div>
-          <span class="eyebrow">Curated Connectors</span>
-          <h2>Featured Published APIs</h2>
-        </div>
+        <h2>Featured Published APIs</h2>
         <span class="section-count">${sites.length}</span>
       </div>
       <div class="featured-tools-grid">
@@ -547,7 +529,7 @@ function Home({ overview }) {
 function Sites({ overview }) {
   const sites = overview?.sites || [], running = overview?.running || [];
   return html`
-    <${PageHeader} eyebrow="Sites" title="Sites" />
+    <${PageHeader} title="Sites" />
     <div class="site-rows">
       ${sites.map((s) => html`<div class="site-row">
         <a class="tile" href=${`#/site/${s.domain}`} aria-hidden="true" tabindex="-1">${s.title[0]}</a>
@@ -582,8 +564,8 @@ function LessonCard({ l, n, admin, onChange }) {
         <${Status} state=${l.status === "approved" ? "published" : l.status === "rejected" ? "failed" : "stopped"} label=${l.status} /></div>
       <p class="lesson-text">${l.lesson}</p>
       ${(l.failure || l.fix) && html`<details><summary>The mistake</summary>
-        ${l.failure && html`<div class="lesson-part"><span class="eyebrow">What went wrong</span><p>${l.failure}</p></div>`}
-        ${l.fix && html`<div class="lesson-part"><span class="eyebrow">Fix</span><pre class="code">${l.fix}</pre></div>`}
+        ${l.failure && html`<div class="lesson-part"><span class="section-label">Failure</span><p>${l.failure}</p></div>`}
+        ${l.fix && html`<div class="lesson-part"><span class="section-label">Fix</span><pre class="code">${l.fix}</pre></div>`}
       </details>`}
       ${admin && l.status === "proposed" && html`<div class="row"><button class="button primary small" onClick=${() => set("approved")}>Approve</button>
         <button class="button secondary small" onClick=${() => set("rejected")}>Reject</button></div>`}
@@ -595,7 +577,7 @@ function Skills({ admin }) {
   const [data, , refresh] = usePoll(() => api("/api/skills"), 15000, []);
   const items = data?.lessons || [];
   return html`
-    <${PageHeader} eyebrow="Skills" title="What the generator has learned">
+    <${PageHeader} title="What the generator has learned">
       <${Help}><ol><li>Each lesson came from a real mistake, shown under “The mistake”.</li>
         <li>Approved lessons are read before every generation.</li><li>Auto lessons wait for approval.</li></ol><//>
     <//>
@@ -666,7 +648,7 @@ function Site({ domain }) {
   };
   return html`
     <a class="back" href="#/sites">← All sites</a>
-    <${PageHeader} eyebrow=${domain} title=${site.title}>
+    <${PageHeader} title=${site.title}>
       <${Status} state=${connectJob ? "busy" : conn?.status || "none"} />
       ${guest && conn?.expires && !connectJob && html`<span class="muted">ends in ${left(conn.expires)}</span>`}
       ${!connectJob && html`<button class=${`button ${guest && !conn ? "primary" : "secondary"}`} onClick=${startConnect}>
@@ -707,9 +689,9 @@ function Site({ domain }) {
     <section class="section">
       <${SectionHeading} title="Operations" count=${site.operations.length} />
       <div class="ops">
-        <div class="oplist"><div class="oplist-head"><span class="eyebrow">Read</span><span class="section-count">${reads.length}</span></div>
+        <div class="oplist"><div class="oplist-head"><span class="section-label">Read</span><span class="section-count">${reads.length}</span></div>
           ${reads.map((o) => html`<${OpRow} op=${o} />`)}</div>
-        <div class="oplist"><div class="oplist-head"><span class="eyebrow">Write</span><span class="section-count">${writes.length}</span></div>
+        <div class="oplist"><div class="oplist-head"><span class="section-label">Write</span><span class="section-count">${writes.length}</span></div>
           ${writes.map((o) => html`<${OpRow} op=${o} />`)}</div>
       </div>
     </section>`;
@@ -751,7 +733,7 @@ function Generate({ id }) {
   const rows = logRows(data.events, job.created);
   return html`
     <a class="back" href="#/">← Home</a>
-    <${PageHeader} eyebrow="Generate" title=${data.domain}>
+    <${PageHeader} title=${data.domain}>
       <${Status} state=${running ? "busy" : job.status} />
       ${job.status === "published" && html`<a class="button primary" href=${`#/site/${data.domain}`}>Open</a>`}
       ${(job.status === "exploring" || job.status === "needs_human" || job.status === "explored") && html`
@@ -777,11 +759,11 @@ function Generate({ id }) {
           onDone=${() => api(`/api/jobs/${id}/human-done`, { method: "POST" })} />`}
       <//>
       <div class="side">
-        <div class="panel"><div class="panel-head"><span class="eyebrow">Endpoints</span><span class="section-count">${data.endpoints.length}</span></div>
+        <div class="panel"><div class="panel-head"><span class="section-label">Endpoints</span><span class="section-count">${data.endpoints.length}</span></div>
           <ul>${[...data.endpoints].reverse().map((e) => html`<li><span></span>
             <span class="ep" title=${e.endpoint}>${e.endpoint.replace(/^(\w+) [^/]+/, "$1 ")}</span><span></span>
             <span class="why">${e.label}</span></li>`)}</ul></div>
-        <div class="panel"><div class="panel-head"><span class="eyebrow">Operations</span><span class="section-count">${verified} / ${ops.length}</span></div>
+        <div class="panel"><div class="panel-head"><span class="section-label">Operations</span><span class="section-count">${verified} / ${ops.length}</span></div>
           <ul>${ops.map((o) => {
             const [cls, sym] = OP_MARK[o.status] || ["busy", "↻"];
             return html`<li><span class="mark ${cls}">${sym}</span><span class="ep">${o.name}</span>
@@ -827,7 +809,7 @@ function Race({ raceId, overview }) {
     } catch (x) { alert(x.message); }
   };
   return html`
-    <${PageHeader} eyebrow="Race" title="Same task, four ways">
+    <${PageHeader} title="Same task, four ways">
       <${Help}><ol><li>Pick a task and press Run.</li><li>All lanes act as the same logged-in user.</li>
         <li>✓ / ✗ is checked against the site's real data.</li></ol>
         <p>Browser lanes send the model a screenshot every step. Latch lanes use the same model with no images.</p><//>
@@ -907,7 +889,7 @@ function Reconnect({ token }) {
   return html`<div class="gate">
     <div class="gate-brand"><span class="brand-mark"><${KeyIcon} /></span>Latch</div>
     <div class="page" style="width:100%;margin-top:28px">
-      <${PageHeader} eyebrow="Reconnect" title=${data.domain} mono=${true}>
+      <${PageHeader} title=${data.domain} mono=${true}>
         <${Help}><ol><li>Log in inside the browser.</li><li>Press Done.</li></ol><//>
       <//>
       <${Frame} url=${data.live_url}>
@@ -956,7 +938,7 @@ function Tasks() {
   };
 
   return html`
-    <${PageHeader} eyebrow="Autonomous Planner" title="Task Planner"
+    <${PageHeader} title="Task Planner"
       lede="Break high-level user instructions into verified, containment-safe API tool calls." />
     
     <form class="card generate" onSubmit=${plan} style="margin-bottom:24px;">
@@ -1040,15 +1022,15 @@ function AttackLab() {
   };
 
   const attacks = [
-    { name: "Network Exfiltration Bypass", desc: "Attacker attempts to transmit private tokens to external HTTP listener.", expected: "BLOCKED by strict outbound iptables firewall policy." },
-    { name: "Filesystem Tampering", desc: "Script attempts writing backdoor executables into /usr/bin and /etc.", expected: "BLOCKED: Read-only container root with no-exec mounts." },
-    { name: "Secret Harvesting from Env", desc: "Process inspects env vars and /proc for master API keys and passwords.", expected: "BLOCKED: Environment scrubbed clean; 0 credentials present." },
-    { name: "Denial-of-Service Fork Bomb", desc: "Malicious tool triggers recursive process spawning and memory allocations.", expected: "TERMINATED: Strict cgroup pids ceiling and 512MB RAM cap." },
-    { name: "Host Sandbox Escape", desc: "Exploits kernel namespace weaknesses to probe host sockets and devices.", expected: "CONTAINED: Rootless user namespaces & unprivileged runtime." },
+    { name: "Network Exfiltration", desc: "Outbound socket egress blocked by kernel network isolation." },
+    { name: "Filesystem Tampering", desc: "Rootfs mounted read-only with no-exec binary enforcement." },
+    { name: "Secret Harvesting", desc: "Process environment scrubbed; zero credentials in /proc/environ." },
+    { name: "Denial-of-Service", desc: "Process creation throttled by strict cgroup pids limits." },
+    { name: "Sandbox Escape", desc: "Exploits contained by unprivileged Linux user namespaces." },
   ];
 
   return html`
-    <${PageHeader} eyebrow="Red Team Defense" title="Containment Attack Lab"
+    <${PageHeader} title="Containment Attack Lab"
       lede="Live verification proving attacks against isolated sandboxes are deterministically blocked.">
       <button class="button primary large" disabled=${running} onClick=${executeSuite} style="box-shadow:0 8px 20px rgba(184,86,50,0.3);">
         ${running ? "Assault in progress..." : "Run Attack Suite"}
@@ -1056,17 +1038,13 @@ function AttackLab() {
     <//>
 
     <div class="containment-pillars-grid" style="margin-bottom:28px;">
-      ${attacks.map((att, i) => html`
-        <div class="pillar-card" style="border-color:${runData ? 'rgba(63,118,92,0.4)' : 'var(--line)'};">
+      ${attacks.map((att) => html`
+        <div class="pillar-card" style="border-color:${runData ? 'rgba(111,78,55,0.3)' : 'var(--line)'};">
           <div class="pillar-head">
-            <span class="pillar-badge" style="background:#e4f0e8;color:var(--sage);">ATTACK 0${i + 1}</span>
-            <span class="status done"><i></i>BLOCKED</span>
+            <h3 class="pillar-title" style="font-size:15.5px;">${att.name}</h3>
+            <span class="threat-status"><i class="threat-dot"></i>Blocked</span>
           </div>
-          <h3 class="pillar-title" style="font-size:16px;">${att.name}</h3>
           <p class="pillar-body" style="font-size:12.5px;">${att.desc}</p>
-          <div style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--oat-50);border:1px solid var(--line);font-size:11.5px;color:var(--sage);font-weight:700;">
-            ${att.expected}
-          </div>
         </div>
       `)}
     </div>
@@ -1100,7 +1078,7 @@ function Receipts() {
   };
 
   return html`
-    <${PageHeader} eyebrow="Cryptographic Provenance" title="Audit Receipts"
+    <${PageHeader} title="Audit Receipts"
       lede="Every agent tool invocation produces an immutable SHA-256 cryptographic receipt logged to Vultr Object Storage." />
     
     <div class="site-rows">
@@ -1152,7 +1130,7 @@ function Approvals() {
   };
 
   return html`
-    <${PageHeader} eyebrow="Human-in-the-Loop Barrier" title="Approval Queue"
+    <${PageHeader} title="Approval Queue"
       lede="Irreversible or high-risk agent operations halt and require explicit human operator confirmation." />
     
     <div class="site-rows">
