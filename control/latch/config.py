@@ -34,7 +34,7 @@ GUEST_TTL_HOURS = int(os.environ.get("LATCH_GUEST_TTL_HOURS", "6"))
 
 BROWSE_MODEL = os.environ.get("LATCH_BROWSE_MODEL", "deepseek-v4.1-flash-1017")
 CODE_MODEL = os.environ.get("LATCH_CODE_MODEL", "deepseek-v4.1-flash-1017")
-EXPLORE_MAX_STEPS = int(os.environ.get("LATCH_EXPLORE_MAX_STEPS", "60"))
+EXPLORE_MAX_STEPS = int(os.environ.get("LATCH_EXPLORE_MAX_STEPS", "10"))
 
 # Public base URL
 _domain = os.environ.get("LATCH_DOMAIN", "localhost")

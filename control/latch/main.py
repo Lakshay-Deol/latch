@@ -269,6 +269,13 @@ def human_done(job_id: str, who=Depends(viewer)):
     return {"ok": True}
 
 
+@app.post("/api/jobs/{job_id}/finish-explore")
+def api_finish_explore(job_id: str, who=Depends(viewer)):
+    own_job(db.get_job(job_id), who)
+    jobs.request_finish_explore(job_id)
+    return {"ok": True}
+
+
 @app.post("/api/jobs/{job_id}/generate", dependencies=[Depends(admin)])
 async def generate(job_id: str, retry_failed: bool = False, fresh: bool = False, publish: bool = False):
     """fresh=true regenerates every operation from the recorded traffic; publish=true republishes afterwards."""

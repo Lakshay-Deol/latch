@@ -6,7 +6,7 @@ with the user-level action it performed so captured requests can be named from t
 """
 import json
 
-from . import db, llm
+from . import db, jobs, llm
 from .browser import SandboxBrowser
 from .config import BROWSE_MODEL
 from .endpoints import endpoint_key, is_app_api, site_domain
@@ -114,7 +114,7 @@ async def perform(b: SandboxBrowser, act, elements):
         await page.go_back(wait_until="domcontentloaded", timeout=30_000)
 
 
-async def explore(job_id, cdp, site, hints, max_steps, on_need_human, patience=10):
+async def explore(job_id, cdp, site, hints, max_steps, on_need_human, patience=3):
     """Run the exploration loop. on_need_human(reason) is awaited when a human must step in."""
     hint_text = f"\nUser hints about what matters on this site: {hints}\n" if hints else ""
     domain = site_domain(site)
@@ -124,8 +124,13 @@ async def explore(job_id, cdp, site, hints, max_steps, on_need_human, patience=1
              if is_app_api(r["method"], r["url"], r["resource_type"], domain)}
     pending_undo = {}  # label of an unreverted write -> step it happened
     no_new_streak = 0
+    human_needs = 0
     async with SandboxBrowser(job_id, cdp) as b:
         for step in range(1, max_steps + 1):
+            if job_id in getattr(jobs, "stop_exploring", set()):
+                db.add_event(job_id, "status", {"status": "exploring", "detail": "User requested immediate generation; finishing exploration."})
+                break
+
             b.step = step
             obs = await b.observe()
             recent = "\n".join(f"{h['step']}. {h['label']} ({h['action']}) -> {h['result']}" for h in history[-25:])
@@ -158,6 +163,20 @@ async def explore(job_id, cdp, site, hints, max_steps, on_need_human, patience=1
             if act.get("action") == "done":
                 break
             if act.get("action") == "need_human":
+                human_needs += 1
+                if human_needs > 1:
+                    # Prevent endless login loop (like on GitHub traffic insights)
+                    db.add_event(job_id, "step", {"step": step, "action": "auto_recover",
+                                                  "thought": "Detected repeated login wall. Navigating back to safe root page."})
+                    try:
+                        await b.page.goto(site, wait_until="domcontentloaded", timeout=6000)
+                    except Exception:
+                        pass
+                    if len(known) >= 2:
+                        db.add_event(job_id, "status", {"status": "exploring", "detail": f"Enough endpoints found ({len(known)}); proceeding to generate."})
+                        break
+                    continue
+
                 await on_need_human(act.get("thought") or "the agent needs a human")
                 history.append({"step": step, "label": "human stepped in", "action": "need_human", "result": "resumed"})
                 continue
@@ -198,6 +217,11 @@ async def explore(job_id, cdp, site, hints, max_steps, on_need_human, patience=1
             db.add_event(job_id, "coverage", {"step": step, "new": new, "total": len(known)})
             history.append({"step": step, "label": label, "action": act.get("action"),
                             "result": f"{result}, new endpoints: {', '.join(new) if new else 'none'}"})
+
+            if len(known) >= 4 and no_new_streak >= 1:
+                db.add_event(job_id, "status", {"status": "exploring", "detail": f"Discovered {len(known)} endpoints; completing exploration early for fast API generation."})
+                break
+
             if no_new_streak >= patience and not pending_undo:
                 db.add_event(job_id, "status", {"status": "exploring", "detail":
                                                 f"stopping: {patience} steps without a new endpoint"})

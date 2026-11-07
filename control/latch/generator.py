@@ -18,7 +18,7 @@ from .config import CODE_MODEL, WORKER_TOKEN, WORKERS
 from .endpoints import endpoint_key, is_app_api, is_auth_path, site_domain
 from .gateway_errors import looks_unauthenticated
 
-MAX_ATTEMPTS = 4
+MAX_ATTEMPTS = 2
 LLM_CONCURRENCY = 4
 RUN_CONCURRENCY = 3
 SKIP_HEADERS = {"cookie", "user-agent", "accept-encoding", "accept-language", "priority", "content-length",
@@ -411,6 +411,8 @@ class Generator:
         await self.refresh_token()  # start verification with the live browser's current session
         self.lessons = await asyncio.to_thread(lessons.load)
         groups = collect(self.job_id, self.site)
+        # Fast mode: cap to top 6 endpoints to prioritize core actions and prevent long synthesis delays
+        groups = groups[:6]
         self.first_step = {g["endpoint"]: g["first_step"] for g in groups}
         self.event("status", {"status": "generating", "detail": f"{len(groups)} endpoints"})
         await asyncio.gather(*(self.build(g) for g in groups))

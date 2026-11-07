@@ -754,6 +754,11 @@ function Generate({ id }) {
     <${PageHeader} eyebrow="Generate" title=${data.domain}>
       <${Status} state=${running ? "busy" : job.status} />
       ${job.status === "published" && html`<a class="button primary" href=${`#/site/${data.domain}`}>Open</a>`}
+      ${(job.status === "exploring" || job.status === "needs_human" || job.status === "explored") && html`
+        <button class="button primary" style="background:var(--terracotta);color:#fff;" onClick=${() => api(`/api/jobs/${id}/finish-explore`, { method: "POST" })}>
+          ⚡ Generate API Now
+        </button>
+      `}
       ${running && html`<button class="button secondary" onClick=${() => api(`/api/jobs/${id}/stop`, { method: "POST" })}>Stop</button>`}
       <${Help}><ol><li>Log in inside the browser when asked, then press Done.</li><li>Everything after that runs on its own.</li></ol><//>
     <//>

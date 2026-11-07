@@ -17,6 +17,16 @@ from .browser import SandboxBrowser
 # In-memory signals for jobs running in this process.
 human_done: dict[str, asyncio.Event] = {}
 tasks: dict[str, asyncio.Task] = {}
+stop_exploring: set[str] = set()
+human_needs_count: dict[str, int] = {}
+
+
+def request_finish_explore(job_id: str):
+    """Fast forward: stop exploring and proceed immediately to code generation and publish."""
+    stop_exploring.add(job_id)
+    ev = human_done.get(job_id)
+    if ev:
+        ev.set()
 
 
 def set_status(job_id, status, detail=None):
@@ -26,6 +36,13 @@ def set_status(job_id, status, detail=None):
 
 async def need_human(job_id, reason):
     """Pause the job until the human presses 'Done' in the live view."""
+    if job_id in stop_exploring:
+        return
+    cnt = human_needs_count.get(job_id, 0)
+    if cnt >= 2:
+        db.add_event(job_id, "status", {"status": "exploring", "detail": f"Skipping redundant human pause: {reason}"})
+        return
+    human_needs_count[job_id] = cnt + 1
     ev = human_done.setdefault(job_id, asyncio.Event())
     ev.clear()
     set_status(job_id, "needs_human", reason)
