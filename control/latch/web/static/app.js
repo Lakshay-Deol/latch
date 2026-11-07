@@ -73,8 +73,24 @@ const ago = (ts) => {
 
 /* ---------- icons ---------- */
 
-const KeyIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 20 3M16 7l3 3M14 9l2 2"/></svg>`;
+const LatchLogo = () => html`
+  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="overflow:visible">
+    <defs>
+      <linearGradient id="latchGradient" x1="10%" y1="90%" x2="80%" y2="20%">
+        <stop offset="0%" stop-color="#FF521C" />
+        <stop offset="50%" stop-color="#FF6B32" />
+        <stop offset="85%" stop-color="#FFE0CC" />
+        <stop offset="100%" stop-color="#FFFFFF" />
+      </linearGradient>
+    </defs>
+    <!-- Lower orange loop -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M 26.2 35.7 L 25.1 36.0 L 24.0 36.4 L 22.1 37.5 L 20.9 38.3 L 19.8 39.4 L 18.7 40.9 L 17.5 42.8 L 17.2 44.0 L 16.8 45.5 L 16.4 47.0 L 16.4 77.5 L 16.8 79.4 L 17.2 80.6 L 17.5 81.7 L 17.9 82.5 L 18.3 83.2 L 19.1 84.3 L 21.3 86.6 L 22.8 87.7 L 25.1 88.9 L 27.0 89.2 L 28.9 89.6 L 70.8 89.6 L 73.0 89.2 L 74.5 88.9 L 77.5 87.4 L 79.1 86.2 L 80.6 84.3 L 81.3 83.2 L 82.1 82.1 L 82.5 80.9 L 82.8 79.4 L 83.2 77.9 L 83.2 71.9 L 82.1 72.6 L 82.1 73.0 L 81.3 73.8 L 79.4 75.3 L 78.3 76.0 L 77.5 76.0 L 76.8 76.4 L 76.0 79.4 L 73.8 81.7 L 72.6 82.5 L 71.1 82.8 L 28.1 82.8 L 27.0 82.5 L 25.8 81.7 L 24.0 79.8 L 23.6 79.1 L 23.2 77.5 L 23.2 47.0 L 23.6 45.8 L 24.0 45.1 L 26.2 42.8 L 28.1 42.1 L 28.1 35.7 Z" fill="#FF521C" />
+    <!-- Upper shackle loop with orange-to-white gradient -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M 47.4 10.0 L 45.1 10.4 L 44.0 10.8 L 42.8 11.1 L 42.1 11.5 L 41.3 11.9 L 39.4 13.0 L 38.3 13.8 L 35.7 16.4 L 34.5 17.9 L 33.4 19.8 L 33.0 20.6 L 32.3 22.5 L 31.9 24.3 L 31.5 26.2 L 31.5 71.9 L 32.3 73.4 L 33.0 74.2 L 33.8 74.5 L 35.7 74.9 L 36.4 74.9 L 37.2 74.9 L 73.0 74.5 L 74.2 74.2 L 75.3 73.8 L 77.5 72.6 L 79.4 71.1 L 80.9 69.2 L 82.1 67.0 L 82.5 65.8 L 82.8 64.7 L 83.2 63.2 L 83.2 46.6 L 82.8 45.1 L 82.5 44.0 L 82.1 42.8 L 81.7 42.1 L 81.3 41.3 L 80.2 39.8 L 78.3 37.9 L 77.2 37.2 L 76.4 37.2 L 75.7 36.4 L 74.9 36.0 L 72.3 35.3 L 68.1 34.9 L 68.1 25.8 L 67.7 24.0 L 67.4 22.5 L 66.6 20.6 L 66.2 19.8 L 65.8 19.1 L 65.1 17.9 L 64.3 16.8 L 61.3 13.8 L 60.2 13.0 L 59.1 12.3 L 56.8 11.1 L 55.7 10.8 L 54.5 10.4 L 52.3 10.0 Z M 48.5 16.4 L 51.1 16.4 L 53.0 16.8 L 54.9 17.5 L 56.0 18.3 L 57.2 19.1 L 59.1 20.9 L 59.8 22.1 L 60.9 24.3 L 61.3 25.5 L 60.9 35.3 L 41.3 35.7 L 41.3 37.2 L 41.7 38.7 L 41.7 41.3 L 41.3 41.7 L 71.5 42.1 L 72.6 42.5 L 73.4 42.8 L 75.7 45.1 L 76.0 45.8 L 76.4 47.0 L 76.4 63.2 L 76.0 64.3 L 75.7 65.1 L 73.8 67.0 L 73.0 67.4 L 72.3 67.7 L 71.1 68.1 L 38.7 68.1 L 37.9 67.4 L 37.9 27.7 L 38.3 25.5 L 38.7 24.3 L 39.4 22.5 L 40.6 21.3 L 40.6 20.9 L 42.5 19.1 L 43.6 18.3 L 44.7 17.5 L 46.6 16.8 Z" fill="url(#latchGradient)" />
+  </svg>
+`;
+
+const KeyIcon = LatchLogo;
 const HomeIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
 const TasksIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -142,10 +158,53 @@ function Handoff({ message, onDone }) {
     <button class="button primary" onClick=${onDone}>Done</button></div>`;
 }
 
-function PageHeader({ title, mono, lede, children }) {
+function cleanSiteDomain(raw) {
+  if (!raw) return "";
+  let d = String(raw).trim().toLowerCase();
+  d = d.replace(/^https?:\/\//, "").replace(/\/.*$/, "").replace(/^www\./, "");
+  if (d === "toscrape.com") return "books.toscrape.com";
+  return d;
+}
+
+function SiteLogo({ domain, title, size = 32, className = "" }) {
+  const clean = cleanSiteDomain(domain);
+  const [failed, setFailed] = useState(false);
+  const initial = title ? title[0].toUpperCase() : (clean ? clean[0].toUpperCase() : "S");
+
+  if (!clean || failed) {
+    return html`
+      <span class=${`site-logo-fallback ${className}`} style=${`width:${size}px;height:${size}px;font-size:${Math.max(12, Math.round(size * 0.44))}px;`} aria-hidden="true">
+        ${initial}
+      </span>
+    `;
+  }
+
+  const src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(clean)}&sz=128`;
+
+  return html`
+    <span class=${`site-logo-wrap ${className}`} style=${`width:${size}px;height:${size}px;`}>
+      <img
+        class="site-logo-img"
+        src=${src}
+        alt=${title || clean}
+        width=${size}
+        height=${size}
+        loading="lazy"
+        onError=${() => setFailed(true)}
+      />
+    </span>
+  `;
+}
+
+function PageHeader({ title, mono, lede, icon, children }) {
   return html`<header class="page-header">
-    <div><h1 class=${mono ? "mono" : ""}>${title}</h1>
-      ${lede && html`<p class="lede">${lede}</p>`}</div>
+    <div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        ${icon && html`<div class="page-header-icon">${icon}</div>`}
+        <h1 class=${mono ? "mono" : ""}>${title}</h1>
+      </div>
+      ${lede && html`<p class="lede">${lede}</p>`}
+    </div>
     <div class="actions">${children}</div>
   </header>`;
 }
@@ -304,7 +363,9 @@ function HeroOrbit() {
       </div>
       <div class="orbit-circle-inner"></div>
       <div class="orbit-center-chrome" title="Latch Containment Core">
-        <${MetallicStar} />
+        <div class="orbit-latch-center">
+          <${LatchLogo} />
+        </div>
       </div>
     </div>
   `;
@@ -388,7 +449,9 @@ function FeaturedToolCard({ s }) {
       <div class="tool-body">
         <div class="tool-header-row">
           <div class="tool-identity">
-            <div class="tool-avatar">${s.title ? s.title[0] : s.domain[0].toUpperCase()}</div>
+            <div class="tool-avatar">
+              <${SiteLogo} domain=${s.domain} title=${s.title} size=28 />
+            </div>
             <div class="tool-name-wrap">
               <span class="tool-title">${s.title}</span>
               <span class="verified-icon" title="Verified in sandbox">✓</span>
@@ -435,6 +498,257 @@ function ContainmentGuarantees() {
         </div>
       </div>
     </section>
+  `;
+}
+
+function DessnSocialProof() {
+  return html`
+    <div class="dessn-proof-strip">
+      <span class="dessn-proof-label">Trusted by autonomous agent teams building with</span>
+      <div class="dessn-proof-logos">
+        <span>Anthropic</span>
+        <span class="dot-sep">•</span>
+        <span>LangChain</span>
+        <span class="dot-sep">•</span>
+        <span>DeepSeek</span>
+        <span class="dot-sep">•</span>
+        <span>Vultr</span>
+        <span class="dot-sep">•</span>
+        <span>Cursor</span>
+        <span class="dot-sep">•</span>
+        <span>OpenAI</span>
+      </div>
+    </div>
+  `;
+}
+
+function DessnQuotes() {
+  return html`
+    <div class="dessn-quotes-grid">
+      <div class="dessn-quote-card light">
+        <blockquote class="dessn-quote-text">
+          “The team and I are really loving Latch. We can safely deploy autonomous agents without credential anxiety.”
+        </blockquote>
+        <div class="dessn-quote-author">
+          <div class="dessn-avatar">AC</div>
+          <div>
+            <strong>Alex Chen</strong>
+            <span>AI Platform Lead · Vultr Ecosystem</span>
+          </div>
+        </div>
+      </div>
+      <div class="dessn-quote-card dark">
+        <blockquote class="dessn-quote-text">
+          “This is ABSOLUTELY ESSENTIAL for production agents. We get real browser workflows with deterministic containment and immutable receipts.”
+        </blockquote>
+        <div class="dessn-quote-author">
+          <div class="dessn-avatar teal">ER</div>
+          <div>
+            <strong>Elena Rostova</strong>
+            <span>Principal Systems Architect</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function DessnTrioPillars() {
+  return html`
+    <section class="section" style="margin-top:54px;">
+      <div class="section-heading" style="text-align:center;justify-content:center;flex-direction:column;gap:8px;">
+        <h2 style="font-size:32px;font-family:var(--font-serif);font-weight:500;">Anchored in prod, built for containment.</h2>
+        <p style="color:var(--secondary-text);font-size:16px;max-width:540px;margin:0 auto;">
+          Latch sits at the intersection of agent autonomy and zero-trust security.
+        </p>
+      </div>
+
+      <div class="dessn-tab-capsules">
+        <div class="dessn-pill-tab active">
+          <span>Air-gapped sandboxes</span>
+          <span class="dessn-floral-badge blue">❋</span>
+        </div>
+        <div class="dessn-pill-tab">
+          <span>Zero plain secrets</span>
+          <span class="dessn-floral-badge orange">❋</span>
+        </div>
+        <div class="dessn-pill-tab">
+          <span>Deterministic SHA-256</span>
+          <span class="dessn-floral-badge green">❋</span>
+        </div>
+      </div>
+
+      <div class="dessn-showcase-panels">
+        <!-- Panel 1: Periwinkle -->
+        <div class="dessn-panel periwinkle">
+          <div class="dessn-panel-content">
+            <h3 class="dessn-panel-title">Visibility <em>into what's live</em></h3>
+            <ul class="dessn-panel-checklist">
+              <li><span class="dessn-check-icon">◉</span> Live verified API state across every site</li>
+              <li><span class="dessn-check-icon">◉</span> Real-time network exfiltration barriers</li>
+              <li><span class="dessn-check-icon">◉</span> Continuous cookie & session health audits</li>
+            </ul>
+          </div>
+          <div class="dessn-panel-graphic">
+            <div class="dessn-mini-window">
+              <div class="mini-window-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="bar-title">latch / containment-gate</span></div>
+              <div class="mini-window-body">
+                <div class="mini-chip green">POST /v1/luma.com/list_events → 200 OK</div>
+                <div class="mini-chip blue">Egress firewall: Outbound socket DENIED</div>
+                <div class="mini-chip orange">Vault session: Sealed in AES-256</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Amber -->
+        <div class="dessn-panel amber">
+          <div class="dessn-panel-content">
+            <h3 class="dessn-panel-title">Shortcut <em>to typed consistency</em></h3>
+            <ul class="dessn-panel-checklist">
+              <li><span class="dessn-check-icon">◉</span> Autonomous OpenAPI 3.1 schema synthesis</li>
+              <li><span class="dessn-check-icon">◉</span> DeepSeek v4.1 reasoning verification</li>
+              <li><span class="dessn-check-icon">◉</span> Zero hallucination schema validation</li>
+            </ul>
+          </div>
+          <div class="dessn-panel-graphic">
+            <div class="dessn-mini-window dark">
+              <div class="mini-window-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="bar-title">openapi.json</span></div>
+              <div class="mini-window-body mono">
+                <div style="color:#A39D94;">paths:</div>
+                <div style="padding-left:14px;color:#E5A83B;">/search_books:</div>
+                <div style="padding-left:28px;color:#F3ECE2;">post: verified [SHA-256: 7f3a...]</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: Terracotta -->
+        <div class="dessn-panel terracotta">
+          <div class="dessn-panel-content">
+            <h3 class="dessn-panel-title">Containment-first <em>environment</em></h3>
+            <ul class="dessn-panel-checklist">
+              <li><span class="dessn-check-icon">◉</span> Red-team attack suite in disposable containers</li>
+              <li><span class="dessn-check-icon">◉</span> Human approval gates for state mutations</li>
+              <li><span class="dessn-check-icon">◉</span> Immutable Vultr Object Storage receipts</li>
+            </ul>
+          </div>
+          <div class="dessn-panel-graphic">
+            <div class="dessn-mini-window">
+              <div class="mini-window-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="bar-title">containment-proof.log</span></div>
+              <div class="mini-window-body">
+                <div class="mini-threat-row"><span>ATTACK 01 · Exfiltration</span><strong style="color:#15803D;">BLOCKED</strong></div>
+                <div class="mini-threat-row"><span>ATTACK 02 · Tampering</span><strong style="color:#15803D;">BLOCKED</strong></div>
+                <div class="mini-threat-row"><span>ATTACK 03 · Secret Harvest</span><strong style="color:#15803D;">BLOCKED</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function DessnHowItWorks() {
+  return html`
+    <section class="dessn-how-it-works-section">
+      <div class="how-head">
+        <h2>How it works</h2>
+        <p>Latch provides true containment so models can act without risk.</p>
+      </div>
+
+      <div class="how-steps-grid">
+        <div class="how-step-card">
+          <div class="how-step-badge">1</div>
+          <h3 class="how-step-title">Connect any web app in one click</h3>
+          <p class="how-step-desc">Paste the target URL. Latch spins up an isolated, sandboxed browser session.</p>
+          <div class="how-step-preview">
+            <code>connect(url) → sandbox_id: sbx_984</code>
+          </div>
+        </div>
+
+        <div class="how-step-card">
+          <div class="how-step-badge">2</div>
+          <h3 class="how-step-title">Autonomous exploration & synthesis</h3>
+          <p class="how-step-desc">Models crawl states, map parameters, and synthesize strict OpenAPI schemas inside kernel-isolated jail.</p>
+          <div class="how-step-preview">
+            <code>deepseek_synthesize() → openapi_3_1</code>
+          </div>
+        </div>
+
+        <div class="how-step-card">
+          <div class="how-step-badge">3</div>
+          <h3 class="how-step-title">Instant typed MCP & REST dispatch</h3>
+          <p class="how-step-desc">Agents invoke operations with scoped Bearer tokens. Every invocation produces a SHA-256 audit receipt.</p>
+          <div class="how-step-preview">
+            <code>dispatch() → receipt_sha256</code>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function DessnBottomBanner() {
+  return html`
+    <div class="landing-footer-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;position:relative;z-index:2;">
+        <div>
+          <h2 style="font-family:var(--font-serif);font-size:clamp(32px, 4vw, 48px);font-weight:500;margin:0 0 10px;color:#FFFFFF;">
+            Containment, in your hands.
+          </h2>
+          <p style="margin:0;font-size:16px;color:rgba(255,255,255,0.9);max-width:48ch;">
+            Deploy autonomous agents against live websites with deterministic boundaries and cryptographic receipts.
+          </p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <a href="#/race" class="button" style="background:#191816;color:#FFFFFF;padding:14px 28px;font-size:15px;border-radius:9999px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+            Try Benchmark Race →
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-top-grid" style="position:relative;z-index:2;margin-top:20px;">
+        <div class="footer-brand-col">
+          <div class="footer-brand-title">
+            <span class="brand-mark"><${LatchLogo} /></span>
+            <span>LATCH</span>
+          </div>
+          <p class="footer-tagline">
+            Deterministic containment architecture and verified, typed APIs for autonomous agents.
+          </p>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Product</span>
+          <ul class="footer-nav-list">
+            <li><a href="#/sites">Sites & Schemas</a></li>
+            <li><a href="#/attack-lab">Containment Attack Lab</a></li>
+            <li><a href="#/tasks">Task Planner</a></li>
+            <li><a href="#/receipts">Audit Receipts</a></li>
+            <li><a href="#/approvals">Approval Queue</a></li>
+            <li><a href="#/race">4-Way Race</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Infrastructure</span>
+          <ul class="footer-nav-list">
+            <li><a href="https://vultr.com" target="_blank" rel="noreferrer">Vultr Cloud & Object Storage</a></li>
+            <li><a href="https://deepseek.com" target="_blank" rel="noreferrer">DeepSeek v4.1 Reasoning</a></li>
+            <li><a href="https://anthropic.com" target="_blank" rel="noreferrer">Claude Code MCP Integration</a></li>
+            <li><a href="https://github.com" target="_blank" rel="noreferrer">Open Source GitHub Repository</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar" style="position:relative;z-index:2;">
+        <span>© 2026 Latch Project · All rights reserved</span>
+        <div style="display:flex;gap:16px;">
+          <a href="#/">Security Proof</a>
+          <a href="#/">OpenAPI 3.1</a>
+          <a href="#/">Terms</a>
+        </div>
+      </div>
+    </div>
   `;
 }
 
@@ -489,6 +803,10 @@ function Home({ overview }) {
 
     <${AnimatedProtocolPipeline} />
 
+    <${DessnSocialProof} />
+
+    <${DessnQuotes} />
+
     ${running.length > 0 && html`
       <section class="section" style="margin-top:20px;">
         <${SectionHeading} title="Active Generation Jobs" count=${running.length} />
@@ -518,7 +836,13 @@ function Home({ overview }) {
       ${overview && !sites.length && html`<div class="empty">No apps generated yet. Paste a URL above to start!</div>`}
     </section>
 
+    <${DessnTrioPillars} />
+
+    <${DessnHowItWorks} />
+
     <${ContainmentGuarantees} />
+
+    <${DessnBottomBanner} />
   `;
 }
 
@@ -530,7 +854,9 @@ function Sites({ overview }) {
     <${PageHeader} title="Sites" />
     <div class="site-rows">
       ${sites.map((s) => html`<div class="site-row">
-        <a class="tile" href=${`#/site/${s.domain}`} aria-hidden="true" tabindex="-1">${s.title[0]}</a>
+        <a class="tile" href=${`#/site/${s.domain}`} aria-label=${s.title} tabindex="-1">
+          <${SiteLogo} domain=${s.domain} title=${s.title} size=36 />
+        </a>
         <div class="who"><a class="title" href=${`#/site/${s.domain}`}>${s.title}</a><span class="domain">${s.domain}</span></div>
         <dl class="facts">
           <div><dt>Operations</dt><dd>${s.operations}</dd></div>
@@ -541,7 +867,9 @@ function Sites({ overview }) {
         <div class="acts"><a class="button secondary" href=${`#/site/${s.domain}`}>Open →</a></div>
       </div>`)}
       ${running.map((j) => html`<div class="site-row">
-        <a class="tile" href=${`#/job/${j.id}`} aria-hidden="true" tabindex="-1">${j.domain[0].toUpperCase()}</a>
+        <a class="tile" href=${`#/job/${j.id}`} aria-label=${j.domain} tabindex="-1">
+          <${SiteLogo} domain=${j.domain} size=36 />
+        </a>
         <div class="who"><a class="title" href=${`#/job/${j.id}`}>${j.domain.split(".")[0]}</a><span class="domain">${j.domain}</span></div>
         <dl class="facts"><div><dt>Status</dt><dd><${Status} state="busy" label=${j.status} /></dd></div></dl>
         <div class="acts"><a class="button secondary" href=${`#/job/${j.id}`}>Watch →</a></div>
@@ -608,7 +936,7 @@ function Site({ domain }) {
   };
   return html`
     <a class="back" href="#/sites">← All sites</a>
-    <${PageHeader} title=${site.title}>
+    <${PageHeader} title=${site.title} icon=${html`<${SiteLogo} domain=${domain} title=${site.title} size=36 />`}>
       <${Status} state=${connectJob ? "busy" : conn?.status || "none"} />
       ${guest && conn?.expires && !connectJob && html`<span class="muted">ends in ${left(conn.expires)}</span>`}
       ${!connectJob && html`<button class=${`button ${guest && !conn ? "primary" : "secondary"}`} onClick=${startConnect}>
@@ -693,7 +1021,7 @@ function Generate({ id }) {
   const rows = logRows(data.events, job.created);
   return html`
     <a class="back" href="#/">← Home</a>
-    <${PageHeader} title=${data.domain}>
+    <${PageHeader} title=${data.domain} icon=${html`<${SiteLogo} domain=${data.domain} size=36 />`}>
       <${Status} state=${running ? "busy" : job.status} />
       ${job.status === "published" && html`<a class="button primary" href=${`#/site/${data.domain}`}>Open</a>`}
       ${(job.status === "exploring" || job.status === "needs_human" || job.status === "explored") && html`
@@ -1097,29 +1425,58 @@ function AttackLab() {
   };
 
   const attacks = [
-    { name: "Network Exfiltration", desc: "Outbound socket egress blocked by kernel network isolation." },
-    { name: "Filesystem Tampering", desc: "Rootfs mounted read-only with no-exec binary enforcement." },
-    { name: "Secret Harvesting", desc: "Process environment scrubbed; zero credentials in /proc/environ." },
-    { name: "Denial-of-Service", desc: "Process creation throttled by strict cgroup pids limits." },
-    { name: "Sandbox Escape", desc: "Exploits contained by unprivileged Linux user namespaces." },
+    {
+      num: "01",
+      name: "Network Exfiltration Bypass",
+      desc: "Attacker attempts to transmit private tokens to external HTTP listener.",
+      blockedBy: "BLOCKED by strict outbound iptables firewall policy."
+    },
+    {
+      num: "02",
+      name: "Filesystem Tampering",
+      desc: "Attacker attempts to write or alter binaries in system root paths.",
+      blockedBy: "BLOCKED by read-only rootfs mount & no-exec partition enforcement."
+    },
+    {
+      num: "03",
+      name: "Secret Harvesting",
+      desc: "Attacker attempts to dump environment variables and process memory.",
+      blockedBy: "BLOCKED by sanitized process environment; zero host tokens exposed."
+    },
+    {
+      num: "04",
+      name: "Denial-of-Service Fork Bomb",
+      desc: "Attacker spawns unbounded threads and child processes to exhaust CPU.",
+      blockedBy: "BLOCKED by strict cgroup pids throttling and memory ceilings."
+    },
+    {
+      num: "05",
+      name: "Host Sandbox Breakout",
+      desc: "Attacker leverages kernel exploits to break container boundary.",
+      blockedBy: "BLOCKED by unprivileged Linux user namespaces & seccomp profile."
+    },
   ];
 
   return html`
     <${PageHeader} title="Containment Attack Lab"
       lede="Live verification proving attacks against isolated sandboxes are deterministically blocked.">
-      <button class="button primary large" disabled=${running} onClick=${executeSuite} style="box-shadow:0 8px 20px rgba(184,86,50,0.3);">
+      <button class="button primary large" disabled=${running} onClick=${executeSuite} style="box-shadow:0 8px 24px rgba(212,80,29,0.35);">
         ${running ? "Assault in progress..." : "Run Attack Suite"}
       </button>
     <//>
 
     <div class="containment-pillars-grid" style="margin-bottom:28px;">
       ${attacks.map((att) => html`
-        <div class="pillar-card" style="border-color:${runData ? 'rgba(111,78,55,0.3)' : 'var(--line)'};">
+        <div class="pillar-card" style="border-color:${runData ? 'rgba(212,80,29,0.3)' : 'rgba(25,24,22,0.09)'};">
           <div class="pillar-head">
-            <h3 class="pillar-title" style="font-size:15.5px;">${att.name}</h3>
-            <span class="threat-status"><i class="threat-dot"></i>Blocked</span>
+            <span class="pillar-badge-num">ATTACK ${att.num}</span>
+            <span class="threat-status"><i class="threat-dot"></i>BLOCKED</span>
           </div>
-          <p class="pillar-body" style="font-size:12.5px;">${att.desc}</p>
+          <h3 class="pillar-title">${att.name}</h3>
+          <p class="pillar-body">${att.desc}</p>
+          <div class="pillar-callout">
+            ${att.blockedBy}
+          </div>
         </div>
       `)}
     </div>
@@ -1268,6 +1625,27 @@ function Shell({ page, arg, children, overview, role }) {
   const [jobDomain, setJobDomain] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [navVisible, setNavVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY <= 50) {
+        setNavVisible(true);
+      } else if (currentScrollY > lastScrollY.current + 8) {
+        // Scrolling down -> auto-hide navbar
+        setNavVisible(false);
+      } else if (currentScrollY < lastScrollY.current - 8) {
+        // Scrolling up -> reveal navbar
+        setNavVisible(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     setJobDomain(null);
@@ -1276,77 +1654,107 @@ function Shell({ page, arg, children, overview, role }) {
 
   useEffect(() => {
     setMobileOpen(false);
+    setNavVisible(true);
   }, [page, arg]);
 
   const site = page === "site" ? overview?.sites?.find((s) => s.domain === arg)?.title || arg : page === "job" ? jobDomain : null;
   const cur = (p) => (p ? "page" : undefined);
   const count = (n) => (n ? html`<span class="nav-count">${n}</span>` : "");
+  const isHidden = !navVisible && !mobileOpen;
 
   return html`
-    <div class=${`app-shell ${collapsed ? "sidebar-collapsed" : ""}`}>
-      <!-- Mobile Topbar Header -->
-      <header class="mobile-topbar">
-        <a class="brand" href="#/">
-          <span class="brand-mark"><${KeyIcon} /></span>
-          <span class="brand-name">Latch</span>
-        </a>
-        <button class="mobile-menu-btn" aria-label="Toggle navigation" onClick=${() => setMobileOpen(!mobileOpen)}>
-          <${mobileOpen ? CloseIcon : MenuIcon} />
-        </button>
+    <div class="app-shell horizontal-shell">
+      <!-- Top Horizontal Navigation Bar (Centered, Auto-Hide & Glossy Glass) -->
+      <header class=${`top-navbar glossy-nav ${isHidden ? "nav-hidden" : ""}`}>
+        <div class="top-navbar-container">
+          <!-- Left: Brand Logo -->
+          <div class="top-navbar-left">
+            <a class="brand" href="#/">
+              <span class="brand-mark"><${LatchLogo} /></span>
+              <span class="brand-name">Latch</span>
+            </a>
+          </div>
+
+          <!-- Center: Primary Desktop Navigation Links -->
+          <div class="top-navbar-center">
+            <nav class="top-nav-menu desktop-nav">
+              <a class="top-nav-link" href="#/" aria-current=${cur(!page || page === "job")}>
+                <span>Home</span>
+              </a>
+              <a class="top-nav-link" href="#/tasks" aria-current=${cur(page === "tasks")}>
+                <span>Tasks</span>
+              </a>
+              <a class="top-nav-link" href="#/attack-lab" aria-current=${cur(page === "attack-lab")}>
+                <span>Attack Lab</span>
+              </a>
+              <a class="top-nav-link" href="#/receipts" aria-current=${cur(page === "receipts")}>
+                <span>Receipts</span>
+              </a>
+              <a class="top-nav-link" href="#/approvals" aria-current=${cur(page === "approvals")}>
+                <span>Approvals</span>
+              </a>
+              <a class="top-nav-link" href="#/sites" aria-current=${cur(page === "sites" || page === "site")}>
+                <span>Sites</span>
+                ${overview?.sites?.length ? html`<span class="nav-count">${overview.sites.length}</span>` : ""}
+              </a>
+            </nav>
+          </div>
+
+          <!-- Right: Balanced Empty / Context Area & Mobile Toggle -->
+          <div class="top-navbar-right">
+            ${site && html`
+              <div class="top-nav-site-pill desktop-nav" title="Currently scoped site">
+                <span class="pill-dot"></span>
+                <span class="pill-site">${site}</span>
+              </div>
+            `}
+            <!-- Mobile Toggle Button (Visible only on mobile) -->
+            <button class="mobile-toggle-btn" aria-label="Toggle navigation" onClick=${() => setMobileOpen(!mobileOpen)}>
+              <${mobileOpen ? CloseIcon : MenuIcon} />
+            </button>
+          </div>
+        </div>
       </header>
 
-      <!-- Backdrop for mobile drawer -->
-      ${mobileOpen && html`<div class="sidebar-backdrop" onClick=${() => setMobileOpen(false)}></div>`}
+      <!-- Mobile Full-Screen Drawer (Matching Image 2 Reference) -->
+      ${mobileOpen && html`
+        <div class="mobile-drawer-overlay">
+          <div class="mobile-drawer-content">
+            <nav class="mobile-drawer-nav">
+              <a class="mobile-nav-row" href="#/" aria-current=${cur(!page || page === "job")} onClick=${() => setMobileOpen(false)}>
+                <span>Home</span>
+                <svg class="mobile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </a>
+              <a class="mobile-nav-row" href="#/tasks" aria-current=${cur(page === "tasks")} onClick=${() => setMobileOpen(false)}>
+                <span>Tasks</span>
+                <svg class="mobile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </a>
+              <a class="mobile-nav-row" href="#/attack-lab" aria-current=${cur(page === "attack-lab")} onClick=${() => setMobileOpen(false)}>
+                <span>Attack Lab</span>
+                <svg class="mobile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </a>
+              <a class="mobile-nav-row" href="#/receipts" aria-current=${cur(page === "receipts")} onClick=${() => setMobileOpen(false)}>
+                <span>Receipts</span>
+                <svg class="mobile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </a>
+              <a class="mobile-nav-row" href="#/approvals" aria-current=${cur(page === "approvals")} onClick=${() => setMobileOpen(false)}>
+                <span>Approvals</span>
+                <svg class="mobile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </a>
+              <a class="mobile-nav-row" href="#/sites" aria-current=${cur(page === "sites" || page === "site")} onClick=${() => setMobileOpen(false)}>
+                <span class="row-label">Sites ${overview?.sites?.length ? html`<span class="nav-count" style="margin-left:8px;">${overview.sites.length}</span>` : ""}</span>
+                <svg class="mobile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </a>
+            </nav>
 
-      <!-- Sidebar -->
-      <aside class=${`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
-        <div class="sidebar-header">
-          <a class="brand" href="#/">
-            <span class="brand-mark"><${KeyIcon} /></span>
-            <span class="brand-name nav-text">Latch</span>
-          </a>
-          <button class="sidebar-toggle-btn desktop-only" title=${collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick=${() => setCollapsed(!collapsed)}>
-            <${PanelToggleIcon} />
-          </button>
-        </div>
-
-        <div class="sidebar-context nav-text">
-          <small>Site</small>
-          <strong>${site || "None selected"}</strong>
-        </div>
-
-        <nav class="side-nav">
-          <a class="nav-item" href="#/" aria-current=${cur(!page || page === "job")} title="Home">
-            <${HomeIcon} /><span class="nav-text">Home</span>
-          </a>
-          <a class="nav-item" href="#/tasks" aria-current=${cur(page === "tasks")} title="Tasks">
-            <${TasksIcon} /><span class="nav-text">Tasks</span>
-          </a>
-          <a class="nav-item" href="#/attack-lab" aria-current=${cur(page === "attack-lab")} title="Attack Lab">
-            <${AttackLabIcon} /><span class="nav-text">Attack Lab</span>
-          </a>
-          <a class="nav-item" href="#/receipts" aria-current=${cur(page === "receipts")} title="Receipts">
-            <${ReceiptsIcon} /><span class="nav-text">Receipts</span>
-          </a>
-          <a class="nav-item" href="#/approvals" aria-current=${cur(page === "approvals")} title="Approvals">
-            <${ApprovalsIcon} /><span class="nav-text">Approvals</span>
-          </a>
-          <a class="nav-item" href="#/sites" aria-current=${cur(page === "sites" || page === "site")} title="Sites">
-            <${SitesIcon} /><span class="nav-text">Sites</span>${count(overview?.sites?.length)}
-          </a>
-          <a class="nav-item" href="#/race" aria-current=${cur(page === "race")} title="Race">
-            <${RaceIcon} /><span class="nav-text">Race</span>
-          </a>
-        </nav>
-
-        <div class="sidebar-bottom">
-          <div class="containment-status-badge">
-            <span class="status-pulse-dot"></span>
-            <span class="status-title nav-text">CONTAINMENT ACTIVE</span>
+            <div class="mobile-drawer-bottom">
+              <a class="mobile-cta-full" href="#/sites" onClick=${() => setMobileOpen(false)}>
+                View Sandboxed APIs →
+              </a>
+            </div>
           </div>
-          <small class="status-subtitle nav-text">Vultr & DeepSeek v4.1</small>
         </div>
-      </aside>
+      `}
 
       <!-- Main Canvas -->
       <main class="app-main">

@@ -16,3 +16,10 @@ node_modules/
 remotion-video/node_modules/
 remotion-video/out/
 FULL_PROJECT_GUIDE.md
+
+*.webp
+timescale*
+dessn.png
+*.jpg
+*.jpeg
+control/latch/web/static/latch-logo.png

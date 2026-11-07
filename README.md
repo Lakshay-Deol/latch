@@ -1,6 +1,6 @@
 # Latch
 
-> **Containment isn't a feature. It's the product.**
+> **"Containment isn't a feature. It's the product."**
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-155.138.217.237-22c55e?style=for-the-badge&logo=vultr)](http://155.138.217.237)
 [![GitHub](https://img.shields.io/badge/GitHub-Lakshay--Deol%2Flatch-b85632?style=for-the-badge&logo=github)](https://github.com/Lakshay-Deol/latch)
@@ -9,41 +9,62 @@
 
 **🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)
 
-![Latch Platform](assets/preview.png)
-
-### 🎬 Video Walkthrough & Containment Demonstration
-- **Full High-Definition Demo Video (3-Minute Tour & Challenge 1 Defense):** [`docs/latch_demo.mp4`](docs/latch_demo.mp4)
-- Programmatically synthesized using **Remotion** in [`remotion-video/`](remotion-video/).
-- Demonstrates Vultr Cloud Compute (`155.138.217.237`), Vultr Serverless Inference (DeepSeek v4.1), Vultr S3 Storage (`atl2.vultrobjects.com`), and live Challenge 1 kernel containment moments.
-
-**Latch** is an open-source, containment-first autonomous agent platform built ground-up on **Vultr Cloud infrastructure**. It turns user goals and web applications into tested, isolated execution workflows — synthesizing typed Python operations and automating headless browsers — while guaranteeing that every agent action stays strictly confined inside a disposable, air-gapped sandbox.
+![Latch Platform Hero](assets/preview.png)
 
 ---
 
-## 1. Vultr Services & Cloud Infrastructure
+### ⚡ 20-Second Video Introducer & Demo
+> **Short on time? Watch the 20-second introducer or the full 3-minute deep dive:**
+>
+> [![Latch 20s Quick Tour](assets/preview.png)](docs/latch_demo.mp4)
+>
+> 📽️ **[▶️ Click to Watch 20s Quick Tour (MP4)](docs/latch_demo.mp4)**  
+> 🎬 **Full High-Definition Demo Video (3-Minute Tour & Challenge 1 Defense):** [`docs/latch_demo.mp4`](docs/latch_demo.mp4)  
+> *Programmatically synthesized using **Remotion** in [`remotion-video/`](remotion-video/). Demonstrates Vultr Cloud Compute (`155.138.217.237`), Vultr Serverless Inference (DeepSeek v4.1), Vultr S3 Storage (`atl2.vultrobjects.com`), and live Challenge 1 kernel containment moments.*
 
-Latch relies on Vultr's composable cloud ecosystem to power every layer of the agent lifecycle:
+---
+
+## 1. Executive Summary & Problem Solved
+
+### The Problem
+Autonomous AI agents (such as Claude Code, AutoGPT, Devin, or custom enterprise workers) are granted raw terminal, execution, and web browser privileges to solve real-world problems. However, current agent execution paradigms suffer from three fatal flaws:
+
+1. **Catastrophic Security & Credential Leakage**: When an agent executes untrusted code, prompt injection or runaway model hallucinations can inspect `/proc/1/environ` to exfiltrate master cloud tokens (`VULTR_API_KEY`, database credentials, OAuth tokens), initiate outbound TCP reverse shells, or launch process-exhausting fork bombs.
+2. **The Fragile "Screenshot Loop"**: Current web-operating agents rely on sending high-resolution screenshots to vision models at every single step. This approach is slow (5–12 seconds per action), cost-prohibitive ($0.10+ per step), and brittle against minor DOM changes.
+3. **Absence of Verifiable Provenance & Human Safety**: Once an agent executes, there is no mathematical proof of what took place inside the runtime, and no deterministic barrier to stop destructive, irreversible actions (e.g., deleting production databases or making payments).
+
+### The Solution: Latch
+**Latch** solves this by turning arbitrary web applications into **typed, verifiable Python modules and OpenAPI 3.1.0 specifications** while guaranteeing that every agent invocation executes inside an **air-gapped, kernel-contained sandbox**. Latch combines deterministic security with sub-second execution speeds, replacing visual loops with direct, verified API operations.
+
+---
+
+## 2. Vultr Cloud Infrastructure: Deep Dive & Service Mapping
+
+Latch is architected ground-up on **Vultr's composable cloud ecosystem**. Every phase of the agent lifecycle maps directly to native Vultr services:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                   VULTR CLOUD INFRASTRUCTURE                                │
+│                                   VULTR CLOUD ECOSYSTEM                                     │
 ├──────────────────────────┬──────────────────────────┬───────────────────────────────────────┤
 │   Vultr Cloud Compute    │ Vultr Serverless Infer.  │       Vultr Object Storage (S3)       │
 │     (Ubuntu 24.04 LTS)   │    (DeepSeek v4.1)       │        (atl2.vultrobjects.com)        │
 │                          │                          │                                       │
-│ • Control Plane (80/8000)│ • Task Planning          │ • latch-apis (OpenAPI & Python ops)   │
+│ • Control Plane (80/8000)│ • Task Planning Engine   │ • latch-apis (Specs & Python modules) │
 │ • Worker Daemon (7000)   │ • Python Code Synthesis  │ • latch-receipts (SHA-256 signatures) │
 │ • Disposable MicroVMs    │ • Vision DOM Verifier    │ • latch-skills (Curated lessons)      │
-└──────────────────────────┴──────────────────────────┴───────────────────────────────────────┘
+├──────────────────────────┴──────────────────────────┴───────────────────────────────────────┤
+│ • Vultr VPC 2.0: Private 10.10.0.0/24 subnet isolating worker and sandbox control traffic.  │
+│ • Vultr Firewall: Hardens host perimeter, blocking public probing into worker ports.       │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 | Vultr Service | Configuration & Region | Role in Latch Architecture |
 |---|---|---|
 | **Vultr Cloud Compute** | `155.138.217.237` (Ubuntu 24.04 LTS) | Hosts the FastAPI Control Plane and the local Docker Worker Daemon running ephemeral runner sandboxes. |
-| **Vultr Serverless Inference** | `api.vultrinference.com/v1` (`deepseek-v4.1-flash-1017`) | High-speed, cost-effective inference engine that translates user prompts into multi-step execution plans and verified Python code. |
-| **Vultr Object Storage (S3)** | Atlanta Cluster (`atl2.vultrobjects.com`) | S3-compatible persistent storage across 3 dedicated buckets: `latch-apis` (specs & code), `latch-receipts` (cryptographic audit trail), and `latch-skills` (curated containment knowledge). |
-| **Vultr VPC 2.0** | `10.10.0.0/24` Private Subnet | Isolates inter-node worker control traffic, preventing untrusted agent code from accessing host networks. |
-| **Vultr Firewall Groups** | Security Policy | Restricts public ingress to HTTP/HTTPS (`80`, `443`, `8000`), blocking internal worker ports (`7000`) from the public internet. |
+| **Vultr Serverless Inference** | `api.vultrinference.com/v1` (`deepseek-v4.1-flash-1017`) | High-speed, cost-effective inference engine that translates user prompts into multi-step execution plans and verified Python code in <400ms. |
+| **Vultr Object Storage (S3)** | Atlanta Cluster (`atl2.vultrobjects.com`) | S3-compatible persistent storage across 3 dedicated zero-trust buckets: `latch-apis` (specs & code), `latch-receipts` (cryptographic audit trail), and `latch-skills` (curated containment knowledge). |
+| **Vultr VPC 2.0** | `10.10.0.0/24` Private Subnet | Isolates inter-node worker control traffic from public networks, preventing untrusted agent code from accessing host networks. |
+| **Vultr Firewall Groups** | Security Policy | Restricts public ingress strictly to HTTP/HTTPS (`80`, `443`, `8000`), blocking internal worker ports (`7000`) and container bridges from public scanning. |
 
 ### Vultr Infrastructure Deployment Evidence
 
@@ -59,84 +80,77 @@ Latch relies on Vultr's composable cloud ecosystem to power every layer of the a
 
 ---
 
-## 2. Backend & Deployment Architecture
-
-Latch is architected with complete separation of concerns between control, reasoning, and sandboxed execution:
+## 3. End-to-End Walkthrough of Every Functionality
 
 ```
-                                  [ User / Agent Request ]
-                                             │
-                                             ▼
-                             ┌───────────────────────────────┐
-                             │     VULTR CLOUD COMPUTE       │
-                             │  Public IP: 155.138.217.237   │
-                             │                               │
-                             │     FastAPI Control Plane     │
-                             │        (Port 80 / 8000)       │
-                             └───────────────┬───────────────┘
-                                             │
-                     ┌───────────────────────┼───────────────────────┐
-                     │                       │                       │
-                     ▼                       ▼                       ▼
-      ┌─────────────────────────────┐  ┌───────────┐  ┌─────────────────────────────┐
-      │  VULTR SERVERLESS INFERENCE │  │ APPROVAL  │  │   VULTR OBJECT STORAGE      │
-      │   (DeepSeek v4.1 Engine)    │  │   GATE    │  │    (atl2.vultrobjects.com)  │
-      │                             │  │           │  │                             │
-      │ • Autonomous Task Planner   │  │ Destruct- │  │ • latch-apis (31 specs)     │
-      │ • Python Code Synthesizer   │  │ ive write │  │ • latch-receipts (10 proofs)│
-      │ • Visual DOM Verifier       │  │ approval  │  │ • latch-skills (15 lessons) │
-      └─────────────────────────────┘  └─────┬─────┘  └─────────────────────────────┘
-                                             │
-                                             ▼
-                             ┌───────────────────────────────┐
-                             │     VULTR WORKER DAEMON       │
-                             │    (agentd on Port 7000)      │
-                             └───────────────┬───────────────┘
-                                             │
-                                             ▼
-                             ┌───────────────────────────────┐
-                             │  DISPOSABLE AIR-GAPPED RUNNER │
-                             │                               │
-                             │ • Network Mode: NONE          │
-                             │ • RAM Ceiling: 512MB          │
-                             │ • Max PIDs: 128 (No bombs)    │
-                             │ • Read-Only Root Filesystem   │
-                             │ • Empty Environment: {}       │
-                             │ • Dropped Capabilities: ALL   │
-                             └───────────────┬───────────────┘
-                                             │
-                                             ▼
-                             [ SHA-256 Cryptographic Receipt ]
+┌───────────────────────────────────────────────────────────────────────────────────────┐
+│                                LATCH PLATFORM ARCHITECTURE                            │
+│                                                                                       │
+│  [ Home / URL Box ] ────> [ Autonomous Explorer ] ────> [ DeepSeek Code Synthesis ]  │
+│           │                                                          │                │
+│           ▼                                                          ▼                │
+│  [ Tasks Planner ]        [ Human Approval Queue ] <──── [ Ephemeral Sandbox ]        │
+│           │                          │                               │                │
+│           ▼                          ▼                               │                │
+│  [ Attack Lab Defense ] ─> [ Verified MCP / REST ] ───> [ SHA-256 S3 Receipts ]      │
+└───────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Deployment Flow:
-1. **Single-Command Launch**: Automated deployment via `docker compose -f docker-compose.single.yml up -d` or the native systemd daemon (`scripts/deploy_vultr.sh`).
-2. **Stateless Workloads**: Every tool call and synthetic API execution spins up a dedicated disposable container that is forcibly destroyed upon task completion.
+### 1. The Autonomous API Generator (Home Page)
+* **URL Input**: Paste any web application URL (e.g. `https://books.toscrape.com`, `https://luma.com`).
+* **Session Vault Handoff**: For authenticated applications, an embedded live view (noVNC / CDP) allows safe human login. Passwords and 2FA tokens remain sealed in Vault storage and are never exposed to LLMs.
+* **Autonomous Exploration**: Headless Chromium navigates routes, forms, and search bars, capturing all HTTP requests and GraphQL queries.
+* **Code Synthesis**: Vultr Serverless DeepSeek v4.1 translates traffic into typed Python operations and OpenAPI 3.1.0 schemas.
+* **Ephemeral Verification**: Runs each operation in an air-gapped container; only clean executions are marked `verified`.
+
+### 2. Task Planner (`#/tasks`)
+![Task Planner](assets/tasks_preview.png)
+* Translates high-level natural language instructions into ordered steps (`code` vs `browser`).
+* Automatically flags destructive operations (`delete`, `pay`, `submit`) for the human gate.
+* Dispatches execution to disposable sandboxes, producing real-time output logs and live execution receipts.
+
+### 3. Published Connectors with Real Site Logos (`#/sites`)
+![Sites Directory](assets/sites_preview.png)
+* One-click consumption of generated web APIs with dynamically fetched official brand logos:
+  * **Claude / Goose / Cursor MCP**: `claude mcp add --transport http <domain> <mcp_url>`
+  * **REST API**: Direct `POST /v1/{domain}/{operation}` with Bearer API key authentication.
+  * **Python SDK**: Standalone, typed Python module (`run(session, ...)`).
+
+### 4. Containment Attack Lab (`#/attack-lab`)
+![Attack Lab](assets/attack_lab_preview.png)
+* Interactive red-team defense suite executing 5 real attacks against disposable sandboxes:
+  1. **Secret Harvesting**: Probes `/proc/1/environ` → **BLOCKED** (environment scrubbed with 0 secrets).
+  2. **Network Egress Escape**: Outbound TCP socket → **BLOCKED** (kernel network mode `none`).
+  3. **DoS Fork Bomb**: Infinite recursive processes → **TERMINATED** (cgroup `pids_limit=128`).
+  4. **Memory Bomb**: Rapid RAM allocation → **TERMINATED** (512MB RAM cap with OOM kill).
+  5. **Host Filesystem Escape**: Writes to `/etc` or `/usr/bin` → **BLOCKED** (read-only rootfs).
+
+### 5. Audit Receipts & Verification (`#/receipts`)
+![Audit Receipts](assets/receipts_preview.png)
+* Every invocation produces an immutable record: `{operation, result, sandbox_id, worker_vm, timestamp}`.
+* A canonical SHA-256 digest is generated and stored in **Vultr Object Storage (`latch-receipts`)**.
+* The **Verify Proof** button validates that the stored digest matches the canonical execution payload (`VALID · SHA-256 MATCH`).
+
+### 6. Human-in-the-Loop Approval Queue (`#/approvals`)
+![Approval Queue](assets/approvals_preview.png)
+* Safety barrier halting destructive actions (`delete`, `pay`, `submit`) in state `awaiting_approval`.
+* Operator reviews the operation, risk rating, and sandbox ID to **Approve** or **Deny**.
+* Displays a full historical audit trail of all approved and denied operations.
 
 ---
 
-## 3. Agent Use Cases & Real Task Execution
+## 4. How Latch Helps Real Users
 
-Conventional browser agents are brittle, slow, and leak credentials when interacting with web platforms. Latch converts web apps into **typed, sandboxed APIs** that agents execute without plain secrets:
-
-### Use Case 1: Sandboxed Research & Catalog Ingestion (`books.toscrape.com`)
-- **Real Task**: Agent searches book catalogs, queries inventory pricing, and simulates basket checkouts.
-- **Latch Execution**: Instead of parsing dynamic HTML, the agent calls `POST /v1/toscrape.com/search_books`.
-- **Containment Guarantee**: The agent never receives host network access; the request executes inside an air-gapped microVM with zero secret leakage.
-
-### Use Case 2: Real-Time Intelligence & Alerts (`hn.algolia.com`)
-- **Real Task**: Agent queries Hacker News discussion threads, evaluates sentiment, and creates search subscriptions.
-- **Latch Execution**: Dispatches sandboxed requests to `POST /v1/algolia.com/search_stories` and `save_search_alert`.
-- **Containment Guarantee**: Strict 8-second execution timeouts prevent runaway scraping loops and denial of service.
-
-### Use Case 3: Private Social & Calendar Coordination (`luma.com` & `partiful.com`)
-- **Real Task**: Autonomous calendar event scheduling and RSVP confirmation.
-- **Latch Execution**: Auth session cookies stay inside the encrypted Vault; the agent interacts only via scoped Bearer keys.
-- **Human-in-the-Loop Gate**: If an agent requests an irreversible action (e.g., submitting an RSVP with card charges), Latch halts execution in the **Approvals Queue** until the human operator signs off.
+| User Persona | The Pain Today | How Latch Solves It |
+|---|---|---|
+| **AI Engineers & Agent Builders** | Fear of agents leaking cloud API keys, running runaway loops, or compromising local machines. | Guaranteed, kernel-enforced sandboxes and instant typed APIs with zero configuration. |
+| **Enterprise IT & Security Teams** | Cannot adopt autonomous agents due to compliance (SOC2/ISO27001), zero auditability, and fear of data loss. | Delivers immutable SHA-256 audit receipts stored in Vultr S3 and a mandatory Human-in-the-Loop Approval Barrier. |
+| **SaaS & Operations Automators** | Manual web scraping is brittle; sites constantly change their DOM, breaking RPA scripts. | Transforms arbitrary web apps into clean REST & MCP APIs in 5 minutes with session cookies sealed in Vultr S3. |
+| **Fintech & Regulated Applications** | High-consequence operations (transfers, deletions, filings) cannot be entrusted to probabilistic LLMs. | The Approval Queue deterministically halts execution before any irreversible write occurs. |
 
 ---
 
-## 4. Challenge 1: Containment Moments & Verifiable Proofs
+## 5. Challenge 1: Containment Moments & Verifiable Proofs
 
 Latch proves its security guarantees through live demonstrations in the **Attack Lab**:
 
@@ -185,7 +199,7 @@ Verify any receipt in real-time at `GET /api/receipts/{sha256}/verify`.
 
 ---
 
-## 5. Quickstart & Live Testing
+## 6. Quickstart & Live Testing
 
 ### Access the Live Deployment
 Open the live dashboard in your browser:
@@ -204,6 +218,8 @@ cp .env.example .env
 # 3. Start local development cluster
 python scripts/run_local.py
 ```
+- **Dashboard**: `http://localhost:8000`
+- **Worker Health**: `http://localhost:7000/health`
 
 ### Run Full Test Suite
 ```bash
@@ -213,7 +229,7 @@ pytest
 
 ---
 
-## 6. Hackathon Submission Checklist
+## 7. Hackathon Submission Checklist
 
 - [x] **Public GitHub Repository**: [https://github.com/Lakshay-Deol/latch](https://github.com/Lakshay-Deol/latch)
 - [x] **Vultr VM Backend Deployment**: Live on Vultr Cloud Compute at `155.138.217.237`
