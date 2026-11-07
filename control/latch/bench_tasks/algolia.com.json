@@ -1,0 +1,50 @@
+[
+ {
+  "id": "hn_search_agent",
+  "difficulty": "easy",
+  "question": "What is the top story title returned on Algolia Hacker News for 'LLM agent'?",
+  "oracle": [
+   {
+    "op": "search_stories",
+    "params": {
+     "query": "LLM agent"
+    }
+   }
+  ],
+  "ui": [
+   "https://hn.algolia.com/?q=LLM+agent"
+  ]
+ },
+ {
+  "id": "hn_story_points",
+  "difficulty": "easy",
+  "question": "How many points does item 3892011 have?",
+  "oracle": [
+   {
+    "op": "get_item",
+    "params": {
+     "item_id": "3892011"
+    }
+   }
+  ],
+  "ui": [
+   "https://news.ycombinator.com/item?id=3892011"
+  ]
+ },
+ {
+  "id": "hn_search_containment",
+  "difficulty": "easy",
+  "question": "Which story discusses 'Agent containment guarantees in production'?",
+  "oracle": [
+   {
+    "op": "search_stories",
+    "params": {
+     "query": "containment"
+    }
+   }
+  ],
+  "ui": [
+   "https://hn.algolia.com/?q=containment"
+  ]
+ }
+]

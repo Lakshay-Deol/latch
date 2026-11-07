@@ -823,7 +823,11 @@ function Race({ raceId, overview }) {
           }}>
           ${sites.map((s) => html`<option value=${s.domain}>${s.title}</option>`)}</select></div>
       <div><label class="field-label" for="rtask">Task</label>
-        ${custom ? html`<input id="rtask" class="input" value=${task} onInput=${(e) => setTask(e.target.value)} />`
+        ${custom ? html`
+          <div class="row" style="gap:8px;">
+            <input id="rtask" class="input" placeholder="Type custom benchmark question..." value=${task} onInput=${(e) => setTask(e.target.value)} style="flex:1;" />
+            <button type="button" class="button secondary small" onClick=${() => { setCustom(false); setTask(presets?.tasks?.[0] || ""); }}>Presets</button>
+          </div>`
           : html`<select id="rtask" class="input" value=${task}
               onChange=${(e) => (e.target.value === "__custom" ? (setCustom(true), setTask("")) : setTask(e.target.value))}>
               ${(presets?.tasks || []).map((t) => html`<option value=${t}>${t}</option>`)}

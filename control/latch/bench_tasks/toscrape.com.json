@@ -1,0 +1,48 @@
+[
+ {
+  "id": "categories_first3",
+  "difficulty": "easy",
+  "question": "What are the first 3 book categories listed on Books to Scrape?",
+  "oracle": [
+   {
+    "op": "list_categories",
+    "params": {}
+   }
+  ],
+  "ui": [
+   "https://books.toscrape.com"
+  ]
+ },
+ {
+  "id": "travel_book_price",
+  "difficulty": "easy",
+  "question": "What is the price of the book 'It's Only the Himalayas'?",
+  "oracle": [
+   {
+    "op": "get_book_details",
+    "params": {
+     "book_id": "b_1"
+    }
+   }
+  ],
+  "ui": [
+   "https://books.toscrape.com"
+  ]
+ },
+ {
+  "id": "search_travel_count",
+  "difficulty": "easy",
+  "question": "How many book results are returned when searching for 'travel'?",
+  "oracle": [
+   {
+    "op": "search_books",
+    "params": {
+     "query": "travel"
+    }
+   }
+  ],
+  "ui": [
+   "https://books.toscrape.com"
+  ]
+ }
+]
