@@ -26,13 +26,15 @@ async def wait_for_login(job_id, cdp, site, manual_flag: asyncio.Event, poll=4, 
     hinted = False
     waited = 0
     if not cdp:
-        # Local desktop fallback: launch visible (headful) Chromium so the user can interact & log in!
+        # Local desktop / headless server fallback
+        import sys, os
         from playwright.async_api import async_playwright
+        is_headless = sys.platform.startswith("linux") and not os.environ.get("DISPLAY")
         pw = None
         browser = None
         try:
             pw = await async_playwright().start()
-            browser = await pw.chromium.launch(headless=False)
+            browser = await pw.chromium.launch(headless=is_headless)
             context = await browser.new_context()
             page = await context.new_page()
             try:
@@ -53,7 +55,10 @@ async def wait_for_login(job_id, cdp, site, manual_flag: asyncio.Event, poll=4, 
                 waited += poll
             return False
         except Exception as e:
-            db.add_event(job_id, "error", {"browser_launch_error": str(e)[:200]})
+            err_msg = str(e)
+            if "Executable doesn't exist" in err_msg:
+                err_msg = "Playwright Chromium missing. Run: playwright install --with-deps chromium"
+            db.add_event(job_id, "error", {"browser_launch_error": err_msg[:200]})
             while waited < timeout:
                 if manual_flag.is_set():
                     db.add_event(job_id, "login_detected", {"by": "human button"})

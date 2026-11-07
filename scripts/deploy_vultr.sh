@@ -24,6 +24,11 @@ python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
 pip install -r control/requirements.txt -r worker/requirements.txt python-dotenv
+playwright install --with-deps chromium
+
+# 3.5 Build sandbox container images
+docker build -t latch-browser:latest sandbox/browser || true
+docker build -t latch-runner:latest sandbox/runner || true
 
 # 4. Populate Database & S3 Sync
 echo "[4/5] Initializing database and syncing Vultr S3..."
