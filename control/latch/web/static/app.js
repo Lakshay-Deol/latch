@@ -501,58 +501,6 @@ function ContainmentGuarantees() {
   `;
 }
 
-function DessnSocialProof() {
-  return html`
-    <div class="dessn-proof-strip">
-      <span class="dessn-proof-label">Trusted by autonomous agent teams building with</span>
-      <div class="dessn-proof-logos">
-        <span>Anthropic</span>
-        <span class="dot-sep">•</span>
-        <span>LangChain</span>
-        <span class="dot-sep">•</span>
-        <span>DeepSeek</span>
-        <span class="dot-sep">•</span>
-        <span>Vultr</span>
-        <span class="dot-sep">•</span>
-        <span>Cursor</span>
-        <span class="dot-sep">•</span>
-        <span>OpenAI</span>
-      </div>
-    </div>
-  `;
-}
-
-function DessnQuotes() {
-  return html`
-    <div class="dessn-quotes-grid">
-      <div class="dessn-quote-card light">
-        <blockquote class="dessn-quote-text">
-          “The team and I are really loving Latch. We can safely deploy autonomous agents without credential anxiety.”
-        </blockquote>
-        <div class="dessn-quote-author">
-          <div class="dessn-avatar">AC</div>
-          <div>
-            <strong>Alex Chen</strong>
-            <span>AI Platform Lead · Vultr Ecosystem</span>
-          </div>
-        </div>
-      </div>
-      <div class="dessn-quote-card dark">
-        <blockquote class="dessn-quote-text">
-          “This is ABSOLUTELY ESSENTIAL for production agents. We get real browser workflows with deterministic containment and immutable receipts.”
-        </blockquote>
-        <div class="dessn-quote-author">
-          <div class="dessn-avatar teal">ER</div>
-          <div>
-            <strong>Elena Rostova</strong>
-            <span>Principal Systems Architect</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
 function DessnTrioPillars() {
   return html`
     <section class="section" style="margin-top:54px;">
@@ -802,10 +750,6 @@ function Home({ overview }) {
     </div>
 
     <${AnimatedProtocolPipeline} />
-
-    <${DessnSocialProof} />
-
-    <${DessnQuotes} />
 
     ${running.length > 0 && html`
       <section class="section" style="margin-top:20px;">
