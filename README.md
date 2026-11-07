@@ -45,6 +45,18 @@ Latch relies on Vultr's composable cloud ecosystem to power every layer of the a
 | **Vultr VPC 2.0** | `10.10.0.0/24` Private Subnet | Isolates inter-node worker control traffic, preventing untrusted agent code from accessing host networks. |
 | **Vultr Firewall Groups** | Security Policy | Restricts public ingress to HTTP/HTTPS (`80`, `443`, `8000`), blocking internal worker ports (`7000`) from the public internet. |
 
+### Vultr Infrastructure Deployment Evidence
+
+| Vultr Cloud Compute Instance | Vultr Serverless Inference |
+|:---:|:---:|
+| ![Vultr Compute](assets/vultr/vultr_instance.png) | ![Vultr Inference](assets/vultr/vultr_inference.png) |
+| *Ubuntu 24.04 LTS VM hosting Control Plane & Ephemeral Sandboxes* | *Serverless DeepSeek v4.1 reasoning engine (`latch-store`)* |
+
+| Vultr Object Storage Buckets & Traffic | S3 Cluster Credentials & Configuration |
+|:---:|:---:|
+| ![Vultr Buckets](assets/vultr/vultr_buckets.png) | ![Vultr S3](assets/vultr/vultr_credentials.png) |
+| *`latch-apis` (31), `latch-receipts` (12), `latch-skills` (15)* | *Cluster: `atl2.vultrobjects.com` with zero-trust bucket partitioning* |
+
 ---
 
 ## 2. Backend & Deployment Architecture

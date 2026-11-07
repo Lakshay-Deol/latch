@@ -74,13 +74,27 @@ const ago = (ts) => {
 const KeyIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   <circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 20 3M16 7l3 3M14 9l2 2"/></svg>`;
 const HomeIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>`;
+  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
+const TasksIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>`;
+const AttackLabIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+const ReceiptsIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-8"/><path d="M16 12h-8"/><path d="M13 16h-5"/></svg>`;
+const ApprovalsIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`;
 const SitesIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/></svg>`;
+  <circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>`;
 const SkillsIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8z"/></svg>`;
+  <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>`;
 const RaceIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <path d="M3 12h4l3-8 4 16 3-8h4"/></svg>`;
+  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
+const MenuIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>`;
+const CloseIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+const PanelToggleIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M9 3v18"/></svg>`;
 
 /* ---------- small components ---------- */
 
@@ -255,24 +269,37 @@ function MetallicStar() {
 function HeroOrbit() {
   return html`
     <div class="hero-orbit-showcase" aria-hidden="true">
+      <svg class="orbit-lines-svg" viewBox="0 0 360 360" aria-hidden="true">
+        <!-- Connecting radial lines -->
+        <line x1="180" y1="180" x2="180" y2="28" stroke="rgba(197, 139, 101, 0.2)" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <line x1="180" y1="180" x2="304" y2="100" stroke="rgba(197, 139, 101, 0.2)" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <line x1="180" y1="180" x2="304" y2="260" stroke="rgba(197, 139, 101, 0.2)" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <line x1="180" y1="180" x2="180" y2="332" stroke="rgba(197, 139, 101, 0.2)" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <line x1="180" y1="180" x2="56" y2="260" stroke="rgba(197, 139, 101, 0.2)" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <line x1="180" y1="180" x2="56" y2="100" stroke="rgba(197, 139, 101, 0.2)" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <!-- Concentric circles -->
+        <circle cx="180" cy="180" r="152" fill="none" stroke="rgba(197, 139, 101, 0.25)" stroke-width="1.5" stroke-dasharray="4 6"/>
+        <circle cx="180" cy="180" r="106" fill="none" stroke="rgba(197, 139, 101, 0.18)" stroke-width="1"/>
+        <circle cx="180" cy="180" r="68" fill="rgba(197, 139, 101, 0.05)" stroke="rgba(197, 139, 101, 0.15)" stroke-width="1"/>
+      </svg>
       <div class="orbit-circle-outer">
         <div class="orbit-disc disc-pos-1" title="Luma Calendar API">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
         <div class="orbit-disc disc-pos-2" title="DeepSeek & Vultr Inference">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         </div>
         <div class="orbit-disc disc-pos-3" title="Partiful Social API">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
         </div>
         <div class="orbit-disc disc-pos-4" title="Cursor AI Agent Sandbox">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><polyline points="8 10 12 14 16 10"/></svg>
         </div>
         <div class="orbit-disc disc-pos-5" title="Hacker News & Algolia Search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
         <div class="orbit-disc disc-pos-6" title="Books Catalog Sandbox">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
         </div>
       </div>
       <div class="orbit-circle-inner"></div>
@@ -295,7 +322,7 @@ function AnimatedProtocolPipeline() {
           <span class="pipeline-node-sub">Zero Plain Secrets</span>
         </div>
       </div>
-      <div class="pipeline-connector"></div>
+      <div class="pipeline-connector"><span class="pulse-beam"></span></div>
       <div class="pipeline-node">
         <div class="pipeline-node-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -305,7 +332,7 @@ function AnimatedProtocolPipeline() {
           <span class="pipeline-node-sub">Egress Firewall</span>
         </div>
       </div>
-      <div class="pipeline-connector"></div>
+      <div class="pipeline-connector"><span class="pulse-beam"></span></div>
       <div class="pipeline-node">
         <div class="pipeline-node-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
@@ -315,7 +342,7 @@ function AnimatedProtocolPipeline() {
           <span class="pipeline-node-sub">Synthesis</span>
         </div>
       </div>
-      <div class="pipeline-connector"></div>
+      <div class="pipeline-connector"><span class="pulse-beam"></span></div>
       <div class="pipeline-node">
         <div class="pipeline-node-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -325,10 +352,10 @@ function AnimatedProtocolPipeline() {
           <span class="pipeline-node-sub">Vultr S3 Receipts</span>
         </div>
       </div>
-      <div class="pipeline-connector"></div>
+      <div class="pipeline-connector"><span class="pulse-beam"></span></div>
       <div class="pipeline-node">
         <div class="pipeline-node-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
         <div class="pipeline-node-info">
           <span class="pipeline-node-label">5. MCP / REST</span>
@@ -1143,38 +1170,97 @@ function Approvals() {
 
 function Shell({ page, arg, children, overview, role, skillsCount }) {
   const [jobDomain, setJobDomain] = useState(null);
-  const [autohide, setAutohide] = useState(false);
-  useEffect(() => { setJobDomain(null); if (page === "job") api(`/api/jobs/${arg}`).then((j) => setJobDomain(j.domain)).catch(() => {}); }, [page, arg]);
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    setJobDomain(null);
+    if (page === "job") api(`/api/jobs/${arg}`).then((j) => setJobDomain(j.domain)).catch(() => {});
+  }, [page, arg]);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [page, arg]);
+
   const site = page === "site" ? overview?.sites?.find((s) => s.domain === arg)?.title || arg : page === "job" ? jobDomain : null;
   const cur = (p) => (p ? "page" : undefined);
   const count = (n) => (n ? html`<span class="nav-count">${n}</span>` : "");
-  return html`<div class=${`app-shell ${autohide ? "sidebar-autohide" : ""}`}>
-    <aside class=${`sidebar ${autohide ? "autohide" : ""}`}>
-      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:6px;">
-        <a class="brand" href="#/"><span class="brand-mark"><${KeyIcon} /></span><span class="nav-text">Latch</span></a>
-        <button class="sidebar-toggle" title=${autohide ? "Pin sidebar" : "Autohide sidebar"} onClick=${() => setAutohide(!autohide)}>
-          ${autohide ? "⇥" : "⇤"}
+
+  return html`
+    <div class=${`app-shell ${collapsed ? "sidebar-collapsed" : ""}`}>
+      <!-- Mobile Topbar Header -->
+      <header class="mobile-topbar">
+        <a class="brand" href="#/">
+          <span class="brand-mark"><${KeyIcon} /></span>
+          <span class="brand-name">Latch</span>
+        </a>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation" onClick=${() => setMobileOpen(!mobileOpen)}>
+          <${mobileOpen ? CloseIcon : MenuIcon} />
         </button>
-      </div>
-      <div class="sidebar-context"><small>Site</small><strong>${site || "None selected"}</strong></div>
-      <nav class="side-nav">
-        <a class="nav-item" href="#/" aria-current=${cur(!page || page === "job")}><${HomeIcon} /><span class="nav-text">Home</span></a>
-        <a class="nav-item" href="#/tasks" aria-current=${cur(page === "tasks")}><${SitesIcon} /><span class="nav-text">Tasks</span></a>
-        <a class="nav-item" href="#/attack-lab" aria-current=${cur(page === "attack-lab")}><${SkillsIcon} /><span class="nav-text">Attack Lab</span></a>
-        <a class="nav-item" href="#/receipts" aria-current=${cur(page === "receipts")}><${KeyIcon} /><span class="nav-text">Receipts</span></a>
-        <a class="nav-item" href="#/approvals" aria-current=${cur(page === "approvals")}><${SitesIcon} /><span class="nav-text">Approvals</span></a>
-        <a class="nav-item" href="#/sites" aria-current=${cur(page === "sites" || page === "site")}><${SitesIcon} /><span class="nav-text">Sites</span>${count(overview?.sites?.length)}</a>
-      </nav>
-      <div class="sidebar-bottom">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;"></span>
-          <span style="font-size:12px;font-weight:750;letter-spacing:.05em;color:#fff;" class="nav-text">CONTAINMENT ACTIVE</span>
+      </header>
+
+      <!-- Backdrop for mobile drawer -->
+      ${mobileOpen && html`<div class="sidebar-backdrop" onClick=${() => setMobileOpen(false)}></div>`}
+
+      <!-- Sidebar -->
+      <aside class=${`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
+        <div class="sidebar-header">
+          <a class="brand" href="#/">
+            <span class="brand-mark"><${KeyIcon} /></span>
+            <span class="brand-name nav-text">Latch</span>
+          </a>
+          <button class="sidebar-toggle-btn desktop-only" title=${collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick=${() => setCollapsed(!collapsed)}>
+            <${PanelToggleIcon} />
+          </button>
         </div>
-        <small style="color:#d9c6ba;font-size:11px;font-family:var(--font-mono);display:block;margin-top:2px;" class="nav-text">Vultr & DeepSeek v4.1</small>
-      </div>
-    </aside>
-    <main class="app-main"><div class="page" style="padding-bottom:40px">${children}</div></main>
-  </div>`;
+
+        <div class="sidebar-context nav-text">
+          <small>Site</small>
+          <strong>${site || "None selected"}</strong>
+        </div>
+
+        <nav class="side-nav">
+          <a class="nav-item" href="#/" aria-current=${cur(!page || page === "job")} title="Home">
+            <${HomeIcon} /><span class="nav-text">Home</span>
+          </a>
+          <a class="nav-item" href="#/tasks" aria-current=${cur(page === "tasks")} title="Tasks">
+            <${TasksIcon} /><span class="nav-text">Tasks</span>
+          </a>
+          <a class="nav-item" href="#/attack-lab" aria-current=${cur(page === "attack-lab")} title="Attack Lab">
+            <${AttackLabIcon} /><span class="nav-text">Attack Lab</span>
+          </a>
+          <a class="nav-item" href="#/receipts" aria-current=${cur(page === "receipts")} title="Receipts">
+            <${ReceiptsIcon} /><span class="nav-text">Receipts</span>
+          </a>
+          <a class="nav-item" href="#/approvals" aria-current=${cur(page === "approvals")} title="Approvals">
+            <${ApprovalsIcon} /><span class="nav-text">Approvals</span>
+          </a>
+          <a class="nav-item" href="#/sites" aria-current=${cur(page === "sites" || page === "site")} title="Sites">
+            <${SitesIcon} /><span class="nav-text">Sites</span>${count(overview?.sites?.length)}
+          </a>
+          <a class="nav-item" href="#/skills" aria-current=${cur(page === "skills")} title="Skills">
+            <${SkillsIcon} /><span class="nav-text">Skills</span>${count(skillsCount)}
+          </a>
+          <a class="nav-item" href="#/race" aria-current=${cur(page === "race")} title="Race">
+            <${RaceIcon} /><span class="nav-text">Race</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="containment-status-badge">
+            <span class="status-pulse-dot"></span>
+            <span class="status-title nav-text">CONTAINMENT ACTIVE</span>
+          </div>
+          <small class="status-subtitle nav-text">Vultr & DeepSeek v4.1</small>
+        </div>
+      </aside>
+
+      <!-- Main Canvas -->
+      <main class="app-main">
+        <div class="page" style="padding-bottom:40px">${children}</div>
+      </main>
+    </div>
+  `;
 }
 
 function App() {
