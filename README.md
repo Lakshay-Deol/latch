@@ -7,9 +7,15 @@
 [![Inference](https://img.shields.io/badge/Vultr_Inference-DeepSeek_v4.1-3b82f6?style=for-the-badge)](https://vultr.com)
 [![Storage](https://img.shields.io/badge/Vultr_S3-Active-eab308?style=for-the-badge)](https://vultr.com)
 
-**🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)>
+**🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)
+
 ---
-> [![Latch 20s Quick Tour](docs/latch_demo.mp4)]
+
+### ⚡ Live Demo Walkthrough
+[![Latch Demo Walkthrough](docs/latch_demo.gif)](docs/latch_demo.mp4)
+
+> 🎬 **Watch the full demo:** Click the animation above or open [`docs/latch_demo.mp4`](docs/latch_demo.mp4) for the high-definition walkthrough and Challenge 1 defense.
+
 ---
 
 ## 1. Executive Summary & Problem Solved
@@ -225,5 +231,5 @@ pytest
 - [x] **Backend & Deployment Architecture**: Dual-container architecture with air-gapped sandboxing
 - [x] **Agent Real-Task Execution**: Sandboxed API execution for search, catalog, and event workflows
 - [x] **Challenge 1 Containment Moment**: Kernel-enforced secret isolation, zero-egress network policies, and SHA-256 receipts demonstrated in the Attack Lab
-- [x] **Demo Video (3 Minutes)**: Full Remotion walkthrough with audio narration & sound effects in `docs/latch_demo.mp4`
+- [x] **Demo Video & GIF**: Full walkthrough in [docs/latch_demo.gif](docs/latch_demo.gif) and high-definition video in [`docs/latch_demo.mp4`](docs/latch_demo.mp4)
 - [x] **Live Public Link**: Accessible at [http://155.138.217.237](http://155.138.217.237) and [http://155.138.217.237:8000](http://155.138.217.237:8000)
