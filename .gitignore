@@ -24,3 +24,5 @@ dessn.png
 *.jpeg
 control/latch/web/static/latch-logo.png
 /*.mp4
+video_scrap/
+remotion-video/
