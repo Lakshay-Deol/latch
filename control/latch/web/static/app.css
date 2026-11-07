@@ -594,10 +594,10 @@ pre.code { margin: 0; padding: 14px 16px; border-radius: var(--radius-md); backg
             box-shadow: var(--shadow-card); }
 .site-row .tile { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 15px; background: var(--espresso-900);
                   color: var(--terracotta-light); font-family: var(--font-display); font-size: 24px; font-weight: 760; }
-.site-row .who { display: grid; gap: 2px; min-width: 0; }
+.site-row .who { display: grid; gap: 2px; min-width: 0; max-width: 380px; }
 .site-row .who .title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: -.025em; }
 .site-row .who .title:hover { color: var(--terracotta-dark); }
-.site-row .who .domain { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+.site-row .who .domain { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .site-row .facts { display: flex; flex-wrap: wrap; gap: 14px 30px; margin: 0; }
 .site-row .facts div { display: grid; gap: 4px; }
 .site-row .facts dt { color: var(--text-muted); font-size: 11px; font-weight: 740; letter-spacing: .07em; text-transform: uppercase; }

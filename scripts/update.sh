@@ -11,3 +11,4 @@ echo "============================================="
 echo "Latch successfully updated to latest version!"
 echo "Check: http://155.138.217.237:8000"
 echo "============================================="
+

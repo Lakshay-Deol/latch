@@ -165,7 +165,9 @@ async def run_attack_suite() -> dict[str, Any]:
         "completed_at": time.time(),
         "all_blocked": all_blocked,
         "results": results,
+        "attacks": results,
         "logs": log_lines,
+        "log_lines": log_lines,
     }
     RUN_STORE[run_id] = run_data
     return run_data

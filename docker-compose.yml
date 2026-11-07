@@ -42,3 +42,4 @@ services:
 networks:
   latch-internal:
     driver: bridge
+

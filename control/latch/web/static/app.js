@@ -65,7 +65,9 @@ const left = (ts) => {
 };
 const ago = (ts) => {
   if (!ts) return "–";
-  const m = Math.round((Date.now() / 1000 - ts) / 60);
+  const num = typeof ts === "number" ? ts : Date.parse(ts) / 1000;
+  if (isNaN(num)) return typeof ts === "string" ? ts.slice(0, 19).replace("T", " ") : "–";
+  const m = Math.round((Date.now() / 1000 - num) / 60);
   return m < 1 ? "just now" : m < 60 ? `${m} min ago` : `${Math.round(m / 60)} h ago`;
 };
 
@@ -929,7 +931,7 @@ function Tasks() {
     if (!prompt.trim() || planning) return;
     setPlanning(true);
     try {
-      const res = await api("/api/tasks/plan", { method: "POST", body: { prompt } });
+      const res = await api("/api/tasks/plan", { method: "POST", body: { goal: prompt, prompt } });
       setActivePlan(res);
       load();
     } catch (err) { alert(err.message); }
@@ -972,11 +974,12 @@ function Tasks() {
         <p style="margin:0 0 12px;color:var(--text-quiet);">${activePlan.goal}</p>
         <div class="oplist">
           ${(activePlan.steps || []).map((st, i) => html`
-            <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;">
+            <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
               <span class="mark ok">✓</span>
-              <strong style="min-width:70px;">Step ${i + 1}</strong>
-              <code class="mono" style="color:var(--terracotta-dark);">${st.operation || st.tool || 'op'}</code>
-              <span style="color:var(--text-muted);font-size:13px;">${st.reason || st.thought || ''}</span>
+              <strong style="min-width:65px;">Step ${i + 1}</strong>
+              <code class="mono" style="color:var(--terracotta-dark);text-transform:uppercase;font-size:11.5px;padding:2px 6px;background:var(--oat-50);border-radius:4px;">${st.kind || st.operation || 'code'}</code>
+              <span style="color:var(--text);font-size:13.5px;flex:1;">${st.description || st.reason || ''}</span>
+              ${st.destructive && html`<span style="font-size:11px;padding:3px 8px;background:rgba(184,86,50,0.12);color:var(--terracotta);border-radius:4px;font-weight:700;">REQUIRES APPROVAL</span>`}
             </div>
           `)}
         </div>
@@ -993,11 +996,16 @@ function Tasks() {
           <div class="site-row">
             <div class="tile"><${SitesIcon} /></div>
             <div class="who">
-              <span class="title" style="font-size:17px;">${t.prompt || t.goal || t.id}</span>
-              <span class="domain">${t.id} · ${t.status || 'planned'}</span>
+              <span class="title" style="font-size:16px;">${t.goal || t.prompt || t.id}</span>
+              <span class="domain">${t.id} · Created: ${(t.created_at || '').slice(0, 19).replace('T', ' ')}</span>
             </div>
+            <dl class="facts">
+              <div><dt>Status</dt><dd><span class="status ${t.status === 'done' ? 'done' : t.status === 'running' ? 'busy' : 'idle'}"><i></i>${(t.status || 'planned').toUpperCase()}</span></dd></div>
+            </dl>
             <div class="acts">
-              <button class="button secondary" onClick=${() => executeTask(t.id)}>Run →</button>
+              <button class="button ${t.status === 'done' ? 'secondary' : 'primary'}" onClick=${() => executeTask(t.id)}>
+                ${t.status === 'done' ? 'Re-run →' : 'Run →'}
+              </button>
             </div>
           </div>
         `)}
@@ -1020,7 +1028,7 @@ function AttackLab() {
     try {
       const res = await api("/api/attack-lab/run", { method: "POST" });
       setRunData(res);
-      setLog(res.log_lines || ["[Attack Lab] Containment Suite Finished: All 5 attacks successfully BLOCKED."]);
+      setLog(res.logs || res.log_lines || ["[Attack Lab] Containment Suite Finished: All 5 attacks successfully BLOCKED."]);
     } catch (err) {
       setLog((prev) => [...prev, `[Error] ${err.message}`]);
     } finally { setRunning(false); }
@@ -1124,7 +1132,11 @@ function Receipts() {
 
 function Approvals() {
   const [items, setItems] = useState([]);
-  const load = () => api("/api/approvals").then((d) => setItems(d.approvals || d.pending || [])).catch(() => {});
+  const [history, setHistory] = useState([]);
+  const load = () => api("/api/approvals").then((d) => {
+    setItems(d.pending || d.approvals || []);
+    setHistory(d.history || []);
+  }).catch(() => {});
   useEffect(() => { load(); }, []);
 
   const act = async (id, action) => {
@@ -1144,11 +1156,11 @@ function Approvals() {
           <div class="tile" style="background:var(--terracotta);color:#fff;font-weight:800;font-size:16px;">!</div>
           <div class="who">
             <span class="title" style="font-size:17px;">${app.operation || app.action}</span>
-            <span class="domain">${app.domain} · ${app.risk_level || 'destructive_write'}</span>
+            <span class="domain">${app.domain || 'Sandbox Action'} · ${app.risk || app.risk_level || 'destructive_write'}</span>
           </div>
           <dl class="facts">
-            <div><dt>Reason</dt><dd><small>${app.reason || 'Irreversible write requires human sign-off'}</small></dd></div>
-            <div><dt>Side Effect</dt><dd><span class="status blocked"><i></i>WRITE</span></dd></div>
+            <div><dt>Sandbox</dt><dd><small>${app.sandbox_id || 'isolated'}</small></dd></div>
+            <div><dt>Side Effect</dt><dd><span class="status blocked"><i></i>PENDING</span></dd></div>
           </dl>
           <div class="acts" style="display:flex;gap:8px;">
             <button class="button primary small" onClick=${() => act(app.id, 'approve')}>Approve</button>
@@ -1157,12 +1169,38 @@ function Approvals() {
         </div>
       `)}
       ${!items.length && html`
-        <div class="card" style="text-align:center;padding:40px;">
-          <h3 style="margin:0 0 8px;color:var(--sage);">✓ Approval Queue Empty</h3>
-          <p style="color:var(--text-quiet);margin:0;">No destructive write actions currently require human intervention. All agent actions are operating within safe bounds.</p>
+        <div class="card" style="text-align:center;padding:32px 20px;">
+          <h3 style="margin:0 0 8px;color:var(--sage);">✓ Approval Queue Clear</h3>
+          <p style="color:var(--text-quiet);margin:0;font-size:13.5px;">No actions currently awaiting human intervention. Live sandboxes operate under zero-trust bounds.</p>
         </div>
       `}
     </div>
+
+    ${history.length > 0 && html`
+      <section class="section" style="margin-top:32px;">
+        <${SectionHeading} title="Resolved Approvals Audit Trail" count=${history.length} />
+        <div class="site-rows">
+          ${history.map((app) => html`
+            <div class="site-row">
+              <div class="tile" style="background:${app.status === 'approved' ? 'var(--sage)' : 'var(--terracotta)'};color:#fff;font-weight:700;font-size:13px;">
+                ${app.status === 'approved' ? '✓' : '✕'}
+              </div>
+              <div class="who">
+                <span class="title" style="font-size:15px;">${app.operation}</span>
+                <span class="domain">Sandbox: ${app.sandbox_id || 'ephemeral'} · Decided by: ${app.decided_by || 'admin'}</span>
+              </div>
+              <dl class="facts">
+                <div><dt>Risk</dt><dd><small style="text-transform:uppercase;">${app.risk || 'high'}</small></dd></div>
+                <div><dt>Verdict</dt><dd><span class="status ${app.status === 'approved' ? 'done' : 'blocked'}"><i></i>${app.status.toUpperCase()}</span></dd></div>
+              </dl>
+              <div class="acts" style="font-size:12px;color:var(--text-quiet);white-space:nowrap;">
+                ${(app.decided_at || app.requested_at || '').slice(0, 19).replace('T', ' ')}
+              </div>
+            </div>
+          `)}
+        </div>
+      </section>
+    `}
   `;
 }
 
@@ -1274,7 +1312,7 @@ function App() {
   const role = overviewErr ? null : overview?.role;
   let view;
   if (page === "tasks") view = html`<${Tasks} />`;
-  else if (page === "attack-lab") view = html`<${AttackLab} />`;
+  else if (page === "attack-lab" || page === "lab") view = html`<${AttackLab} />`;
   else if (page === "receipts") view = html`<${Receipts} />`;
   else if (page === "approvals") view = html`<${Approvals} />`;
   else if (page === "site") view = html`<${Site} domain=${arg} />`;

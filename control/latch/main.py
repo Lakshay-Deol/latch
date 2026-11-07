@@ -568,17 +568,22 @@ async def call_operation(domain: str, operation: str, request: Request):
 # --- Latch Platform Routes: Tasks, Receipts, Approvals, Attack Lab, WebSocket ---
 
 class PlanRequest(BaseModel):
-    goal: str
+    goal: str = ""
+    prompt: str = ""
+
+    @property
+    def target_goal(self) -> str:
+        return self.goal or self.prompt
 
 class PlanUpdateRequest(BaseModel):
     steps: list[dict]
 
 @app.post("/api/tasks/plan")
 def api_plan_task(req: PlanRequest, who=Depends(viewer)):
-    planned = task_planner.plan_task(req.goal)
+    planned = task_planner.plan_task(req.target_goal)
     task_id = f"task_{secrets.token_hex(6)}"
     session_id = who.get("id") or "admin"
-    db.create_task(task_id, session_id, req.goal, status="planned")
+    db.create_task(task_id, session_id, req.target_goal, status="planned")
     out_steps = []
     for i, s in enumerate(planned):
         step_id = f"step_{secrets.token_hex(6)}"
@@ -647,8 +652,12 @@ async def api_attack_lab_stream(run_id: str):
     return JSONResponse(run_data)
 
 @app.get("/api/approvals")
-def api_list_approvals():
-    return {"approvals": db.list_approvals("pending")}
+def api_list_approvals(status: str = None):
+    if status:
+        return {"approvals": db.list_approvals(status)}
+    pending = db.list_approvals("pending")
+    history = db.list_approvals()
+    return {"approvals": pending, "pending": pending, "history": history[:30]}
 
 @app.post("/api/approvals/{approval_id}/approve")
 def api_approve(approval_id: str, who=Depends(viewer)):
