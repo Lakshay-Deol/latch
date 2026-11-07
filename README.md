@@ -7,21 +7,9 @@
 [![Inference](https://img.shields.io/badge/Vultr_Inference-DeepSeek_v4.1-3b82f6?style=for-the-badge)](https://vultr.com)
 [![Storage](https://img.shields.io/badge/Vultr_S3-Active-eab308?style=for-the-badge)](https://vultr.com)
 
-**🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)
-
-![Latch Platform Hero](assets/preview.png)
-
+**🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)>
 ---
-
-### ⚡ 20-Second Video Introducer & Demo
-> **Short on time? Watch the 20-second introducer or the full 3-minute deep dive:**
->
 > [![Latch 20s Quick Tour](assets/preview.png)](docs/latch_demo.mp4)
->
-> 📽️ **[▶️ Click to Watch 20s Quick Tour (MP4)](docs/latch_demo.mp4)**  
-> 🎬 **Full High-Definition Demo Video (3-Minute Tour & Challenge 1 Defense):** [`docs/latch_demo.mp4`](docs/latch_demo.mp4)  
-> *Programmatically synthesized using **Remotion** in [`remotion-video/`](remotion-video/). Demonstrates Vultr Cloud Compute (`155.138.217.237`), Vultr Serverless Inference (DeepSeek v4.1), Vultr S3 Storage (`atl2.vultrobjects.com`), and live Challenge 1 kernel containment moments.*
-
 ---
 
 ## 1. Executive Summary & Problem Solved
