@@ -9,7 +9,7 @@
 
 **🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)>
 ---
-> [![Latch 20s Quick Tour](assets/preview.png)](docs/latch_demo.mp4)
+> [![Latch 20s Quick Tour](docs/latch_demo.mp4)]
 ---
 
 ## 1. Executive Summary & Problem Solved
