@@ -797,10 +797,27 @@ function Race({ raceId, overview }) {
   const [task, setTask] = useState("");
   const [custom, setCustom] = useState(false);
   const d = domain || sites[0]?.domain || "luma.com";
+  const hasPresets = Boolean(presets?.tasks && presets.tasks.length > 0);
+
   useEffect(() => {
-    if (d) api(`/api/race/presets/${d}`).then((p) => { setPresets(p); setTask((t) => (t && (raceId || p.tasks.includes(t)) ? t : p.tasks[0])); }).catch(() => {});
+    if (d) {
+      api(`/api/race/presets/${d}`).then((p) => {
+        setPresets(p);
+        if (p?.tasks && p.tasks.length > 0) {
+          setCustom(false);
+          setTask((t) => (t && (raceId || p.tasks.includes(t)) ? t : p.tasks[0]));
+        } else {
+          setCustom(true);
+          setTask("");
+        }
+      }).catch(() => {
+        setPresets({ tasks: [], custom: true });
+        setCustom(true);
+        setTask("");
+      });
+    }
   }, [d]);
-  useEffect(() => { if (presets?.custom && task && !presets.tasks.includes(task)) setCustom(true); }, [presets, task]);
+
   const run = async (e) => {
     e.preventDefault();
     try {
@@ -808,6 +825,7 @@ function Race({ raceId, overview }) {
       location.hash = `#/race/${race_id}`;
     } catch (x) { alert(x.message); }
   };
+
   return html`
     <${PageHeader} title="Same task, four ways">
       <${Help}><ol><li>Pick a task and press Run.</li><li>All lanes act as the same logged-in user.</li>
@@ -823,16 +841,20 @@ function Race({ raceId, overview }) {
           }}>
           ${sites.map((s) => html`<option value=${s.domain}>${s.title}</option>`)}</select></div>
       <div><label class="field-label" for="rtask">Task</label>
-        ${custom ? html`
+        ${!hasPresets ? html`
+          <input id="rtask" class="input" placeholder="Type a task question for ${d}..."
+            value=${task} onInput=${(e) => setTask(e.target.value)} />
+        ` : custom ? html`
           <div class="row" style="gap:8px;">
             <input id="rtask" class="input" placeholder="Type custom benchmark question..." value=${task} onInput=${(e) => setTask(e.target.value)} style="flex:1;" />
-            <button type="button" class="button secondary small" onClick=${() => { setCustom(false); setTask(presets?.tasks?.[0] || ""); }}>Presets</button>
+            <button type="button" class="button secondary small" onClick=${() => { setCustom(false); setTask(presets.tasks[0]); }}>Presets</button>
           </div>`
           : html`<select id="rtask" class="input" value=${task}
               onChange=${(e) => (e.target.value === "__custom" ? (setCustom(true), setTask("")) : setTask(e.target.value))}>
-              ${(presets?.tasks || []).map((t) => html`<option value=${t}>${t}</option>`)}
-              ${presets?.custom && html`<option value="__custom">Custom…</option>`}</select>`}</div>
-      <button class="button primary large" disabled=${!d || !task}>Run</button>
+              ${presets.tasks.map((t) => html`<option value=${t}>${t}</option>`)}
+              <option value="__custom">Custom…</option>
+            </select>`}</div>
+      <button class="button primary large" disabled=${!d || !task.trim()}>Run</button>
     </form>
     ${raceId && html`<section class="section"><${RaceView} id=${raceId} frontier=${presets?.frontier} open=${presets?.open}
         onTask=${(t, dom) => { if (dom && dom !== d) setDomain(dom); if (t && t !== task) setTask(t); }} /></section>`}
