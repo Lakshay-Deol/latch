@@ -3,11 +3,14 @@
 > **"Containment isn't a feature. It's the product."**
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-155.138.217.237-22c55e?style=for-the-badge&logo=vultr)](http://155.138.217.237)
+[![Pitch Deck](https://img.shields.io/badge/Pitch_Deck-Google_Slides-ea4335?style=for-the-badge&logo=googleslides)](https://docs.google.com/presentation/d/e/2PACX-1vR-_SUccg1NnQMa9K6UgdsUc5_k5xLkkItESI4uUWoKf2g3gDUWoV9hecH0F1ksHZ_67g_TWJ_CYBUf/pub?start=false&loop=false&delayms=10000)
 [![GitHub](https://img.shields.io/badge/GitHub-Lakshay--Deol%2Flatch-b85632?style=for-the-badge&logo=github)](https://github.com/Lakshay-Deol/latch)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Inference](https://img.shields.io/badge/Vultr_Inference-DeepSeek_v4.1-3b82f6?style=for-the-badge)](https://vultr.com)
 [![Storage](https://img.shields.io/badge/Vultr_S3-Active-eab308?style=for-the-badge)](https://vultr.com)
 
-**🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)
+**🌐 Live Demo Instance:** [http://155.138.217.237](http://155.138.217.237) · [http://155.138.217.237:8000](http://155.138.217.237:8000)  
+**📊 Official Pitch Deck:** [View Interactive Slides](https://docs.google.com/presentation/d/e/2PACX-1vR-_SUccg1NnQMa9K6UgdsUc5_k5xLkkItESI4uUWoKf2g3gDUWoV9hecH0F1ksHZ_67g_TWJ_CYBUf/pub?start=false&loop=false&delayms=10000)
 
 ---
 
@@ -223,13 +226,6 @@ pytest
 
 ---
 
-## 7. Hackathon Submission Checklist
+## License
 
-- [x] **Public GitHub Repository**: [https://github.com/Lakshay-Deol/latch](https://github.com/Lakshay-Deol/latch)
-- [x] **Vultr VM Backend Deployment**: Live on Vultr Cloud Compute at `155.138.217.237`
-- [x] **Vultr Services Documentation**: Detailed in `README.md` (Serverless Inference, S3 Object Storage, Cloud Compute, VPC)
-- [x] **Backend & Deployment Architecture**: Dual-container architecture with air-gapped sandboxing
-- [x] **Agent Real-Task Execution**: Sandboxed API execution for search, catalog, and event workflows
-- [x] **Challenge 1 Containment Moment**: Kernel-enforced secret isolation, zero-egress network policies, and SHA-256 receipts demonstrated in the Attack Lab
-- [x] **Demo Video & GIF**: Full walkthrough in [docs/latch_demo.gif](docs/latch_demo.gif) and high-definition video in [`docs/latch_demo.mp4`](docs/latch_demo.mp4)
-- [x] **Live Public Link**: Accessible at [http://155.138.217.237](http://155.138.217.237) and [http://155.138.217.237:8000](http://155.138.217.237:8000)
+This project is licensed under the [MIT License](LICENSE).
