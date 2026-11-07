@@ -17,6 +17,7 @@ services:
       - LATCH_DB_PATH=/data/latch.db
     volumes:
       - ./data:/data
+      - ./control/latch/web/static:/app/latch/web/static:ro
     networks:
       - latch-internal
     depends_on:
