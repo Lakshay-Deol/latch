@@ -87,8 +87,6 @@ const ApprovalsIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="cu
   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`;
 const SitesIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   <circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>`;
-const SkillsIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>`;
 const RaceIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
 const MenuIcon = () => html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -550,44 +548,6 @@ function Sites({ overview }) {
       </div>`)}
       ${overview && !sites.length && !running.length && html`<div class="empty">No sites yet</div>`}
     </div>`;
-}
-
-/* ---------- skills ---------- */
-
-function LessonCard({ l, n, admin, onChange }) {
-  const set = async (status) => { await api(`/api/skills/${l.id}`, { method: "POST", body: { status } }); onChange(); };
-  return html`<li class="lesson">
-    <span class="lesson-n">${String(n).padStart(2, "0")}</span>
-    <div class="lesson-body">
-      <div class="row"><span class="mono muted">${l.site} · ${l.date}</span><span class="spacer"></span>
-        <span class="tag ${l.source}">${l.source}</span>
-        <${Status} state=${l.status === "approved" ? "published" : l.status === "rejected" ? "failed" : "stopped"} label=${l.status} /></div>
-      <p class="lesson-text">${l.lesson}</p>
-      ${(l.failure || l.fix) && html`<details><summary>The mistake</summary>
-        ${l.failure && html`<div class="lesson-part"><span class="section-label">Failure</span><p>${l.failure}</p></div>`}
-        ${l.fix && html`<div class="lesson-part"><span class="section-label">Fix</span><pre class="code">${l.fix}</pre></div>`}
-      </details>`}
-      ${admin && l.status === "proposed" && html`<div class="row"><button class="button primary small" onClick=${() => set("approved")}>Approve</button>
-        <button class="button secondary small" onClick=${() => set("rejected")}>Reject</button></div>`}
-    </div>
-  </li>`;
-}
-
-function Skills({ admin }) {
-  const [data, , refresh] = usePoll(() => api("/api/skills"), 15000, []);
-  const items = data?.lessons || [];
-  return html`
-    <${PageHeader} title="What the generator has learned">
-      <${Help}><ol><li>Each lesson came from a real mistake, shown under “The mistake”.</li>
-        <li>Approved lessons are read before every generation.</li><li>Auto lessons wait for approval.</li></ol><//>
-    <//>
-    <dl class="summary">
-      <div><dt>Lessons</dt><dd>${items.length}</dd></div>
-      <div><dt>Approved</dt><dd>${data?.approved ?? "–"}</dd></div>
-      <div><dt>From sites</dt><dd>${data?.sites ?? "–"}</dd></div>
-      <div><dt>Read before every run</dt><dd>✓</dd></div>
-    </dl>
-    <ol class="lessons section">${items.map((l, i) => html`<${LessonCard} l=${l} n=${i + 1} admin=${admin} onChange=${refresh} />`)}</ol>`;
 }
 
 /* ---------- site ---------- */
@@ -1215,7 +1175,7 @@ function Approvals() {
 
 /* ---------- app ---------- */
 
-function Shell({ page, arg, children, overview, role, skillsCount }) {
+function Shell({ page, arg, children, overview, role }) {
   const [jobDomain, setJobDomain] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -1285,9 +1245,6 @@ function Shell({ page, arg, children, overview, role, skillsCount }) {
           <a class="nav-item" href="#/sites" aria-current=${cur(page === "sites" || page === "site")} title="Sites">
             <${SitesIcon} /><span class="nav-text">Sites</span>${count(overview?.sites?.length)}
           </a>
-          <a class="nav-item" href="#/skills" aria-current=${cur(page === "skills")} title="Skills">
-            <${SkillsIcon} /><span class="nav-text">Skills</span>${count(skillsCount)}
-          </a>
           <a class="nav-item" href="#/race" aria-current=${cur(page === "race")} title="Race">
             <${RaceIcon} /><span class="nav-text">Race</span>
           </a>
@@ -1315,7 +1272,6 @@ function App() {
   const [page, arg] = parts;
   const bare = page === "login" || page === "r";
   const [overview, overviewErr] = usePoll(() => (bare ? Promise.resolve(null) : api("/api/overview")), bare ? 0 : 5000, [bare]);
-  const [skills] = usePoll(() => (bare ? Promise.resolve(null) : api("/api/skills")), bare ? 0 : 30000, [bare]);
   if (page === "login") return html`<${Login} query=${query} />`;
   if (page === "r") return html`<${Reconnect} token=${arg} />`;
   const role = overviewErr ? null : overview?.role;
@@ -1326,12 +1282,10 @@ function App() {
   else if (page === "approvals") view = html`<${Approvals} />`;
   else if (page === "site") view = html`<${Site} domain=${arg} />`;
   else if (page === "sites") view = html`<${Sites} overview=${overview} />`;
-  else if (page === "skills") view = html`<${Skills} admin=${role === "admin"} />`;
   else if (page === "job") view = html`<${Generate} id=${arg} />`;
   else if (page === "race") view = html`<${Race} raceId=${arg} overview=${overview} />`;
   else view = html`<${Home} overview=${overview} />`;
-  return html`<${Shell} page=${page} arg=${arg} overview=${overview} role=${role}
-    skillsCount=${skills?.lessons?.length}>${view}<//>`;
+  return html`<${Shell} page=${page} arg=${arg} overview=${overview} role=${role}>${view}<//>`;
 }
 
 render(html`<${App} />`, document.getElementById("app"));

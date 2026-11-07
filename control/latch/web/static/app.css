@@ -605,25 +605,11 @@ pre.code { margin: 0; padding: 14px 16px; border-radius: var(--radius-md); backg
 .site-row .facts dd small { color: var(--text-muted); font-size: 12px; font-weight: 600; }
 @media (max-width: 1000px) { .site-row { grid-template-columns: 56px minmax(0, 1fr); } .site-row .facts, .site-row .acts { grid-column: 1 / -1; } }
 
-/* ---------- skills (lesson timeline) ---------- */
-.lessons { list-style: none; margin: 34px 0 0; padding: 0; position: relative; display: grid; gap: 14px; }
-.lessons::before { content: ""; position: absolute; top: 24px; bottom: 24px; left: 27px; width: 1px; background: var(--brown-300); }
-.lesson { position: relative; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; align-items: start; }
-.lesson-n { z-index: 1; width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; background: var(--espresso-900);
-            color: var(--terracotta-light); font-family: var(--font-mono); font-size: 15px; font-weight: 700; box-shadow: 0 0 0 5px var(--oat-100); }
-.lesson-body { display: grid; gap: 10px; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius-lg);
-               background: var(--ivory); box-shadow: var(--shadow-card); min-width: 0; }
-.lesson-text { margin: 0; font-size: 17px; font-weight: 640; line-height: 1.45; letter-spacing: -.01em; }
-.lesson-body details summary { cursor: pointer; color: var(--terracotta-dark); font-size: 13px; font-weight: 700; }
-.lesson-part { display: grid; gap: 6px; margin-top: 12px; }
-.lesson-part p { margin: 0; color: var(--text-quiet); font-size: 14px; }
-.lesson-part pre.code { max-height: 220px; }
 .tag { font-size: 11px; font-weight: 740; letter-spacing: .05em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px;
        background: #ece2d6; color: var(--brown-700); }
 .tag.curated { background: #efe0d4; color: var(--terracotta-dark); }
 .tag.auto { background: #e4ece6; color: #2f674c; }
 a.signout { display: grid; place-items: center; }
-.lesson-part pre.code { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 /* guest / admin choice on the sign-in page */
 .gate-choices { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 36px; }

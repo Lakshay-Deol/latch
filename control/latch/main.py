@@ -404,39 +404,6 @@ def reconnect_done(token: str):
     return {"ok": True}
 
 
-# --- Skills (public: lessons are general rules; still scrubbed for personal data) -----------------
-
-def _personal_values():
-    from .publisher import personal_values
-    values = set()
-    for s in db.list_sites():
-        values |= personal_values(s["job_id"], db.operations(s["job_id"]), db.get_session(s["job_id"]) or [])
-    return values
-
-
-@app.get("/api/skills")
-async def skills():
-    from .publisher import redact_value
-    items = await asyncio.to_thread(lessons.load_all)
-    values = _personal_values()
-    items = [redact_value({k: l.get(k) for k in ("id", "site", "date", "lesson", "failure", "fix", "status", "source",
-                                                  "scope")}, values) for l in items]
-    return {"lessons": items, "sites": len({l["site"] for l in items}),
-            "approved": sum(l["status"] == "approved" for l in items)}
-
-
-class LessonStatus(BaseModel):
-    status: str
-
-
-@app.post("/api/skills/{lesson_id}", dependencies=[Depends(admin)])
-async def set_lesson_status(lesson_id: str, body: LessonStatus):
-    if body.status not in ("approved", "rejected", "proposed"):
-        raise HTTPException(400, "status must be approved, rejected or proposed")
-    await asyncio.to_thread(lessons.set_status, lesson_id, body.status)
-    return {"ok": True}
-
-
 # --- Race ----------------------------------------------------------------------------------------
 
 class RaceRequest(BaseModel):
