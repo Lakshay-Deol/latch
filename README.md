@@ -15,10 +15,10 @@
 ---
 
 ### ⚡ Live Demo Walkthrough
+
 [![Latch Demo Walkthrough](docs/latch-demo.gif)](docs/latch-demo.gif)
 
-> 🎬 **Watch the full demo:** Click the animation above or open [`docs/latch_demo.mp4`](docs/latch_demo.mp4) for the high-definition walkthrough and Challenge 1 defense.
-
+> 🎥 **Watch the full demo:** Click the animation above or open the [high-definition video](docs/latch_demo.mp4) for the complete walkthrough and Challenge 1 defense.
 ---
 
 ## 1. Executive Summary & Problem Solved
